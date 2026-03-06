@@ -24,6 +24,7 @@ body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -70,9 +71,10 @@ img { max-width: 100%; height: auto; border-radius: 12px; }
 .main-header {
     background-color: #dadae7;
     width: 100%;
-    position: sticky;
+    position: fixed;
     top: 0;
     z-index: 1000;
+   
 }
 
 /* ===== NAVBAR ===== */
