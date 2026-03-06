@@ -75,7 +75,7 @@ INSERT INTO `detalle_factura` (`id_detalle`, `id_factura`, `id_servicio`, `descr
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `factura`
+-- Structure de tabla para la tabla `factura`
 --
 
 CREATE TABLE `factura` (
