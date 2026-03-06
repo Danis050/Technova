@@ -136,10 +136,20 @@
                 <label>Contraseña</label>
                 <input type="password" id="password" name="password" placeholder="Tu contraseña" required>
             </div>
+            <label for="tipoUsuario">Tipo de Usuario</label>
+            <select id="tipoUsuario" name="tipoUsuario" required>
+                <option value="">Selecciona tu tipo de usuario</option>
+                <option value="Cliente">Vendedor</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Administrador">Cajero</option>
+
+            </select>
             <button type="submit" class="btn-submit" id="btnLogin">
                 <span id="btnTexto">Iniciar Sesión</span>
                 <i class="fa-solid fa-arrow-right-to-bracket"></i>
             </button>
+            
+            
         </form>
 
         <p style="text-align:center;margin-top:20px;color:#6b7280;font-size:0.9rem;">
