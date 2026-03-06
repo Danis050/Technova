@@ -7,19 +7,166 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ===== RESPONSIVE GLOBAL ===== */
+        *, *::before, *::after { box-sizing: border-box; }
+        img { max-width: 100%; height: auto; }
+
+        /* ===== NAVBAR RESPONSIVE ===== */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+            z-index: 200;
+        }
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: #0f172a;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        @media (max-width: 768px) {
+            /* Navbar */
+            .navbar {
+                flex-wrap: wrap;
+                padding: 12px 16px;
+                position: relative;
+            }
+            .hamburger { display: flex; }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                padding: 8px 0;
+                border-top: 1px solid #e5e7eb;
+                margin-top: 8px;
+            }
+            .nav-links.open { display: flex; }
+            .nav-links li a {
+                display: block;
+                padding: 12px 8px;
+                font-size: 1rem;
+                border-bottom: 1px solid #f1f5f9;
+            }
+            .nav-actions {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px 0 4px;
+            }
+            .nav-actions.open { display: flex; }
+            .nav-actions .btn-login,
+            .nav-actions .btn-registro {
+                text-align: center;
+                width: 100%;
+                padding: 12px;
+            }
+
+            /* Hero */
+            .hero .container.hero {
+                flex-direction: column !important;
+                padding: 40px 16px 32px;
+                gap: 32px;
+                text-align: center;
+            }
+            .hero-content { align-items: center; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content p { font-size: 1rem; }
+            .hero-image { width: 100%; max-width: 400px; margin: 0 auto; }
+            .hero-image img { border-radius: 16px; }
+            .hero-stats { justify-content: center; gap: 24px; }
+            .btn-group { justify-content: center; }
+
+            /* Products */
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px;
+            }
+            .section-title { font-size: 1.6rem !important; }
+            .section-desc br { display: none; }
+
+            /* Services */
+            .services-container {
+                flex-direction: column !important;
+                gap: 24px;
+            }
+            .services-image { width: 100%; }
+            .services-image img { border-radius: 16px; width: 100%; }
+
+            /* Projects */
+            .projects-container {
+                flex-direction: column !important;
+                gap: 24px;
+            }
+            .projects-image { width: 100%; }
+            .projects-image img { border-radius: 16px; width: 100%; }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 16px;
+            }
+
+            /* Contact */
+            .contact-info-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px;
+            }
+            .form-row {
+                flex-direction: column !important;
+                gap: 0;
+            }
+
+            /* Footer */
+            .footer-grid {
+                grid-template-columns: 1fr !important;
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .hero-content h1 { font-size: 1.8rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .hero-stats { gap: 16px; }
+            .hero-stats .stat-item h3 { font-size: 1.4rem; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .navbar { padding: 12px 24px; }
+            .nav-links { gap: 16px; }
+            .hero-content h1 { font-size: 2.4rem; }
+            .stats-cards { grid-template-columns: repeat(2, 1fr) !important; }
+            .products-grid { grid-template-columns: repeat(3, 1fr) !important; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+    </style>
 </head>
 <body>
-    <!-- ===== NAVBAR ===== -->
+
 <header class="main-header">
     <nav class="navbar">
-
         <div class="logo">
             <a href="index.html">
                 <img src="img/er.png" alt="Logo TechNova" width="100" height="100">
             </a>
         </div>
 
-        <ul class="nav-links">
+        <button class="hamburger" id="hamburger" aria-label="Menú">
+            <span></span><span></span><span></span>
+        </button>
+
+        <ul class="nav-links" id="navLinks">
             <li><a href="index.html">Inicio</a></li>
             <li><a href="#productos">Productos</a></li>
             <li><a href="#services_page">Servicios</a></li>
@@ -27,243 +174,264 @@
             <li><a href="#contacto">Contacto</a></li>
         </ul>
 
-        <div class="nav-actions">
+        <div class="nav-actions" id="navActions">
             <a href="login.html" class="btn-login">Inicio de Sesión</a>
             <a href="registro.html" class="btn-registro">Registro</a>
         </div>
-
     </nav>
 </header>
-    <section class="hero">
-        <div class="container hero">
-            <div class="hero-content">
-                <div class="badge">
-                    <i class="fa-solid fa-rocket"></i> Innovación Tecnológica
-                </div>
-                <h1>Transformamos <br> <span class="text-gradient">el Futuro</span> <br> Digital</h1>
-                <p>Impulsamos tu negocio con soluciones tecnológicas de vanguardia. Desde desarrollo de software hasta inteligencia artificial.</p>
-                <div class="btn-group">
-                    <a href="registro.html" class="btn btn-primary">
-                        Comenzar Ahora
-                    </a>
-                 
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <h3>500+</h3>
-                        <p>Proyectos</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3 class="text-purple">98%</h3>
-                        <p>Satisfacción</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3>24/7</h3>
-                        <p>Soporte</p>
-                    </div>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="Hombre usando computadora antigua">
-            </div>
-        </div>
-    </section>
 
-    <section id="productos"class="products">
-        <div class="container">
-            <span class="section-subtitle">PRODUCTOS</span>
-            <h2 class="section-title">Soluciones Tecnológicas<br><span class="text-gradient">Para Tu Negocio</span></h2>
-            <p class="section-desc">Ofrecemos un conjunto completo de productos tecnológicos diseñados para<br>impulsar tu empresa hacia el futuro digital.</p>
-            
-            <!--Imagenes de productos, servicios y proyectos-->
-            <div class="products-grid">
-                <div class="products-card">
-                    <div class="icon-box bg-blue"> <img src="img/laptop.jpg" alt=""></div>
-                    <h3>Computadoras</h3>
-                </div>
-                <div class="products-card">
-                    <div class="icon-box bg-pink"> <img src="img/teclado.jpg" alt=""></i></div>
-                    <h3>Teclados</h3>
-                </div>
-                <div class="products-card">
-                    <div class="icon-box bg-green"><img src="img/mouse.jpg" alt=""></div>
-                    <h3>Mouse</h3>
-                </div>
-                <div class="products-card">
-                    <div class="icon-box bg-orange"><img src="img/audifonos.jpg" alt=""></div>
-                    <h3>Audifonos</h3>
-                </div>
-                <div class="products-card">
-                    <div class="icon-box bg-indigo"><img src="img/monitor.jpeg" alt=""></div>
-                    <h3>Monitor</h3>
-                </div>
-                <div class="products-card">
-                    <div class="icon-box bg-yellow"><img src="img/baterias.jpeg" alt=""></div>
-                    <h3>Bateria</h3>
-                    </div>
+<section class="hero">
+    <div class="container hero">
+        <div class="hero-content">
+            <div class="badge">
+                <i class="fa-solid fa-rocket"></i> Innovación Tecnológica
             </div>
-        </div>
-    </section>
-
-    <section class="servicios" id="services_page">
-        <div class="container services-container">
-            <div class="services-image">
-                <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=820&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Brazo robótico">
+            <h1>Transformamos <br> <span class="text-gradient">el Futuro</span> <br> Digital</h1>
+            <p>Impulsamos tu negocio con soluciones tecnológicas de vanguardia. Desde desarrollo de software hasta inteligencia artificial.</p>
+            <div class="btn-group">
+                <a href="registro.html" class="btn btn-primary">Comenzar Ahora</a>
             </div>
-            <div class="services-content">
-                <span class="section-subtitle">SERVICIOS</span>
-                <h2 class="section-title">Donde la tecnologia <br><span class="text-gradient">impulsa tu éxito</span></h2>
-                <p class="section-desc"> Desarrollamos servicios tecnologicos que impulsan la innovación y llevan tu negocio al siguiente nivel </p>
-                
-                <ul class="services-list">
-                    <li><i class="fa-regular fa-circle-check"></i> Desarrollo de proyectos de Software personalizados</li>
-                    <li><i class="fa-regular fa-circle-check"></i> Diseño gráfico</li>
-                    <li><i class="fa-regular fa-circle-check"></i> Venta de "Demos" (Software base adaptable) </li>
-                    <li><i class="fa-regular fa-circle-check"></i> Cursos de Tecnología (Microsoft Office, JavaScript, C#, etc) </li>
-                </ul>
-
-               
-        </div>
-    </section>
-
-    <section class="projects" id="projects">
-        <div class="container">
-            <div class="projects-container">
-                <div class="projects-content">
-                    <span class="section-subtitle">PROYECTOS</span>
-                    <h2 class="section-title">Tecnología aplicada <br><span class="text-gradient">a soluciones reales</span></h2>
-                    <p class="section-desc" style="margin-bottom: 1rem;">Cada proyecto es desarrollado con enfoque estratégico, garantizando soluciones tecnológicas funcionales y escalables.</p>
-                    <div class="cta-box">
-                        <div class="cta-icon"><i class="fa-regular fa-lightbulb"></i></div>
-                        <div>
-                            <h4>¿Tienes un proyecto en mente?</h4>
-                            <p>Conversemos sobre cómo podemos ayudarte a alcanzar tus objetivos tecnológicos.</p>
-                        </div>
-                    </div>
-                </div>
-                </div>
-                <div class="projects-image">
-                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Equipo trabajando">
-                </div>
-            </div>
-            
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <i class="fa-solid fa-users text-blue"></i>
-                    <h3>150+</h3>
-                    <p>Clientes Satisfechos</p>
-                </div>
-                <div class="stat-card">
-                    <i class="fa-solid fa-bullseye" style="color: #d946ef;"></i>
+            <div class="hero-stats">
+                <div class="stat-item">
                     <h3>500+</h3>
-                    <p>Proyectos Completados</p>
+                    <p>Proyectos</p>
                 </div>
-                <div class="stat-card">
-                    <i class="fa-solid fa-award text-green" style="color: #10b981;"></i>
-                    <h3>15+</h3>
-                    <p>Años de Experiencia</p>
+                <div class="stat-item">
+                    <h3 class="text-purple">98%</h3>
+                    <p>Satisfacción</p>
                 </div>
-                <div class="stat-card">
-                    <i class="fa-solid fa-arrow-trend-up text-orange" style="color: #f97316;"></i>
-                    <h3>99%</h3>
-                    <p>Tasa de Éxito</p>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Soporte</p>
                 </div>
             </div>
         </div>
-    </section>
-    
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="Tecnología">
+        </div>
+    </div>
+</section>
 
-    <section class="contact" id="contacto">
-        <div class="container">
-            <span class="section-subtitle">CONTACTO</span>
-            <h2 class="section-title">Hablemos de <br><span class="text-gradient">Tu Proyecto</span></h2>
-            <p class="section-desc">¿Tienes una idea? Estamos aquí para hacerla realidad. Contáctanos y<br>descubre cómo podemos ayudarte.</p>
-            
-            <div class="contact-info-grid">
-                <div class="contact-card">
-                    <div class="icon-box bg-blue" style="background-color: hsla(252, 81%, 17%, 0.815);"><i class="fa-regular fa-envelope"></i></div>
-                    <h3>Email</h3>
-                    <p class="text-gray" style="margin-top: 10px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5dddad9d4f5c1d0d6dddbdac3d49bd6dad8">[email&#160;protected]</a></p>
-                </div>
-                <div class="contact-card">
-                    <div class="icon-box" style="background-color: hsl(252, 81%, 17%,0.815)"><i class="fa-solid fa-phone"></i></div>
-                    <h3>Teléfono</h3>
-                    <p class="text-gray" style="margin-top: 10px;" >+123 456 789</p>
-                </div>
-                <div class="contact-card">
-                    <div class="icon-box bg-green" style="background-color: hsl(252, 81%, 17%,0.815)"><i class="fa-solid fa-location-dot"></i></div>
-                    <h3>Ubicación</h3>
-                    <p class="text-gray" style="margin-top: 10px;">Madrid, España</p>
-                </div>
+<section id="productos" class="products">
+    <div class="container">
+        <span class="section-subtitle">PRODUCTOS</span>
+        <h2 class="section-title">Soluciones Tecnológicas<br><span class="text-gradient">Para Tu Negocio</span></h2>
+        <p class="section-desc">Ofrecemos un conjunto completo de productos tecnológicos diseñados para impulsar tu empresa hacia el futuro digital.</p>
+        <div class="products-grid">
+            <div class="products-card">
+                <div class="icon-box bg-blue"><img src="img/laptop.jpg" alt=""></div>
+                <h3>Computadoras</h3>
             </div>
-
-            <div class="contact-form-container">
-                <h3>Envíanos un Mensaje</h3>
-                <form>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Nombre</label>
-                            <input type="text" placeholder="Tu nombre">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" placeholder="tu@email.com">
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label>Asunto</label>
-                        <input type="text" placeholder="¿En qué podemos ayudarte?">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label>Mensaje</label>
-                        <textarea rows="4" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">Enviar Mensaje <i class="fa-regular fa-paper-plane"></i></button>
-                </form>
+            <div class="products-card">
+                <div class="icon-box bg-pink"><img src="img/teclado.jpg" alt=""></div>
+                <h3>Teclados</h3>
+            </div>
+            <div class="products-card">
+                <div class="icon-box bg-green"><img src="img/mouse.jpg" alt=""></div>
+                <h3>Mouse</h3>
+            </div>
+            <div class="products-card">
+                <div class="icon-box bg-orange"><img src="img/audifonos.jpg" alt=""></div>
+                <h3>Audifonos</h3>
+            </div>
+            <div class="products-card">
+                <div class="icon-box bg-indigo"><img src="img/monitor.jpeg" alt=""></div>
+                <h3>Monitor</h3>
+            </div>
+            <div class="products-card">
+                <div class="icon-box bg-yellow"><img src="img/baterias.jpeg" alt=""></div>
+                <h3>Bateria</h3>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <div class="logo-icon" style="width: 28px; height: 28px; font-size: 1rem;">T</div>
-                        TechNova
+<section class="servicios" id="services_page">
+    <div class="container services-container">
+        <div class="services-image">
+            <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=820&auto=format&fit=crop" alt="Brazo robótico">
+        </div>
+        <div class="services-content">
+            <span class="section-subtitle">SERVICIOS</span>
+            <h2 class="section-title">Donde la tecnologia <br><span class="text-gradient">impulsa tu éxito</span></h2>
+            <p class="section-desc">Desarrollamos servicios tecnologicos que impulsan la innovación y llevan tu negocio al siguiente nivel</p>
+            <ul class="services-list">
+                <li><i class="fa-regular fa-circle-check"></i> Desarrollo de proyectos de Software personalizados</li>
+                <li><i class="fa-regular fa-circle-check"></i> Diseño gráfico</li>
+                <li><i class="fa-regular fa-circle-check"></i> Venta de "Demos" (Software base adaptable)</li>
+                <li><i class="fa-regular fa-circle-check"></i> Cursos de Tecnología (Microsoft Office, JavaScript, C#, etc)</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="projects" id="projects">
+    <div class="container">
+        <div class="projects-container">
+            <div class="projects-content">
+                <span class="section-subtitle">PROYECTOS</span>
+                <h2 class="section-title">Tecnología aplicada <br><span class="text-gradient">a soluciones reales</span></h2>
+                <p class="section-desc" style="margin-bottom: 1rem;">Cada proyecto es desarrollado con enfoque estratégico, garantizando soluciones tecnológicas funcionales y escalables.</p>
+                <div class="cta-box">
+                    <div class="cta-icon"><i class="fa-regular fa-lightbulb"></i></div>
+                    <div>
+                        <h4>¿Tienes un proyecto en mente?</h4>
+                        <p>Conversemos sobre cómo podemos ayudarte a alcanzar tus objetivos tecnológicos.</p>
                     </div>
-                    <p class="footer-desc">Transformamos ideas en soluciones tecnológicas innovadoras. Tu socio de confianza para el futuro digital.</p>
-                    <div class="social-links">
-                        <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+            <div class="projects-image">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=870&auto=format&fit=crop" alt="Equipo trabajando">
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-users text-blue"></i>
+                <h3>150+</h3>
+                <p>Clientes Satisfechos</p>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-bullseye" style="color:#d946ef;"></i>
+                <h3>500+</h3>
+                <p>Proyectos Completados</p>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-award" style="color:#10b981;"></i>
+                <h3>15+</h3>
+                <p>Años de Experiencia</p>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-arrow-trend-up" style="color:#f97316;"></i>
+                <h3>99%</h3>
+                <p>Tasa de Éxito</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="contact" id="contacto">
+    <div class="container">
+        <span class="section-subtitle">CONTACTO</span>
+        <h2 class="section-title">Hablemos de <br><span class="text-gradient">Tu Proyecto</span></h2>
+        <p class="section-desc">¿Tienes una idea? Estamos aquí para hacerla realidad. Contáctanos y descubre cómo podemos ayudarte.</p>
+
+        <div class="contact-info-grid">
+            <div class="contact-card">
+                <div class="icon-box" style="background-color:hsla(252,81%,17%,0.815);"><i class="fa-regular fa-envelope"></i></div>
+                <h3>Email</h3>
+                <p class="text-gray" style="margin-top:10px;">info@technova.com</p>
+            </div>
+            <div class="contact-card">
+                <div class="icon-box" style="background-color:hsl(252,81%,17%,0.815);"><i class="fa-solid fa-phone"></i></div>
+                <h3>Teléfono</h3>
+                <p class="text-gray" style="margin-top:10px;">+123 456 789</p>
+            </div>
+            <div class="contact-card">
+                <div class="icon-box" style="background-color:hsl(252,81%,17%,0.815);"><i class="fa-solid fa-location-dot"></i></div>
+                <h3>Ubicación</h3>
+                <p class="text-gray" style="margin-top:10px;">Madrid, España</p>
+            </div>
+        </div>
+
+        <div class="contact-form-container">
+            <h3>Envíanos un Mensaje</h3>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" placeholder="Tu nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="tu@email.com">
                     </div>
                 </div>
-                <div class="footer-col">
-                    <h4>Empresa</h4>
-                    <ul>
-                        <li><a href="#">Acerca de</a></li>
-                        <li><a href="#">Servicios</a></li>
-                        <li><a href="#">Equipo</a></li>
-                        <li><a href="#">Carreras</a></li>
-                    </ul>
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label>Asunto</label>
+                    <input type="text" placeholder="¿En qué podemos ayudarte?">
                 </div>
-                <div class="footer-col">
-                    <h4>Recursos</h4>
-                    <ul>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Documentación</a></li>
-                        <li><a href="#">Casos de Estudio</a></li>
-                        <li><a href="#">Soporte</a></li>
-                    </ul>
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label>Mensaje</label>
+                    <textarea rows="4" placeholder="Cuéntanos sobre tu proyecto..."></textarea>
                 </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacidad</a></li>
-                        <li><a href="#">Términos</a></li>
-                        <li><a href="#">Cookies</a></li>
-                        <li><a href="#">Licencias</a></li>
+                <button type="submit" class="btn-submit">Enviar Mensaje <i class="fa-regular fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <div class="logo-icon" style="width:28px;height:28px;font-size:1rem;">T</div>
+                    TechNova
+                </div>
+                <p class="footer-desc">Transformamos ideas en soluciones tecnológicas innovadoras. Tu socio de confianza para el futuro digital.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Empresa</h4>
+                <ul>
+                    <li><a href="#">Acerca de</a></li>
+                    <li><a href="#">Servicios</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Carreras</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Recursos</h4>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Documentación</a></li>
+                    <li><a href="#">Casos de Estudio</a></li>
+                    <li><a href="#">Soporte</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacidad</a></li>
+                    <li><a href="#">Términos</a></li>
+                    <li><a href="#">Cookies</a></li>
+                    <li><a href="#">Licencias</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom" style="text-align:center;padding-top:24px;border-top:1px solid #1e293b;margin-top:32px;color:#64748b;font-size:0.85rem;">
+            © 2024 TechNova. Todos los derechos reservados.
+        </div>
+    </div>
+</footer>
+
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('navLinks');
+    const navActions = document.getElementById('navActions');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        navLinks.classList.toggle('open');
+        navActions.classList.toggle('open');
+    });
+
+    // Cerrar menú al hacer click en un link
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('open');
+            navLinks.classList.remove('open');
+            navActions.classList.remove('open');
+        });
+    });
+</script>
+</body>
+</html>

@@ -2,27 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | TechNova</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
         body { background:#f1f5f9; }
 
         .dash-layout { display:flex; min-height:100vh; }
 
-        /* SIDEBAR */
+        /* ===== SIDEBAR ===== */
         .sidebar {
             width: 250px;
             background: #0f172a;
             color: white;
-            padding: 0;
             position: fixed;
             top: 0; left: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
             z-index: 100;
+            transition: transform 0.3s ease;
         }
         .sidebar-logo {
             padding: 24px 20px;
@@ -34,15 +36,26 @@
             font-weight: 700;
         }
         .sidebar-logo img { width: 40px; height: 40px; border-radius: 8px; }
-        .sidebar-menu { padding: 20px 0; flex: 1; }
+        .sidebar-menu { padding: 20px 0; flex: 1; overflow-y: auto; }
+
+        .menu-section-label {
+            padding: 4px 20px 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: #475569;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
         .sidebar-menu a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 11px 20px;
             color: #94a3b8;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -50,99 +63,119 @@
             color: white;
             border-left: 3px solid #6d28d9;
         }
-        .sidebar-menu a i { width: 20px; }
+        .sidebar-menu a i { width: 18px; font-size: 0.85rem; }
+
+        /* Botón crear usuario en sidebar */
+        .btn-crear-usuario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 12px 14px 4px;
+            padding: 11px 14px;
+            background: linear-gradient(135deg, #6d28d9, #4f46e5);
+            color: white !important;
+            border-radius: 10px;
+            font-size: 0.85rem !important;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: calc(100% - 28px);
+            text-align: left;
+            transition: all 0.2s !important;
+            border-left: none !important;
+        }
+        .btn-crear-usuario:hover {
+            background: linear-gradient(135deg, #7c3aed, #6366f1) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(109,40,217,0.4);
+            border-left: none !important;
+        }
+        .btn-crear-usuario i { color: rgba(255,255,255,0.8); }
+        .btn-crear-usuario .badge-new {
+            margin-left: auto;
+            background: rgba(255,255,255,0.2);
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 99px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
         .sidebar-user {
             padding: 16px 20px;
             border-top: 1px solid #1e293b;
             font-size: 0.85rem;
             color: #64748b;
         }
-        .sidebar-user strong { display:block; color:#e2e8f0; }
+        .sidebar-user strong { display:block; color:#e2e8f0; margin-bottom: 2px; }
 
-        /* MAIN */
-        .dash-main {
-            margin-left: 250px;
-            flex: 1;
-            padding: 30px;
+        /* ===== TOPBAR MÓVIL ===== */
+        .mobile-topbar {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; height: 56px;
+            background: #0f172a; z-index: 150;
+            align-items: center; justify-content: space-between;
+            padding: 0 16px; color: white;
         }
+        .mobile-topbar .brand { font-weight: 700; font-size: 1rem; }
+        .btn-menu-toggle {
+            background: none; border: none; color: white;
+            font-size: 1.2rem; cursor: pointer; padding: 8px;
+        }
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 99;
+        }
+        .sidebar-overlay.visible { display: block; }
+
+        /* ===== MAIN ===== */
+        .dash-main { margin-left: 250px; flex: 1; padding: 30px; }
         .dash-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 30px;
+            flex-wrap: wrap; gap: 12px;
         }
         .dash-header h1 { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
         .dash-header p  { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
 
-        /* CARDS ESTADÍSTICAS */
+        /* ===== STATS ===== */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 20px; margin-bottom: 30px;
         }
         .stat-card-dash {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
+            background: white; border-radius: 16px; padding: 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            display: flex; align-items: center; gap: 16px;
         }
         .stat-icon {
-            width: 52px; height: 52px;
-            border-radius: 12px;
+            width: 52px; height: 52px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
+            font-size: 1.4rem; flex-shrink: 0;
         }
         .stat-card-dash h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: 2px; }
         .stat-card-dash p  { color: #64748b; font-size: 0.85rem; }
 
-        /* TABLAS */
-        .tables-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
+        /* ===== TABLES ===== */
+        .tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .table-card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            background: white; border-radius: 16px; padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow-x: auto;
         }
         .table-card h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 1rem; font-weight: 700; margin-bottom: 16px;
+            color: #0f172a; display: flex; align-items: center; gap: 8px;
         }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 260px; }
         th {
-            background: #f8fafc;
-            padding: 10px 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #64748b;
-            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc; padding: 10px 12px; text-align: left;
+            font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;
         }
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
-        }
+        td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: #334155; }
         tr:last-child td { border-bottom: none; }
 
-        .badge-estado {
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        .badge-estado { padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
         .badge-pendiente  { background:#fef3c7; color:#92400e; }
         .badge-proceso    { background:#dbeafe; color:#1e40af; }
         .badge-completado { background:#d1fae5; color:#065f46; }
@@ -150,39 +183,282 @@
         .badge-anulada    { background:#fee2e2; color:#991b1b; }
 
         .btn-logout {
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
+            background: #fee2e2; color: #dc2626; border: none;
+            padding: 8px 16px; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 6px; white-space: nowrap;
+        }
+        .btn-logout:hover { background: #fecaca; }
+
+        #loading { text-align: center; padding: 60px; color: #64748b; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn {
+            from { opacity:0; transform:scale(0.95) translateY(10px); }
+            to   { opacity:1; transform:scale(1)    translateY(0); }
+        }
+
+        .modal-header {
+            padding: 24px 24px 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-header h2 .modal-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: #6d28d9;
+        }
+        .modal-subtitle { font-size: 0.8rem; color: #64748b; margin-top: 4px; margin-left: 46px; }
+
+        .btn-close-modal {
+            background: #f1f5f9; border: none; cursor: pointer;
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: #64748b; font-size: 0.85rem; flex-shrink: 0;
+            transition: all 0.15s;
+        }
+        .btn-close-modal:hover { background: #fee2e2; color: #dc2626; }
+
+        .modal-body { padding: 0 24px 24px; }
+
+        /* Role selector */
+        .role-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .role-option {
+            position: relative;
+        }
+        .role-option input[type="radio"] { display: none; }
+        .role-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 14px 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .role-card:hover { border-color: #c4b5fd; background: #faf5ff; }
+        .role-option input:checked + .role-card {
+            border-color: #6d28d9;
+            background: #faf5ff;
+            box-shadow: 0 0 0 3px rgba(109,40,217,0.1);
+        }
+        .role-card-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+        }
+        .rc-admin  .role-card-icon { background: #ede9fe; color: #6d28d9; }
+        .rc-emp    .role-card-icon { background: #dbeafe; color: #2563eb; }
+        .rc-client .role-card-icon { background: #d1fae5; color: #059669; }
+        .role-card-name { font-size: 0.8rem; font-weight: 600; color: #0f172a; }
+        .role-card-desc { font-size: 0.68rem; color: #94a3b8; line-height: 1.3; }
+        .role-option input:checked + .role-card .role-card-name { color: #6d28d9; }
+
+        /* Form fields */
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .mfield { margin-bottom: 14px; }
+        .mfield label {
+            display: block;
+            font-size: 0.78rem;
             font-weight: 600;
-            font-size: 0.85rem;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        .mfield input, .mfield select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .mfield input:focus, .mfield select:focus {
+            border-color: #6d28d9;
+            box-shadow: 0 0 0 3px rgba(109,40,217,0.08);
+            background: white;
+        }
+        .mfield input::placeholder { color: #94a3b8; }
+
+        /* Sección puesto (solo empleado) */
+        .puesto-section {
+            display: none;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+        .puesto-section.visible { display: block; }
+        .puesto-section-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #0369a1;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .btn-logout:hover { background: #fecaca; }
+        .puestos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        .puesto-opt input[type="radio"] { display: none; }
+        .puesto-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border: 1.5px solid #bae6fd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #0369a1;
+            background: white;
+            transition: all 0.15s;
+        }
+        .puesto-label:hover { border-color: #0284c7; background: #e0f2fe; }
+        .puesto-opt input:checked + .puesto-label {
+            border-color: #0284c7;
+            background: #0284c7;
+            color: white;
+        }
+        .puesto-opt input:checked + .puesto-label i { color: white; }
+        .puesto-label i { font-size: 0.75rem; color: #0369a1; }
 
-        #loading {
-            text-align: center;
-            padding: 60px;
-            color: #64748b;
-            font-size: 1rem;
+        /* Divider */
+        .divider {
+            border: none; border-top: 1px solid #f1f5f9;
+            margin: 4px 0 16px;
+        }
+
+        /* Alerta modal */
+        #modalAlerta {
+            display: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        /* Botón submit modal */
+        .btn-modal-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6d28d9, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-modal-submit:hover { background: linear-gradient(135deg, #7c3aed, #6366f1); transform: translateY(-1px); }
+        .btn-modal-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .stats-cards { grid-template-columns: repeat(2, 1fr); }
+            .tables-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .mobile-topbar { display: flex; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .dash-main { margin-left: 0; padding: 72px 16px 24px; }
+            .stats-cards { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-card-dash { padding: 16px; gap: 12px; }
+            .stat-card-dash h3 { font-size: 1.3rem; }
+            .stat-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+            .role-selector { grid-template-columns: repeat(3, 1fr); }
+            .form-row-2 { grid-template-columns: 1fr; }
+            .puestos-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .modal { border-radius: 16px; }
+            .role-card { padding: 10px 6px; }
+            .role-card-icon { width: 32px; height: 32px; font-size: 0.9rem; }
+            .role-card-name { font-size: 0.72rem; }
+            .role-card-desc { display: none; }
         }
     </style>
 </head>
 <body>
 
+<!-- TOPBAR MÓVIL -->
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="dash-layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="img/er.png" alt="TechNova">
             TechNova
         </div>
+
         <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
             <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
             <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
             <a href="#"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
@@ -190,17 +466,27 @@
             <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
             <a href="#"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
             <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+            <!-- SECCIÓN ADMIN (solo visible para Administrador) -->
+            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+            <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
+                <i class="fa-solid fa-user-plus"></i>
+                Crear Usuario
+                <span class="badge-new">ADMIN</span>
+            </button>
+
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
             <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
         </nav>
+
         <div class="sidebar-user">
             <strong id="sidebarNombre">Cargando...</strong>
             <span id="sidebarRol"></span>
         </div>
     </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- MAIN -->
     <main class="dash-main">
-
         <div id="loading">
             <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
             <p style="margin-top:12px;">Cargando datos...</p>
@@ -217,75 +503,39 @@
                 </button>
             </div>
 
-            <!-- TARJETAS ESTADÍSTICAS -->
             <div class="stats-cards">
                 <div class="stat-card-dash">
-                    <div class="stat-icon" style="background:#ede9fe;">
-                        <i class="fa-solid fa-users" style="color:#6d28d9;"></i>
-                    </div>
-                    <div>
-                        <h3 id="totalClientes">0</h3>
-                        <p>Clientes</p>
-                    </div>
+                    <div class="stat-icon" style="background:#ede9fe;"><i class="fa-solid fa-users" style="color:#6d28d9;"></i></div>
+                    <div><h3 id="totalClientes">0</h3><p>Clientes</p></div>
                 </div>
                 <div class="stat-card-dash">
-                    <div class="stat-icon" style="background:#dbeafe;">
-                        <i class="fa-solid fa-diagram-project" style="color:#2563eb;"></i>
-                    </div>
-                    <div>
-                        <h3 id="totalProyectos">0</h3>
-                        <p>Proyectos</p>
-                    </div>
+                    <div class="stat-icon" style="background:#dbeafe;"><i class="fa-solid fa-diagram-project" style="color:#2563eb;"></i></div>
+                    <div><h3 id="totalProyectos">0</h3><p>Proyectos</p></div>
                 </div>
                 <div class="stat-card-dash">
-                    <div class="stat-icon" style="background:#d1fae5;">
-                        <i class="fa-solid fa-file-invoice-dollar" style="color:#059669;"></i>
-                    </div>
-                    <div>
-                        <h3 id="totalFacturado">$0</h3>
-                        <p>Total Facturado</p>
-                    </div>
+                    <div class="stat-icon" style="background:#d1fae5;"><i class="fa-solid fa-file-invoice-dollar" style="color:#059669;"></i></div>
+                    <div><h3 id="totalFacturado">$0</h3><p>Total Facturado</p></div>
                 </div>
                 <div class="stat-card-dash">
-                    <div class="stat-icon" style="background:#fef3c7;">
-                        <i class="fa-solid fa-hand-holding-dollar" style="color:#d97706;"></i>
-                    </div>
-                    <div>
-                        <h3 id="totalPagos">$0</h3>
-                        <p>Pagos Recibidos</p>
-                    </div>
+                    <div class="stat-icon" style="background:#fef3c7;"><i class="fa-solid fa-hand-holding-dollar" style="color:#d97706;"></i></div>
+                    <div><h3 id="totalPagos">$0</h3><p>Pagos Recibidos</p></div>
                 </div>
             </div>
 
-            <!-- TABLAS -->
             <div class="tables-grid">
                 <div class="table-card">
                     <h3><i class="fa-solid fa-diagram-project" style="color:#6d28d9;"></i> Proyectos Recientes</h3>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Proyecto</th>
-                                <th>Cliente</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th></tr></thead>
                         <tbody id="tablaProyectos">
                             <tr><td colspan="3" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
                         </tbody>
                     </table>
                 </div>
-
                 <div class="table-card">
                     <h3><i class="fa-solid fa-file-invoice-dollar" style="color:#059669;"></i> Facturas Recientes</h3>
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Número</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Número</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead>
                         <tbody id="tablaFacturas">
                             <tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
                         </tbody>
@@ -293,31 +543,291 @@
                 </div>
             </div>
         </div>
-
     </main>
 </div>
 
+<!-- ===== MODAL CREAR USUARIO ===== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">
+                    <span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span>
+                    Crear Nuevo Usuario
+                </h2>
+                <p class="modal-subtitle">Completa los datos y asigna el rol correspondiente</p>
+            </div>
+            <button class="btn-close-modal" onclick="cerrarModal()" aria-label="Cerrar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- Selector de rol -->
+            <p style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:10px;">Selecciona el rol del usuario</p>
+            <div class="role-selector">
+                <div class="role-option rc-admin">
+                    <input type="radio" name="rolNuevo" id="rolAdmin" value="Administrador">
+                    <label class="role-card" for="rolAdmin">
+                        <div class="role-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span class="role-card-name">Admin</span>
+                    </label>
+                </div>
+                <div class="role-option rc-emp">
+                    <input type="radio" name="rolNuevo" id="rolEmpleado" value="Empleado" checked>
+                    <label class="role-card" for="rolEmpleado">
+                        <div class="role-card-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <span class="role-card-name">Empleado</span>
+                    </label>
+                </div>
+                <div class="role-option rc-client">
+                    <input type="radio" name="rolNuevo" id="rolCliente" value="Cliente">
+                    <label class="role-card" for="rolCliente">
+                        <div class="role-card-icon"><i class="fa-solid fa-user"></i></div>
+                        <span class="role-card-name">Cliente</span>
+                    </label>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Sección puesto (solo Empleado) -->
+            <div class="puesto-section visible" id="puestoSection">
+                <div class="puesto-section-title">
+                    <i class="fa-solid fa-id-badge"></i> ¿Qué puesto desempeñará?
+                </div>
+                <div class="puestos-grid">
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pDesarrollador" value="Desarrollador" checked>
+                        <label class="puesto-label" for="pDesarrollador">
+                            <i class="fa-solid fa-code"></i> Desarrollador
+                        </label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pDiseñador" value="Diseñador">
+                        <label class="puesto-label" for="pDiseñador">
+                            <i class="fa-solid fa-pen-nib"></i> Diseñador
+                        </label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pGerente" value="Gerente de Proyectos">
+                        <label class="puesto-label" for="pGerente">
+                            <i class="fa-solid fa-diagram-project"></i> Ger. Proyectos
+                        </label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pSoporte" value="Soporte Técnico">
+                        <label class="puesto-label" for="pSoporte">
+                            <i class="fa-solid fa-headset"></i> Soporte Técnico
+                        </label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pVentas" value="Ventas">
+                        <label class="puesto-label" for="pVentas">
+                            <i class="fa-solid fa-handshake"></i> Ventas
+                        </label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pContador" value="Contador">
+                        <label class="puesto-label" for="pContador">
+                            <i class="fa-solid fa-calculator"></i> Contador
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos del usuario -->
+            <div class="form-row-2">
+                <div class="mfield">
+                    <label for="mNombre">Nombre <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="mNombre" placeholder="Ej: Juan">
+                </div>
+                <div class="mfield">
+                    <label for="mApellido">Apellido <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="mApellido" placeholder="Ej: Pérez">
+                </div>
+            </div>
+
+            <div class="mfield">
+                <label for="mEmail">Correo electrónico <span style="color:#ef4444;">*</span></label>
+                <input type="email" id="mEmail" placeholder="usuario@technova.com">
+            </div>
+
+            <div class="form-row-2">
+                <div class="mfield">
+                    <label for="mPassword">Contraseña <span style="color:#ef4444;">*</span></label>
+                    <input type="password" id="mPassword" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="mfield">
+                    <label for="mConfirmar">Confirmar contraseña <span style="color:#ef4444;">*</span></label>
+                    <input type="password" id="mConfirmar" placeholder="Repite la contraseña">
+                </div>
+            </div>
+
+            <!-- Alerta -->
+            <div id="modalAlerta"></div>
+
+            <!-- Submit -->
+            <button class="btn-modal-submit" id="btnCrearUsuario" onclick="crearUsuario()">
+                <i class="fa-solid fa-user-plus"></i>
+                <span id="btnCrearTexto">Crear Usuario</span>
+            </button>
+
+        </div>
+    </div>
+</div>
+
 <script>
+// ===== SIDEBAR MÓVIL =====
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+const btnMenuToggle = document.getElementById('btnMenuToggle');
+btnMenuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+});
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+});
+
+// ===== MODAL =====
+function abrirModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    limpiarModal();
+}
+function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+// Cerrar con click fuera
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+});
+// Cerrar con Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+function limpiarModal() {
+    ['mNombre','mApellido','mEmail','mPassword','mConfirmar'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('rolEmpleado').checked = true;
+    document.getElementById('pDesarrollador').checked = true;
+    document.getElementById('puestoSection').classList.add('visible');
+    ocultarAlertaModal();
+}
+
+// Mostrar/ocultar sección puesto según rol
+document.querySelectorAll('input[name="rolNuevo"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const esEmpleado = document.getElementById('rolEmpleado').checked;
+        document.getElementById('puestoSection').classList.toggle('visible', esEmpleado);
+    });
+});
+
+function mostrarAlertaModal(msg, tipo = 'error') {
+    const el = document.getElementById('modalAlerta');
+    el.style.display = 'block';
+    if (tipo === 'error') {
+        el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+        el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
+    } else {
+        el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
+        el.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + msg;
+    }
+}
+function ocultarAlertaModal() {
+    const el = document.getElementById('modalAlerta');
+    el.style.display = 'none';
+    el.innerHTML = '';
+}
+
+// ===== CREAR USUARIO =====
+async function crearUsuario() {
+    const btn  = document.getElementById('btnCrearUsuario');
+    const txt  = document.getElementById('btnCrearTexto');
+    ocultarAlertaModal();
+
+    const nombre   = document.getElementById('mNombre').value.trim();
+    const apellido = document.getElementById('mApellido').value.trim();
+    const email    = document.getElementById('mEmail').value.trim();
+    const password = document.getElementById('mPassword').value;
+    const confirmar= document.getElementById('mConfirmar').value;
+    const rol      = document.querySelector('input[name="rolNuevo"]:checked')?.value;
+    const puesto   = document.querySelector('input[name="puesto"]:checked')?.value || '';
+
+    // Validaciones frontend
+    if (!nombre || !apellido || !email || !password || !confirmar) {
+        return mostrarAlertaModal('Todos los campos son requeridos.');
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return mostrarAlertaModal('El correo electrónico no es válido.');
+    }
+    if (password.length < 6) {
+        return mostrarAlertaModal('La contraseña debe tener al menos 6 caracteres.');
+    }
+    if (password !== confirmar) {
+        return mostrarAlertaModal('Las contraseñas no coinciden.');
+    }
+    if (rol === 'Empleado' && !puesto) {
+        return mostrarAlertaModal('Selecciona el puesto del empleado.');
+    }
+
+    btn.disabled = true;
+    txt.textContent = 'Creando...';
+
+    const formData = new FormData();
+    formData.append('nombre',    nombre);
+    formData.append('apellido',  apellido);
+    formData.append('email',     email);
+    formData.append('password',  password);
+    formData.append('confirmar', confirmar);
+    formData.append('rol',       rol);
+    formData.append('puesto',    puesto);
+
+    try {
+        const res  = await fetch('php/crear_usuario.php', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.error) {
+            mostrarAlertaModal(data.mensaje);
+        } else {
+            mostrarAlertaModal('¡Usuario creado exitosamente!', 'ok');
+            setTimeout(() => cerrarModal(), 1800);
+        }
+    } catch(err) {
+        mostrarAlertaModal('Error de conexión con el servidor.');
+    }
+
+    btn.disabled = false;
+    txt.textContent = 'Crear Usuario';
+}
+
+// ===== DASHBOARD DATA =====
 async function cargarDashboard() {
     try {
         const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
 
-        if (data.error) {
-            window.location.href = 'login.html';
-            return;
-        }
+        if (data.error) { window.location.href = 'login.html'; return; }
 
-        // Info usuario
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
         document.getElementById('saludo').textContent        = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
 
-        // Estadísticas
         document.getElementById('totalClientes').textContent  = data.total_clientes;
         document.getElementById('totalProyectos').textContent = data.total_proyectos;
         document.getElementById('totalFacturado').textContent = '$' + parseFloat(data.total_facturado).toFixed(2);
         document.getElementById('totalPagos').textContent     = '$' + parseFloat(data.total_pagos).toFixed(2);
+
+        // Mostrar botón crear usuario solo para Administrador
+        if (data.rol === 'Administrador') {
+            document.getElementById('adminSection').style.display = 'block';
+            document.getElementById('btnAbrirModal').style.display = 'flex';
+        }
 
         // Tabla proyectos
         if (data.proyectos.length > 0) {
