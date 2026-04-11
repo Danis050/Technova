@@ -526,9 +526,9 @@
                 <div class="table-card">
                     <h3><i class="fa-solid fa-diagram-project" style="color:#6d28d9;"></i> Proyectos Recientes</h3>
                     <table>
-                        <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th></tr></thead>
+                        <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th><th id="thAccion" style="display:none;">Acción</th></tr></thead>
                         <tbody id="tablaProyectos">
-                            <tr><td colspan="3" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
+                            <tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -830,16 +830,33 @@ async function cargarDashboard() {
         }
 
         // Tabla proyectos
-        if (data.proyectos.length > 0) {
-            const badges = { 'Pendiente':'badge-pendiente','En Proceso':'badge-proceso','Completado':'badge-completado','Cancelado':'badge-anulada' };
-            document.getElementById('tablaProyectos').innerHTML = data.proyectos.map(p => `
-                <tr>
-                    <td>${p.nombre}</td>
-                    <td>${p.nombre_empresa}</td>
-                    <td><span class="badge-estado ${badges[p.estado] || ''}">${p.estado}</span></td>
-                </tr>
-            `).join('');
-        }
+       if (data.proyectos.length > 0) {
+           const badges = { 'Pendiente':'badge-pendiente','En Proceso':'badge-proceso','Completado':'badge-completado','Cancelado':'badge-anulada' };
+           const esAdmin = (data.rol === 'Administrador');
+
+        if (esAdmin) document.getElementById('thAccion').style.display = '';
+
+           document.getElementById('tablaProyectos').innerHTML = data.proyectos.map(p => {
+           const estaActivo  = (p.estado === 'Pendiente' || p.estado === 'En Proceso');
+           const btnHtml = esAdmin ? `
+            <button onclick="alert('Estado actual: ${p.estado}')"
+                style="padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
+                       border:none; cursor:pointer;
+                       background:${estaActivo ? '#d1fae5' : '#fee2e2'};
+                       color:${estaActivo ? '#065f46' : '#991b1b'};">
+                ${estaActivo ? '✔ Activo' : '✖ Cerrado'}
+            </button>` : '';
+
+        return `
+            <tr>
+                <td>${p.nombre}</td>
+                <td>${p.nombre_empresa}</td>
+                <td><span class="badge-estado ${badges[p.estado] || ''}">${p.estado}</span></td>
+                ${esAdmin ? `<td>${btnHtml}</td>` : ''}
+            </tr>`;
+    }).join('');
+}
+
 
         // Tabla facturas
         if (data.facturas.length > 0) {
