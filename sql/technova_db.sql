@@ -498,6 +498,43 @@ ALTER TABLE `proyecto_servicio`
 --
 ALTER TABLE `reporte`
   ADD CONSTRAINT `fk_reporte_usuario` FOREIGN KEY (`generado_por`) REFERENCES `usuario` (`id_usuario`) ON UPDATE CASCADE;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proyecto_estado_log`
+--
+
+CREATE TABLE `proyecto_estado_log` (
+  `id_log`          int(11)      NOT NULL AUTO_INCREMENT,
+  `id_proyecto`     int(11)      NOT NULL,
+  `estado_anterior` enum('Pendiente','En Proceso','Completado','Cancelado') NOT NULL,
+  `estado_nuevo`    enum('Pendiente','En Proceso','Completado','Cancelado') NOT NULL,
+  `cambiado_por`    int(11)      NOT NULL COMMENT 'FK → usuario (Administrador) que realizó el cambio',
+  `cambiado_en`     datetime     NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Auditoría de cambios de estado en proyectos';
+
+--
+-- Índices para la tabla `proyecto_estado_log`
+--
+ALTER TABLE `proyecto_estado_log`
+  ADD PRIMARY KEY (`id_log`),
+  ADD KEY `fk_log_proyecto` (`id_proyecto`),
+  ADD KEY `fk_log_usuario`  (`cambiado_por`);
+
+--
+-- AUTO_INCREMENT de la tabla `proyecto_estado_log`
+--
+ALTER TABLE `proyecto_estado_log`
+  MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Filtros para la tabla `proyecto_estado_log`
+--
+ALTER TABLE `proyecto_estado_log`
+  ADD CONSTRAINT `fk_log_proyecto` FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_log_usuario`  FOREIGN KEY (`cambiado_por`) REFERENCES `usuario`  (`id_usuario`)  ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
