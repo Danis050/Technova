@@ -4,6 +4,7 @@
 --
 -- Servidor: 127.0.0.1:3307
 -- Tiempo de generación: 06-03-2026 a las 18:37:43
+-- Actualizado Sprint 2 – T01: tabla `proyecto` migrada a nueva estructura (15-04-2026)
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -128,26 +129,28 @@ INSERT INTO `pago` (`id_pago`, `id_proyecto`, `tipo_pago`, `monto`, `fecha_pago`
 
 --
 -- Estructura de tabla para la tabla `proyecto`
+-- Sprint 2 – T01 | Responsable: David A. Urias Blanco
+-- Cambios: nuevos estados (Activo/Pausado/Cerrado), fecha_fin, estado_cambiado_en
 --
 
 CREATE TABLE `proyecto` (
-  `id_proyecto` int(11) NOT NULL,
-  `id_cliente` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `descripcion` text DEFAULT NULL,
-  `fecha_inicio` date DEFAULT NULL,
-  `fecha_entrega` date DEFAULT NULL,
-  `estado` enum('Pendiente','En Proceso','Completado','Cancelado') NOT NULL DEFAULT 'Pendiente',
-  `anticipo_pagado` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'RB-01: El proyecto inicia solo si anticipo=1',
-  `creado_en` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='RN: Proyecto no inicia sin anticipo registrado';
+  `id_proyecto`        int(11)      NOT NULL AUTO_INCREMENT,
+  `nombre`             varchar(150) NOT NULL,
+  `descripcion`        text         DEFAULT NULL,
+  `fecha_inicio`       date         NOT NULL,
+  `fecha_fin`          date         DEFAULT NULL                    COMMENT 'Fecha estimada de entrega',
+  `estado`             enum('Activo','Pausado','Cerrado') NOT NULL DEFAULT 'Activo',
+  `id_cliente`         int(11)      NOT NULL                        COMMENT 'FK → cliente.id_cliente',
+  `creado_en`          timestamp    NOT NULL DEFAULT current_timestamp(),
+  `estado_cambiado_en` datetime     DEFAULT NULL                    COMMENT 'Última vez que cambió el estado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Proyectos gestionados por TechNova – Sprint 2';
 
 --
 -- Volcado de datos para la tabla `proyecto`
 --
 
-INSERT INTO `proyecto` (`id_proyecto`, `id_cliente`, `nombre`, `descripcion`, `fecha_inicio`, `fecha_entrega`, `estado`, `anticipo_pagado`, `creado_en`) VALUES
-(1, 1, 'Sistema de Facturación Web', 'Desarrollo de sistema de facturación electrónica para la empresa', '2026-02-14', '2026-05-14', 'En Proceso', 1, '2026-03-05 21:11:07');
+INSERT INTO `proyecto` (`id_proyecto`, `nombre`, `descripcion`, `fecha_inicio`, `fecha_fin`, `estado`, `id_cliente`, `creado_en`, `estado_cambiado_en`) VALUES
+(1, 'Sistema de Facturación Web', 'Desarrollo de sistema de facturación electrónica para la empresa', '2026-02-14', '2026-05-14', 'Activo', 1, '2026-03-05 21:11:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -291,9 +294,9 @@ CREATE TABLE `v_pagos_por_proyecto` (
 CREATE TABLE `v_proyectos_clientes` (
 `id_proyecto` int(11)
 ,`proyecto` varchar(150)
-,`estado` enum('Pendiente','En Proceso','Completado','Cancelado')
-,`fecha_entrega` date
-,`anticipo_pagado` tinyint(1)
+,`estado` enum('Activo','Pausado','Cerrado')
+,`fecha_fin` date
+,`estado_cambiado_en` datetime
 ,`cliente` varchar(150)
 ,`email_cliente` varchar(150)
 );
@@ -323,7 +326,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_proyectos_clientes`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_proyectos_clientes`  AS SELECT `p`.`id_proyecto` AS `id_proyecto`, `p`.`nombre` AS `proyecto`, `p`.`estado` AS `estado`, `p`.`fecha_entrega` AS `fecha_entrega`, `p`.`anticipo_pagado` AS `anticipo_pagado`, `c`.`nombre_empresa` AS `cliente`, `u`.`email` AS `email_cliente` FROM ((`proyecto` `p` join `cliente` `c` on(`p`.`id_cliente` = `c`.`id_cliente`)) join `usuario` `u` on(`c`.`id_usuario` = `u`.`id_usuario`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_proyectos_clientes`  AS SELECT `p`.`id_proyecto` AS `id_proyecto`, `p`.`nombre` AS `proyecto`, `p`.`estado` AS `estado`, `p`.`fecha_fin` AS `fecha_fin`, `p`.`estado_cambiado_en` AS `estado_cambiado_en`, `c`.`nombre_empresa` AS `cliente`, `u`.`email` AS `email_cliente` FROM ((`proyecto` `p` join `cliente` `c` on(`p`.`id_cliente` = `c`.`id_cliente`)) join `usuario` `u` on(`c`.`id_usuario` = `u`.`id_usuario`)) ;
 
 --
 -- Índices para tablas volcadas
@@ -367,7 +370,8 @@ ALTER TABLE `pago`
 --
 ALTER TABLE `proyecto`
   ADD PRIMARY KEY (`id_proyecto`),
-  ADD KEY `fk_proyecto_cliente` (`id_cliente`);
+  ADD KEY `fk_proyecto_cliente` (`id_cliente`),
+  ADD KEY `idx_proyecto_estado` (`estado`);
 
 --
 -- Indices de la tabla `proyecto_servicio`
@@ -508,8 +512,8 @@ ALTER TABLE `reporte`
 CREATE TABLE `proyecto_estado_log` (
   `id_log`          int(11)      NOT NULL AUTO_INCREMENT,
   `id_proyecto`     int(11)      NOT NULL,
-  `estado_anterior` enum('Pendiente','En Proceso','Completado','Cancelado') NOT NULL,
-  `estado_nuevo`    enum('Pendiente','En Proceso','Completado','Cancelado') NOT NULL,
+  `estado_anterior` enum('Activo','Pausado','Cerrado') NOT NULL,
+  `estado_nuevo`    enum('Activo','Pausado','Cerrado') NOT NULL,
   `cambiado_por`    int(11)      NOT NULL COMMENT 'FK → usuario (Administrador) que realizó el cambio',
   `cambiado_en`     datetime     NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Auditoría de cambios de estado en proyectos';
