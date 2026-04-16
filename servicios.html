@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <h2>Sistema de Gestión</h2>
+        <p>Panel Administrador</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+        <a class="nav-item" href="proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Proyectos</a>
+        <a class="nav-item active" href="servicios.html"><i class="fa-solid fa-gear"></i> Servicios</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout-side" onclick="cerrarSesion()">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+        </button>
+    </div>
+</aside>
+
+<div class="main-wrap">
+    <div class="topbar">
+        <div class="topbar-left"><h1>Catálogo de Servicios</h1></div>
+        <div class="topbar-user">
+            <div class="user-info">
+                <div class="user-name" id="topNombre">Admin Usuario</div>
+                <div class="user-role" id="topRol">Administrador</div>
+            </div>
+            <div class="avatar" id="topAvatar">A</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="content-card">
+            <div class="content-card-header">
+                <div>
+                    <h2>Catálogo de Servicios</h2>
+                    <p>Administra los servicios disponibles</p>
+                </div>
+                <button class="btn-primary" onclick="abrirModal()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Servicio
+                </button>
+            </div>
+
+            <div id="loadingBox" class="state-box">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Cargando servicios...</p>
+            </div>
+
+            <div class="table-wrap" id="tableWrap" style="display:none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th style="text-align:right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="overlayServicio">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h3 id="mTitle">Nuevo Servicio</h3>
+                <p id="mSub">Completa los campos para crear un nuevo servicio.</p>
+            </div>
+            <button class="btn-close" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="mId">
+            <div class="field">
+                <label>Nombre del servicio</label>
+                <input type="text" id="mNombre" placeholder="Ej. Desarrollo Web Personalizado">
+            </div>
+            <div class="row2">
+                <div class="field">
+                    <label>Categoría</label>
+                    <select id="mCategoria">
+                        <option value="">Selecciona</option>
+                        <option value="Desarrollo">Desarrollo</option>
+                        <option value="Diseño">Diseño</option>
+                        <option value="Consultoría">Consultoría</option>
+                        <option value="Soporte">Soporte</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Precio ($)</label>
+                    <input type="number" id="mPrecio" placeholder="0.00" min="0" step="0.01">
+                </div>
+            </div>
+            <div class="field">
+                <label>Estado</label>
+                <select id="mEstado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Descripción (opcional)</label>
+                <input type="text" id="mDescripcion" placeholder="Breve descripción del servicio">
+            </div>
+            <div class="modal-alert" id="mAlert"></div>
+            <div class="modal-foot">
+                <button class="btn-cancel-m" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-save" onclick="guardarServicio()">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span id="mBtnTxt">Crear servicio</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="overlayEliminar">
+    <div class="modal modal-confirm">
+        <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
+        <h3>¿Eliminar servicio?</h3>
+        <p>Esta acción no se puede deshacer. El servicio <strong id="delNombre"></strong> será eliminado.</p>
+        <div class="confirm-btns">
+            <button class="btn-cancel-m" onclick="cerrarEliminar()">Cancelar</button>
+            <button class="btn-del-confirm" id="btnConfDel">
+                <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let servicios = [];
+let nextId = 1, editId = null, delId = null;
+
+// Formateo de moneda para que se vea bien en la tabla
+function fmtPrecio(p) { return '$' + parseFloat(p||0).toLocaleString('es-MX',{minimumFractionDigits:0}); }
+
+// Escapa HTML para evitar ataques XSS básicos
+function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function render() {
+    const tbody = document.getElementById('tbody');
+    if (servicios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="state-box"><i class="fa-solid fa-box-open"></i><p>No hay servicios registrados aún</p></div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = servicios.map(s => `
+        <tr>
+            <td class="col-nombre">${escH(s.nombre)}</td>
+            <td>${escH(s.categoria)}</td>
+            <td class="col-precio">${fmtPrecio(s.precio)}</td>
+            <td><span class="badge-sv ${s.estado==='Activo'?'badge-activo':'badge-inactivo'}">${escH(s.estado)}</span></td>
+            <td><div class="acciones">
+                <button class="btn-icon btn-edit" onclick="abrirEditar(${s.id})"><i class="fa-regular fa-pen-to-square"></i></button>
+                <button class="btn-icon btn-del"  onclick="abrirEliminar(${s.id})"><i class="fa-regular fa-trash-can"></i></button>
+            </div></td>
+        </tr>`).join('');
+}
+
+function abrirModal() {
+    editId = null;
+    document.getElementById('mTitle').textContent = 'Nuevo Servicio';
+    document.getElementById('mSub').textContent = 'Completa los campos para crear un nuevo servicio.';
+    document.getElementById('mBtnTxt').textContent = 'Crear servicio';
+    
+    // Limpiamos los campos antes de mostrar el modal
+    ['mId','mNombre','mPrecio','mDescripcion'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('mCategoria').value = '';
+    document.getElementById('mEstado').value = 'Activo';
+    
+    ocultarAlert();
+    document.getElementById('overlayServicio').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function abrirEditar(id) {
+    const s = servicios.find(x => x.id===id); if(!s) return;
+    editId = id;
+    
+    // Cambiamos textos para modo edición
+    document.getElementById('mTitle').textContent = 'Editar Servicio';
+    document.getElementById('mSub').textContent = 'Modifica los campos del servicio.';
+    document.getElementById('mBtnTxt').textContent = 'Guardar cambios';
+    
+    document.getElementById('mId').value = s.id;
+    document.getElementById('mNombre').value = s.nombre;
+    document.getElementById('mCategoria').value = s.categoria;
+    document.getElementById('mPrecio').value = s.precio;
+    document.getElementById('mEstado').value = s.estado;
+    document.getElementById('mDescripcion').value = s.descripcion || '';
+    
+    ocultarAlert();
+    document.getElementById('overlayServicio').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() { 
+    document.getElementById('overlayServicio').classList.remove('open'); 
+    document.body.style.overflow = ''; 
+}
+
+// Cerrar al hacer clic fuera del contenido del modal
+document.getElementById('overlayServicio').addEventListener('click', e => { 
+    if(e.target===e.currentTarget) cerrarModal(); 
+});
+
+function guardarServicio() {
+    const nombre = document.getElementById('mNombre').value.trim();
+    const categoria = document.getElementById('mCategoria').value;
+    const precio = document.getElementById('mPrecio').value;
+    const estado = document.getElementById('mEstado').value;
+    const descripcion = document.getElementById('mDescripcion').value.trim();
+
+    // Validaciones básicas de seguridad
+    if (!nombre) return mostrarAlert('El nombre del servicio es requerido.');
+    if (!categoria) return mostrarAlert('Selecciona una categoría.');
+    if (!precio || isNaN(precio) || Number(precio) < 0) return mostrarAlert('Ingresa un precio válido.');
+
+    if (editId !== null) {
+        const idx = servicios.findIndex(x => x.id===editId);
+        if (idx !== -1) servicios[idx] = { ...servicios[idx], nombre, categoria, precio:Number(precio), estado, descripcion };
+    } else {
+        servicios.push({ id:nextId++, nombre, categoria, precio:Number(precio), estado, descripcion });
+    }
+    
+    cerrarModal(); 
+    render();
+}
+
+function abrirEliminar(id) {
+    delId = id;
+    const s = servicios.find(x=>x.id===id); if(!s) return;
+    document.getElementById('delNombre').textContent = '"' + s.nombre + '"';
+    document.getElementById('overlayEliminar').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarEliminar() { 
+    document.getElementById('overlayEliminar').classList.remove('open'); 
+    document.body.style.overflow=''; 
+    delId=null; 
+}
+
+document.getElementById('overlayEliminar').addEventListener('click', e => { 
+    if(e.target===e.currentTarget) cerrarEliminar(); 
+});
+
+document.getElementById('btnConfDel').addEventListener('click', () => {
+    if(delId===null) return;
+    servicios = servicios.filter(x=>x.id!==delId);
+    cerrarEliminar(); 
+    render();
+});
+
+function mostrarAlert(msg) {
+    const el=document.getElementById('mAlert');
+    el.style.cssText='display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
+    el.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> '+msg;
+}
+
+function ocultarAlert() { 
+    const el=document.getElementById('mAlert'); 
+    el.style.display='none'; 
+}
+
+async function init() {
+    try {
+        // Obtenemos los datos de sesión para el encabezado
+        const res = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        
+        if (data.error) { 
+            window.location.href='login.html'; 
+            return; 
+        }
+        
+        document.getElementById('topNombre').textContent = data.usuario;
+        document.getElementById('topRol').textContent = data.rol;
+        document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
+        
+        // Aquí iría la carga inicial desde la base de datos
+    } catch(e) {
+        console.error("Error al inicializar:", e);
+    }
+    
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('tableWrap').style.display = 'block';
+    render();
+}
+
+async function cerrarSesion() { 
+    try { await fetch('php/logout.php'); } catch(e) {} 
+    window.location.href='login.html'; 
+}
+
+// Shortcuts de teclado
+document.addEventListener('keydown', e => { 
+    if(e.key==='Escape') {
+        cerrarModal();
+        cerrarEliminar();
+    } 
+});
+
+init();
+</script>
+</body>
+</html>
