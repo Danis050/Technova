@@ -191,7 +191,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ===== ESTADO DE PROYECTOS =====
-let proyectos = []; // En el futuro, llenar este arreglo mediante un fetch a tu base de datos
+let proyectos = [];
 let modoEdicion = false;
 let proyectoEditId = null;
 let proyectoEliminarId = null;
@@ -245,7 +245,6 @@ async function poblarSelectClientes(idSeleccionado = '') {
         const data = await res.json();
         sel.innerHTML = '<option value="">Selecciona un cliente</option>';
         
-        // Se espera: [{ id: 1, nombre_empresa: "Tech Solutions SA" }, ...]
         data.forEach(c => {
             const o = document.createElement('option');
             o.value       = c.id;
@@ -308,8 +307,7 @@ async function abrirModalEditar(id) {
     document.body.style.overflow = 'hidden';
     await poblarSelectClientes(p.idCliente);
 }
- 
-// En producción, aquí deberás hacer un fetch POST/PUT a tu backend.
+
 function guardarProyecto() {
     const nombre      = document.getElementById('proyectoNombre').value.trim();
     const sel         = document.getElementById('sel-cliente');
@@ -329,7 +327,6 @@ function guardarProyecto() {
         const idx = proyectos.findIndex(x => x.id===proyectoEditId);
         if (idx !== -1) proyectos[idx] = { id: proyectoEditId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin };
     } else {
-        // En producción el ID te lo devolverá tu base de datos
         const tempId = Date.now(); 
         proyectos.push({ id: tempId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin });
     }
@@ -369,7 +366,6 @@ function cerrarModalEliminar() {
 document.getElementById('modalEliminarOverlay').addEventListener('click', function(e){ 
     if(e.target===this) cerrarModalEliminar(); 
 });
-
 
 document.getElementById('btnConfirmarEliminar').addEventListener('click', () => {
     if (proyectoEliminarId === null) return;
