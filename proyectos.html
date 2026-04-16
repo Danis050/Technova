@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<!-- TOPBAR MÓVIL -->
 <div class="mobile-topbar">
     <span class="brand">🔷 TechNova</span>
     <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
@@ -19,7 +18,6 @@
 
 <div class="dash-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="img/er.png" alt="TechNova">
@@ -53,7 +51,6 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="dash-main">
 
         <div class="page-header">
@@ -95,7 +92,6 @@
     </main>
 </div>
 
-<!-- ===== MODAL NUEVO / EDITAR PROYECTO ===== -->
 <div class="modal-overlay" id="modalProyectoOverlay">
     <div class="modal" role="dialog" aria-modal="true">
 
@@ -118,8 +114,8 @@
             </div>
 
             <div class="mfield">
-                <label for="proyectoCliente">Cliente</label>
-                <select id="proyectoCliente">
+                <label for="sel-cliente">Cliente</label>
+                <select id="sel-cliente">
                     <option value="">Selecciona un cliente</option>
                 </select>
             </div>
@@ -158,7 +154,6 @@
     </div>
 </div>
 
-<!-- ===== MODAL CONFIRMAR ELIMINAR ===== -->
 <div class="modal-overlay" id="modalEliminarOverlay">
     <div class="modal modal-confirmar" role="dialog" aria-modal="true">
         <div class="icon-danger">
@@ -180,10 +175,12 @@
 const sidebar       = document.getElementById('sidebar');
 const overlay       = document.getElementById('sidebarOverlay');
 const btnMenuToggle = document.getElementById('btnMenuToggle');
+
 btnMenuToggle.addEventListener('click', () => {
     sidebar.classList.toggle('open');
     overlay.classList.toggle('visible');
 });
+
 overlay.addEventListener('click', () => {
     sidebar.classList.remove('open');
     overlay.classList.remove('visible');
@@ -193,19 +190,8 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
 });
 
-// ===== DATOS DEMO =====
-let proyectos = [
-    { id: 1, nombre: 'Sitio Web Corporativo',   cliente: 'Tech Solutions SA',     estado: 'En Proceso',  fechaInicio: '2026-03-01', fechaFin: '2026-05-30' },
-    { id: 2, nombre: 'App Móvil E-commerce',    cliente: 'Retail Express',        estado: 'En Proceso',  fechaInicio: '2026-02-15', fechaFin: '2026-06-15' },
-    { id: 3, nombre: 'Sistema de Inventario',   cliente: 'Logística Global',      estado: 'Completado',  fechaInicio: '2026-01-01', fechaFin: '2026-02-28' },
-    { id: 4, nombre: 'Rediseño de Marca',       cliente: 'Innovación & Co',       estado: 'Pendiente',   fechaInicio: '2026-05-01', fechaFin: '2026-06-30' },
-    { id: 5, nombre: 'Portal de Clientes',      cliente: 'Servicios Financieros', estado: 'En Proceso',  fechaInicio: '2026-03-10', fechaFin: '2026-07-10' },
-    { id: 6, nombre: 'Dashboard Analítico',     cliente: 'Data Insights Ltd',     estado: 'Completado',  fechaInicio: '2025-12-01', fechaFin: '2026-01-31' },
-    { id: 7, nombre: 'Plataforma de Cursos',    cliente: 'Academia Digital',      estado: 'En Proceso',  fechaInicio: '2026-03-20', fechaFin: '2026-08-20' },
-    { id: 8, nombre: 'CRM Personalizado',       cliente: 'Ventas Pro',            estado: 'Cancelado',   fechaInicio: '2026-02-01', fechaFin: '2026-04-01' },
-];
-let clientes = ['Tech Solutions SA','Retail Express','Logística Global','Innovación & Co','Servicios Financieros','Data Insights Ltd','Academia Digital','Ventas Pro'];
-let nextId = 9;
+// ===== ESTADO DE PROYECTOS =====
+let proyectos = []; // En el futuro, llenar este arreglo mediante un fetch a tu base de datos
 let modoEdicion = false;
 let proyectoEditId = null;
 let proyectoEliminarId = null;
@@ -215,25 +201,30 @@ function formatFecha(f) {
     const [y,m,d] = f.split('-');
     return `${d}/${m}/${y}`;
 }
+
 function getBadgeClass(e) {
     return { 'En Proceso':'badge-en-progreso','Completado':'badge-completado','Pendiente':'badge-pendiente','Cancelado':'badge-cancelado' }[e] || 'badge-pendiente';
 }
+
 function getBadgeLabel(e) {
     return { 'En Proceso':'En Progreso','Completado':'Completado','Pendiente':'Pendiente','Cancelado':'Cancelado' }[e] || e;
 }
+
 function escapeHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
 function renderTabla() {
     const tbody = document.getElementById('tablaProyectosBody');
     document.getElementById('proyectosCount').textContent = `${proyectos.length} proyecto${proyectos.length!==1?'s':''} en total`;
+    
     if (proyectos.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6"><div class="tabla-empty"><i class="fa-solid fa-folder-open"></i><p>No hay proyectos registrados aún</p></div></td></tr>`;
         return;
     }
+    
     tbody.innerHTML = proyectos.map(p => `
         <tr>
             <td class="proyecto-nombre">${escapeHtml(p.nombre)}</td>
-            <td class="proyecto-cliente">${escapeHtml(p.cliente)}</td>
+            <td class="proyecto-cliente">${escapeHtml(p.nombreCliente)}</td>
             <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${getBadgeLabel(p.estado)}</span></td>
             <td>${formatFecha(p.fechaInicio)}</td>
             <td>${formatFecha(p.fechaFin)}</td>
@@ -244,15 +235,36 @@ function renderTabla() {
         </tr>`).join('');
 }
 
-function poblarSelectClientes() {
-    const sel = document.getElementById('proyectoCliente');
-    const val = sel.value;
-    sel.innerHTML = '<option value="">Selecciona un cliente</option>';
-    clientes.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; if(c===val) o.selected=true; sel.appendChild(o); });
+async function poblarSelectClientes(idSeleccionado = '') {
+    const sel = document.getElementById('sel-cliente');
+    sel.innerHTML = '<option value="">Cargando clientes...</option>';
+    sel.disabled = true;
+    
+    try {
+        const res  = await fetch('php/clientes_lista.php');
+        const data = await res.json();
+        sel.innerHTML = '<option value="">Selecciona un cliente</option>';
+        
+        // Se espera: [{ id: 1, nombre_empresa: "Tech Solutions SA" }, ...]
+        data.forEach(c => {
+            const o = document.createElement('option');
+            o.value       = c.id;
+            o.textContent = c.nombre_empresa;
+            o.dataset.nombre = c.nombre_empresa;
+            if (String(c.id) === String(idSeleccionado)) o.selected = true;
+            sel.appendChild(o);
+        });
+    } catch(e) {
+        sel.innerHTML = '<option value="">Error al cargar clientes</option>';
+        console.error('Error en la petición de clientes:', e);
+    }
+    
+    sel.disabled = false;
 }
 
-function abrirModalProyecto() {
-    modoEdicion = false; proyectoEditId = null;
+async function abrirModalProyecto() {
+    modoEdicion = false; 
+    proyectoEditId = null;
     document.getElementById('modalProyectoTitle').textContent = 'Nuevo Proyecto';
     document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos para crear un nuevo proyecto.';
     document.getElementById('btnGuardarTexto').textContent = 'Crear proyecto';
@@ -261,20 +273,28 @@ function abrirModalProyecto() {
     document.getElementById('proyectoEstado').value = 'Pendiente';
     document.getElementById('proyectoFechaInicio').value = '';
     document.getElementById('proyectoFechaFin').value = '';
-    poblarSelectClientes();
+    
     ocultarAlertaProyecto();
     document.getElementById('modalProyectoOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+    await poblarSelectClientes();
 }
+
 function cerrarModalProyecto() {
     document.getElementById('modalProyectoOverlay').classList.remove('open');
     document.body.style.overflow = '';
 }
-document.getElementById('modalProyectoOverlay').addEventListener('click', function(e){ if(e.target===this) cerrarModalProyecto(); });
 
-function abrirModalEditar(id) {
-    const p = proyectos.find(x => x.id===id); if(!p) return;
-    modoEdicion = true; proyectoEditId = id;
+document.getElementById('modalProyectoOverlay').addEventListener('click', function(e){ 
+    if(e.target===this) cerrarModalProyecto(); 
+});
+
+async function abrirModalEditar(id) {
+    const p = proyectos.find(x => x.id===id); 
+    if(!p) return;
+    
+    modoEdicion = true; 
+    proyectoEditId = id;
     document.getElementById('modalProyectoTitle').textContent = 'Editar Proyecto';
     document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los campos del proyecto.';
     document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
@@ -282,30 +302,38 @@ function abrirModalEditar(id) {
     document.getElementById('proyectoEstado').value = p.estado;
     document.getElementById('proyectoFechaInicio').value = p.fechaInicio;
     document.getElementById('proyectoFechaFin').value = p.fechaFin;
-    poblarSelectClientes();
-    document.getElementById('proyectoCliente').value = p.cliente;
+    
     ocultarAlertaProyecto();
     document.getElementById('modalProyectoOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+    await poblarSelectClientes(p.idCliente);
 }
-
+ 
+// En producción, aquí deberás hacer un fetch POST/PUT a tu backend.
 function guardarProyecto() {
     const nombre      = document.getElementById('proyectoNombre').value.trim();
-    const cliente     = document.getElementById('proyectoCliente').value;
+    const sel         = document.getElementById('sel-cliente');
+    const idCliente   = sel.value;
+    const nombreCliente = sel.options[sel.selectedIndex]?.dataset.nombre || sel.options[sel.selectedIndex]?.text || '';
     const estado      = document.getElementById('proyectoEstado').value;
     const fechaInicio = document.getElementById('proyectoFechaInicio').value;
     const fechaFin    = document.getElementById('proyectoFechaFin').value;
+    
     if (!nombre)      return mostrarAlertaProyecto('El nombre del proyecto es requerido.');
-    if (!cliente)     return mostrarAlertaProyecto('Selecciona un cliente.');
+    if (!idCliente)   return mostrarAlertaProyecto('Selecciona un cliente.');
     if (!fechaInicio) return mostrarAlertaProyecto('La fecha de inicio es requerida.');
     if (!fechaFin)    return mostrarAlertaProyecto('La fecha de fin es requerida.');
     if (fechaFin < fechaInicio) return mostrarAlertaProyecto('La fecha de fin debe ser posterior a la de inicio.');
+    
     if (modoEdicion) {
         const idx = proyectos.findIndex(x => x.id===proyectoEditId);
-        if (idx !== -1) proyectos[idx] = { id: proyectoEditId, nombre, cliente, estado, fechaInicio, fechaFin };
+        if (idx !== -1) proyectos[idx] = { id: proyectoEditId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin };
     } else {
-        proyectos.push({ id: nextId++, nombre, cliente, estado, fechaInicio, fechaFin });
+        // En producción el ID te lo devolverá tu base de datos
+        const tempId = Date.now(); 
+        proyectos.push({ id: tempId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin });
     }
+    
     cerrarModalProyecto();
     renderTabla();
 }
@@ -315,24 +343,34 @@ function mostrarAlertaProyecto(msg) {
     el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
     el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
 }
+
 function ocultarAlertaProyecto() {
     const el = document.getElementById('modalProyectoAlerta');
-    el.style.display = 'none'; el.innerHTML = '';
+    el.style.display = 'none'; 
+    el.innerHTML = '';
 }
 
 function abrirModalEliminar(id) {
     proyectoEliminarId = id;
-    const p = proyectos.find(x => x.id===id); if(!p) return;
+    const p = proyectos.find(x => x.id===id); 
+    if(!p) return;
+    
     document.getElementById('eliminarNombreProyecto').textContent = '"' + p.nombre + '"';
     document.getElementById('modalEliminarOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
+
 function cerrarModalEliminar() {
     document.getElementById('modalEliminarOverlay').classList.remove('open');
     document.body.style.overflow = '';
     proyectoEliminarId = null;
 }
-document.getElementById('modalEliminarOverlay').addEventListener('click', function(e){ if(e.target===this) cerrarModalEliminar(); });
+
+document.getElementById('modalEliminarOverlay').addEventListener('click', function(e){ 
+    if(e.target===this) cerrarModalEliminar(); 
+});
+
+
 document.getElementById('btnConfirmarEliminar').addEventListener('click', () => {
     if (proyectoEliminarId === null) return;
     proyectos = proyectos.filter(x => x.id !== proyectoEliminarId);
@@ -345,9 +383,15 @@ async function inicializar() {
     try {
         const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
-        if (data.error) { window.location.href = 'login.html'; return; }
+        
+        if (data.error) { 
+            window.location.href = 'login.html'; 
+            return; 
+        }
+        
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
+        
         if (data.rol === 'Administrador') {
             document.getElementById('adminSection').style.display = 'block';
             document.getElementById('btnAbrirModalUsuario').style.display = 'flex';
@@ -356,6 +400,7 @@ async function inicializar() {
         document.getElementById('sidebarNombre').textContent = 'Admin';
         document.getElementById('sidebarRol').textContent    = 'Administrador';
     }
+    
     document.getElementById('loadingProyectos').style.display = 'none';
     document.getElementById('proyectosCard').style.display    = 'block';
     renderTabla();
