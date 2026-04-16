@@ -8,16 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="admin">
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="sidebar-brand">
         <h2>Sistema de Gestión</h2>
         <p>Panel Administrador</p>
     </div>
     <nav class="sidebar-nav">
-        <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
-        <a class="nav-item" href="proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Proyectos</a>
+        <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+        <a class="nav-item" href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
         <a class="nav-item active" href="servicios.html"><i class="fa-solid fa-gear"></i> Servicios</a>
     </nav>
     <div class="sidebar-footer">
@@ -27,13 +28,14 @@
     </div>
 </aside>
 
+<!-- MAIN -->
 <div class="main-wrap">
     <div class="topbar">
         <div class="topbar-left"><h1>Catálogo de Servicios</h1></div>
         <div class="topbar-user">
             <div class="user-info">
                 <div class="user-name" id="topNombre">Admin Usuario</div>
-                <div class="user-role" id="topRol">Administrador</div>
+                <div class="user-role"  id="topRol">Administrador</div>
             </div>
             <div class="avatar" id="topAvatar">A</div>
         </div>
@@ -74,6 +76,7 @@
     </div>
 </div>
 
+<!-- MODAL NUEVO / EDITAR -->
 <div class="overlay" id="overlayServicio">
     <div class="modal">
         <div class="modal-head">
@@ -130,6 +133,7 @@
     </div>
 </div>
 
+<!-- MODAL CONFIRMAR ELIMINAR -->
 <div class="overlay" id="overlayEliminar">
     <div class="modal modal-confirm">
         <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
@@ -148,10 +152,7 @@
 let servicios = [];
 let nextId = 1, editId = null, delId = null;
 
-// Formateo de moneda para que se vea bien en la tabla
 function fmtPrecio(p) { return '$' + parseFloat(p||0).toLocaleString('es-MX',{minimumFractionDigits:0}); }
-
-// Escapa HTML para evitar ataques XSS básicos
 function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
 function render() {
@@ -175,15 +176,12 @@ function render() {
 
 function abrirModal() {
     editId = null;
-    document.getElementById('mTitle').textContent = 'Nuevo Servicio';
-    document.getElementById('mSub').textContent = 'Completa los campos para crear un nuevo servicio.';
+    document.getElementById('mTitle').textContent  = 'Nuevo Servicio';
+    document.getElementById('mSub').textContent    = 'Completa los campos para crear un nuevo servicio.';
     document.getElementById('mBtnTxt').textContent = 'Crear servicio';
-    
-    // Limpiamos los campos antes de mostrar el modal
     ['mId','mNombre','mPrecio','mDescripcion'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('mCategoria').value = '';
     document.getElementById('mEstado').value = 'Activo';
-    
     ocultarAlert();
     document.getElementById('overlayServicio').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -192,55 +190,39 @@ function abrirModal() {
 function abrirEditar(id) {
     const s = servicios.find(x => x.id===id); if(!s) return;
     editId = id;
-    
-    // Cambiamos textos para modo edición
-    document.getElementById('mTitle').textContent = 'Editar Servicio';
-    document.getElementById('mSub').textContent = 'Modifica los campos del servicio.';
+    document.getElementById('mTitle').textContent  = 'Editar Servicio';
+    document.getElementById('mSub').textContent    = 'Modifica los campos del servicio.';
     document.getElementById('mBtnTxt').textContent = 'Guardar cambios';
-    
     document.getElementById('mId').value = s.id;
     document.getElementById('mNombre').value = s.nombre;
     document.getElementById('mCategoria').value = s.categoria;
     document.getElementById('mPrecio').value = s.precio;
     document.getElementById('mEstado').value = s.estado;
     document.getElementById('mDescripcion').value = s.descripcion || '';
-    
     ocultarAlert();
     document.getElementById('overlayServicio').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal() { 
-    document.getElementById('overlayServicio').classList.remove('open'); 
-    document.body.style.overflow = ''; 
-}
-
-// Cerrar al hacer clic fuera del contenido del modal
-document.getElementById('overlayServicio').addEventListener('click', e => { 
-    if(e.target===e.currentTarget) cerrarModal(); 
-});
+function cerrarModal() { document.getElementById('overlayServicio').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('overlayServicio').addEventListener('click', e => { if(e.target===e.currentTarget) cerrarModal(); });
 
 function guardarServicio() {
-    const nombre = document.getElementById('mNombre').value.trim();
-    const categoria = document.getElementById('mCategoria').value;
-    const precio = document.getElementById('mPrecio').value;
-    const estado = document.getElementById('mEstado').value;
-    const descripcion = document.getElementById('mDescripcion').value.trim();
-
-    // Validaciones básicas de seguridad
-    if (!nombre) return mostrarAlert('El nombre del servicio es requerido.');
+    const nombre     = document.getElementById('mNombre').value.trim();
+    const categoria  = document.getElementById('mCategoria').value;
+    const precio     = document.getElementById('mPrecio').value;
+    const estado     = document.getElementById('mEstado').value;
+    const descripcion= document.getElementById('mDescripcion').value.trim();
+    if (!nombre)    return mostrarAlert('El nombre del servicio es requerido.');
     if (!categoria) return mostrarAlert('Selecciona una categoría.');
     if (!precio || isNaN(precio) || Number(precio) < 0) return mostrarAlert('Ingresa un precio válido.');
-
     if (editId !== null) {
         const idx = servicios.findIndex(x => x.id===editId);
         if (idx !== -1) servicios[idx] = { ...servicios[idx], nombre, categoria, precio:Number(precio), estado, descripcion };
     } else {
         servicios.push({ id:nextId++, nombre, categoria, precio:Number(precio), estado, descripcion });
     }
-    
-    cerrarModal(); 
-    render();
+    cerrarModal(); render();
 }
 
 function abrirEliminar(id) {
@@ -250,22 +232,12 @@ function abrirEliminar(id) {
     document.getElementById('overlayEliminar').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
-
-function cerrarEliminar() { 
-    document.getElementById('overlayEliminar').classList.remove('open'); 
-    document.body.style.overflow=''; 
-    delId=null; 
-}
-
-document.getElementById('overlayEliminar').addEventListener('click', e => { 
-    if(e.target===e.currentTarget) cerrarEliminar(); 
-});
-
+function cerrarEliminar() { document.getElementById('overlayEliminar').classList.remove('open'); document.body.style.overflow=''; delId=null; }
+document.getElementById('overlayEliminar').addEventListener('click', e => { if(e.target===e.currentTarget) cerrarEliminar(); });
 document.getElementById('btnConfDel').addEventListener('click', () => {
     if(delId===null) return;
     servicios = servicios.filter(x=>x.id!==delId);
-    cerrarEliminar(); 
-    render();
+    cerrarEliminar(); render();
 });
 
 function mostrarAlert(msg) {
@@ -273,50 +245,25 @@ function mostrarAlert(msg) {
     el.style.cssText='display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
     el.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> '+msg;
 }
-
-function ocultarAlert() { 
-    const el=document.getElementById('mAlert'); 
-    el.style.display='none'; 
-}
+function ocultarAlert() { const el=document.getElementById('mAlert'); el.style.display='none'; el.innerHTML=''; }
 
 async function init() {
     try {
-        // Obtenemos los datos de sesión para el encabezado
-        const res = await fetch('php/dashboard_data.php');
+        const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
-        
-        if (data.error) { 
-            window.location.href='login.html'; 
-            return; 
-        }
-        
+        if (data.error) { window.location.href='login.html'; return; }
         document.getElementById('topNombre').textContent = data.usuario;
-        document.getElementById('topRol').textContent = data.rol;
+        document.getElementById('topRol').textContent    = data.rol;
         document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
-        
-        // Aquí iría la carga inicial desde la base de datos
-    } catch(e) {
-        console.error("Error al inicializar:", e);
-    }
-    
+     
+    } catch(e) {}
     document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('tableWrap').style.display = 'block';
+    document.getElementById('tableWrap').style.display  = 'block';
     render();
 }
 
-async function cerrarSesion() { 
-    try { await fetch('php/logout.php'); } catch(e) {} 
-    window.location.href='login.html'; 
-}
-
-// Shortcuts de teclado
-document.addEventListener('keydown', e => { 
-    if(e.key==='Escape') {
-        cerrarModal();
-        cerrarEliminar();
-    } 
-});
-
+async function cerrarSesion() { try{await fetch('php/logout.php')}catch(e){} window.location.href='login.html'; }
+document.addEventListener('keydown', e => { if(e.key==='Escape'){cerrarModal();cerrarEliminar();} });
 init();
 </script>
 </body>
