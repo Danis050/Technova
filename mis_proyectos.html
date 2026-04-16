@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Proyectos | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <h2>Portal Cliente</h2>
+        <p>Mis Proyectos</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item active" href="mis_proyectos.html">
+            <i class="fa-regular fa-rectangle-list"></i> Mis Proyectos
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout-side" onclick="cerrarSesion()">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+        </button>
+    </div>
+</aside>
+
+<div class="main-wrap">
+    <div class="topbar">
+        <div class="topbar-left"><h1>Mis Proyectos</h1></div>
+        <div class="topbar-user">
+            <div class="user-info">
+                <div class="user-name" id="topNombre">Cliente Demo</div>
+                <div class="user-role" id="topRol">Cliente</div>
+            </div>
+            <div class="avatar" id="topAvatar">C</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="section-header">
+            <h2>Mis Proyectos</h2>
+            <p>Visualiza el estado de tus proyectos asignados</p>
+        </div>
+
+        <div id="loadingBox" class="state-box">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Cargando tus proyectos...</p>
+        </div>
+
+        <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
+
+        <div id="emptyBox" class="state-box" style="display:none;">
+            <i class="fa-solid fa-folder-open"></i>
+            <p>No tienes proyectos asignados aún.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Utilidades de formato y seguridad
+function fmt(f) {
+    if (!f) return '-';
+    const [y,m,d] = f.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+function escH(s) { 
+    const d = document.createElement('div'); 
+    d.textContent = s; 
+    return d.innerHTML; 
+}
+
+// Mapeo de estilos según el estado del proyecto
+function badgeClass(estado) {
+    const map = {
+        'Activo':      'badge-en-proceso',
+        'En Proceso':  'badge-en-proceso',
+        'Completado':  'badge-completado',
+        'Pausado':     'badge-pausado',
+        'Cerrado':     'badge-cerrado',
+        'Cancelado':   'badge-cerrado',
+        'Pendiente':   'badge-pendiente',
+    };
+    return map[estado] || 'badge-pendiente';
+}
+
+function renderCards(proyectos) {
+    const grid = document.getElementById('cardsGrid');
+    const emptyBox = document.getElementById('emptyBox');
+
+    if (!proyectos || proyectos.length === 0) {
+        grid.style.display = 'none';
+        emptyBox.style.display = 'block';
+        return;
+    }
+
+    grid.style.display = 'grid';
+    emptyBox.style.display = 'none';
+
+    grid.innerHTML = proyectos.map(p => `
+        <div class="project-card">
+            <div class="card-nombre">${escH(p.nombre)}</div>
+            <span class="badge-sv ${badgeClass(p.estado)}">${escH(p.estado)}</span>
+            <hr class="card-divider">
+            <div class="card-detail">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>${escH(p.servicio || 'Sin servicio asignado')}</span>
+            </div>
+            <div class="card-detail">
+                <i class="fa-regular fa-calendar"></i>
+                <span>${fmt(p.fechaInicio)} - ${fmt(p.fechaFin)}</span>
+            </div>
+            <p class="card-id">Proyecto ID: #${p.id}</p>
+        </div>
+    `).join('');
+}
+
+async function init() {
+    try {
+        // Verificación de sesión
+        const res = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        
+        if (data.error) { 
+            window.location.href = 'login.html'; 
+            return; 
+        }
+
+        document.getElementById('topNombre').textContent = data.usuario;
+        document.getElementById('topRol').textContent = data.rol;
+        document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
+
+        renderCards([]);
+        
+    } catch(e) {
+        console.error("Error al cargar datos:", e);
+        renderCards([]);
+    }
+
+    document.getElementById('loadingBox').style.display = 'none';
+}
+
+async function cerrarSesion() {
+    try { 
+        await fetch('php/logout.php'); 
+    } catch(e) {}
+    window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
