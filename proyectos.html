@@ -10,160 +10,128 @@
 </head>
 <body>
 
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <h2>Sistema de Gestión</h2>
+        <p>Panel Administrador</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+        <a class="nav-item active" href="proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Proyectos</a>
+        <a class="nav-item" href="servicios.html"><i class="fa-solid fa-gear"></i> Servicios</a>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="btn-logout-side" onclick="cerrarSesion()">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+        </button>
+    </div>
+</aside>
 
-<div class="dash-layout">
-
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/er.png" alt="TechNova">
-            TechNova
-        </div>
-
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Principal</div>
-            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="proyectos.html" class="active"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-            <a href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-            <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-            <a href="#"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
-
-            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
-            <button class="btn-crear-usuario" id="btnAbrirModalUsuario" style="display:none;" onclick="abrirModalUsuario()">
-                <i class="fa-solid fa-user-plus"></i>
-                Crear Usuario
-                <span class="badge-new">ADMIN</span>
-            </button>
-
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
-
-    <main class="dash-main">
-
-        <div class="page-header">
-            <div>
-                <h1>Proyectos</h1>
-                <p>Gestiona y visualiza todos tus proyectos</p>
+<div class="main-wrap">
+    <div class="topbar">
+        <div class="topbar-left"><h1>Gestión de Proyectos</h1></div>
+        <div class="topbar-user">
+            <div class="user-info">
+                <div class="user-name" id="topNombre">Admin Usuario</div>
+                <div class="user-role" id="topRol">Administrador</div>
             </div>
-            <button class="btn-nuevo-proyecto" onclick="abrirModalProyecto()">
-                <i class="fa-solid fa-plus"></i> Nuevo Proyecto
-            </button>
+            <div class="avatar" id="topAvatar">A</div>
         </div>
+    </div>
 
-        <div id="loadingProyectos" style="text-align:center;padding:60px;color:#64748b;">
-            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
-            <p style="margin-top:12px;">Cargando proyectos...</p>
-        </div>
-
-        <div class="proyectos-card" id="proyectosCard" style="display:none;">
-            <div class="proyectos-card-header">
-                <span class="proyectos-count" id="proyectosCount">0 proyectos en total</span>
+    <div class="content">
+        <div class="content-card">
+            <div class="content-card-header">
+                <div>
+                    <h2>Lista de Proyectos</h2>
+                    <p>Gestiona todos los proyectos del sistema</p>
+                </div>
+                <button class="btn-primary" onclick="abrirModal()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+                </button>
             </div>
-            <div class="proyectos-table-wrap">
-                <table class="proyectos-table">
+
+            <div id="loadingBox" class="state-box">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Cargando proyectos...</p>
+            </div>
+
+            <div class="table-wrap" id="tableWrap" style="display:none;">
+                <table>
                     <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Cliente</th>
                             <th>Estado</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
+                            <th>Fechas</th>
                             <th style="text-align:right;">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tablaProyectosBody"></tbody>
+                    <tbody id="tbody"></tbody>
                 </table>
             </div>
         </div>
-
-    </main>
+    </div>
 </div>
 
-<div class="modal-overlay" id="modalProyectoOverlay">
-    <div class="modal" role="dialog" aria-modal="true">
-
-        <div class="modal-header">
-            <div class="modal-header-info">
-                <h2 id="modalProyectoTitle">Nuevo Proyecto</h2>
-                <p id="modalProyectoSubtitle">Completa los campos para crear un nuevo proyecto.</p>
+<div class="overlay" id="overlayProyecto">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h3 id="mTitle">Nuevo Proyecto</h3>
+                <p id="mSub">Completa los campos para crear un nuevo proyecto.</p>
             </div>
-            <button class="btn-close-modal" onclick="cerrarModalProyecto()" aria-label="Cerrar">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            <button class="btn-close" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
         <div class="modal-body">
-            <input type="hidden" id="proyectoId">
-
-            <div class="mfield">
-                <label for="proyectoNombre">Nombre del proyecto</label>
-                <input type="text" id="proyectoNombre" placeholder="Ej. Sitio Web Corporativo">
+            <input type="hidden" id="mId">
+            <div class="field">
+                <label>Nombre del proyecto</label>
+                <input type="text" id="mNombre" placeholder="Ej. Sitio Web Corporativo">
             </div>
-
-            <div class="mfield">
-                <label for="sel-cliente">Cliente</label>
-                <select id="sel-cliente">
-                    <option value="">Selecciona un cliente</option>
-                </select>
+            <div class="field">
+                <label>Cliente</label>
+                <select id="sel-cliente"><option value="">Selecciona un cliente</option></select>
             </div>
-
-            <div class="mfield">
-                <label for="proyectoEstado">Estado</label>
-                <select id="proyectoEstado">
+            <div class="field">
+                <label>Estado</label>
+                <select id="mEstado">
                     <option value="Pendiente">Pendiente</option>
-                    <option value="En Proceso">En Progreso</option>
+                    <option value="En Proceso">En Proceso</option>
                     <option value="Completado">Completado</option>
                     <option value="Cancelado">Cancelado</option>
                 </select>
             </div>
-
-            <div class="form-row-2">
-                <div class="mfield">
-                    <label for="proyectoFechaInicio">Fecha de inicio</label>
-                    <input type="date" id="proyectoFechaInicio">
+            <div class="row2">
+                <div class="field">
+                    <label>Fecha de inicio</label>
+                    <input type="date" id="mFechaInicio">
                 </div>
-                <div class="mfield">
-                    <label for="proyectoFechaFin">Fecha de fin</label>
-                    <input type="date" id="proyectoFechaFin">
+                <div class="field">
+                    <label>Fecha de fin</label>
+                    <input type="date" id="mFechaFin">
                 </div>
             </div>
-
-            <div class="modal-alerta" id="modalProyectoAlerta"></div>
-
-            <div class="modal-footer">
-                <button class="btn-cancelar-modal" onclick="cerrarModalProyecto()">Cancelar</button>
-                <button class="btn-guardar-proyecto" onclick="guardarProyecto()">
+            <div class="modal-alert" id="mAlert"></div>
+            <div class="modal-foot">
+                <button class="btn-cancel-m" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-save" onclick="guardarProyecto()">
                     <i class="fa-solid fa-floppy-disk"></i>
-                    <span id="btnGuardarTexto">Crear proyecto</span>
+                    <span id="mBtnTxt">Crear proyecto</span>
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal-overlay" id="modalEliminarOverlay">
-    <div class="modal modal-confirmar" role="dialog" aria-modal="true">
-        <div class="icon-danger">
-            <i class="fa-solid fa-trash"></i>
-        </div>
+<div class="overlay" id="overlayEliminar">
+    <div class="modal modal-confirm">
+        <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
         <h3>¿Eliminar proyecto?</h3>
-        <p>Esta acción no se puede deshacer. El proyecto <strong id="eliminarNombreProyecto"></strong> será eliminado permanentemente.</p>
-        <div class="modal-confirmar-btns">
-            <button class="btn-confirmar-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
-            <button class="btn-confirmar-eliminar" id="btnConfirmarEliminar">
+        <p>Esta acción no se puede deshacer. El proyecto <strong id="delNombre"></strong> será eliminado.</p>
+        <div class="confirm-btns">
+            <button class="btn-cancel-m" onclick="cerrarEliminar()">Cancelar</button>
+            <button class="btn-del-confirm" id="btnConfDel">
                 <i class="fa-solid fa-trash"></i> Eliminar
             </button>
         </div>
@@ -171,238 +139,182 @@
 </div>
 
 <script>
-// ===== SIDEBAR MÓVIL =====
-const sidebar       = document.getElementById('sidebar');
-const overlay       = document.getElementById('sidebarOverlay');
-const btnMenuToggle = document.getElementById('btnMenuToggle');
-
-btnMenuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('visible');
-});
-
-overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('visible');
-});
-
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
-});
-
-// ===== ESTADO DE PROYECTOS =====
 let proyectos = [];
-let modoEdicion = false;
-let proyectoEditId = null;
-let proyectoEliminarId = null;
+let nextId = 1, editId = null, delId = null;
 
-function formatFecha(f) {
-    if (!f) return '-';
-    const [y,m,d] = f.split('-');
-    return `${d}/${m}/${y}`;
-}
+function fmt(f) { if(!f)return'-'; const[y,m,d]=f.split('-'); return`${d}/${m}/${y}`; }
+function estadoClass(e) { return{'Pendiente':'estado-pendiente','En Proceso':'estado-activo','Completado':'estado-completado','Cancelado':'estado-cerrado'}[e]||'estado-pendiente'; }
+function esFinal(e) { return e==='Completado'||e==='Cancelado'; }
+function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 
-function getBadgeClass(e) {
-    return { 'En Proceso':'badge-en-progreso','Completado':'badge-completado','Pendiente':'badge-pendiente','Cancelado':'badge-cancelado' }[e] || 'badge-pendiente';
-}
-
-function getBadgeLabel(e) {
-    return { 'En Proceso':'En Progreso','Completado':'Completado','Pendiente':'Pendiente','Cancelado':'Cancelado' }[e] || e;
-}
-
-function escapeHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
-
-function renderTabla() {
-    const tbody = document.getElementById('tablaProyectosBody');
-    document.getElementById('proyectosCount').textContent = `${proyectos.length} proyecto${proyectos.length!==1?'s':''} en total`;
-    
+function render() {
+    const tbody = document.getElementById('tbody');
     if (proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="tabla-empty"><i class="fa-solid fa-folder-open"></i><p>No hay proyectos registrados aún</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5"><div class="state-box"><i class="fa-solid fa-folder-open"></i><p>No hay proyectos registrados aún</p></div></td></tr>`;
         return;
     }
-    
-    tbody.innerHTML = proyectos.map(p => `
-        <tr>
-            <td class="proyecto-nombre">${escapeHtml(p.nombre)}</td>
-            <td class="proyecto-cliente">${escapeHtml(p.nombreCliente)}</td>
-            <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${getBadgeLabel(p.estado)}</span></td>
-            <td>${formatFecha(p.fechaInicio)}</td>
-            <td>${formatFecha(p.fechaFin)}</td>
-            <td><div class="acciones-cell">
-                <button class="btn-accion btn-editar" title="Editar" onclick="abrirModalEditar(${p.id})"><i class="fa-regular fa-pen-to-square"></i></button>
-                <button class="btn-accion btn-eliminar" title="Eliminar" onclick="abrirModalEliminar(${p.id})"><i class="fa-regular fa-trash-can"></i></button>
+    tbody.innerHTML = proyectos.map(p => {
+        const final = esFinal(p.estado);
+        return `
+        <tr class="${final?'row-cerrado':''}" id="row-${p.id}">
+            <td class="col-nombre">${escH(p.nombre)}</td>
+            <td class="col-cliente">${escH(p.nombreCliente||'')}</td>
+            <td>
+                <select class="estado-select ${estadoClass(p.estado)}"
+                    onchange="cambiarEstado(${p.id},this)" ${final?'disabled':''}>
+                    <option value="Pendiente"   ${p.estado==='Pendiente'?'selected':''}>Pendiente</option>
+                    <option value="En Proceso"  ${p.estado==='En Proceso'?'selected':''}>En Proceso</option>
+                    <option value="Completado"  ${p.estado==='Completado'?'selected':''}>Completado</option>
+                    <option value="Cancelado"   ${p.estado==='Cancelado'?'selected':''}>Cancelado</option>
+                </select>
+            </td>
+            <td class="col-fechas">${fmt(p.fechaInicio)} - ${fmt(p.fechaFin)}</td>
+            <td><div class="acciones">
+                <button class="btn-icon btn-edit" onclick="abrirEditar(${p.id})" ${final?'disabled style="opacity:.4;cursor:not-allowed;"':''}>
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="btn-icon btn-del" onclick="abrirEliminar(${p.id})">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
             </div></td>
-        </tr>`).join('');
+        </tr>`;
+    }).join('');
 }
 
-async function poblarSelectClientes(idSeleccionado = '') {
-    const sel = document.getElementById('sel-cliente');
-    sel.innerHTML = '<option value="">Cargando clientes...</option>';
-    sel.disabled = true;
-    
+async function cambiarEstado(id, sel) {
+    const nuevoEstado = sel.value;
+    const idx = proyectos.findIndex(x => x.id === id);
+    if (idx !== -1) proyectos[idx].estado = nuevoEstado;
+    render();
     try {
-        const res  = await fetch('php/clientes_lista.php');
+        const fd = new FormData();
+        fd.append('id_proyecto', id);
+        fd.append('nuevo_estado', nuevoEstado);
+        await fetch('php/cambiar_estado_proyecto.php', { method:'POST', body:fd });
+    } catch(e) {}
+}
+
+async function cargarClientes(idSel='') {
+    const sel = document.getElementById('sel-cliente');
+    sel.innerHTML = '<option value="">Cargando...</option>';
+    sel.disabled = true;
+    try {
+        const res = await fetch('php/clientes_lista.php');
         const data = await res.json();
         sel.innerHTML = '<option value="">Selecciona un cliente</option>';
-        
         data.forEach(c => {
-            const o = document.createElement('option');
-            o.value       = c.id;
-            o.textContent = c.nombre_empresa;
-            o.dataset.nombre = c.nombre_empresa;
-            if (String(c.id) === String(idSeleccionado)) o.selected = true;
+            const o=document.createElement('option');
+            o.value=c.id; o.textContent=c.nombre_empresa; o.dataset.nombre=c.nombre_empresa;
+            if(String(c.id)===String(idSel)) o.selected=true;
             sel.appendChild(o);
         });
-    } catch(e) {
-        sel.innerHTML = '<option value="">Error al cargar clientes</option>';
-        console.error('Error en la petición de clientes:', e);
-    }
-    
+    } catch(e) { sel.innerHTML='<option value="">Selecciona un cliente</option>'; }
     sel.disabled = false;
 }
 
-async function abrirModalProyecto() {
-    modoEdicion = false; 
-    proyectoEditId = null;
-    document.getElementById('modalProyectoTitle').textContent = 'Nuevo Proyecto';
-    document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos para crear un nuevo proyecto.';
-    document.getElementById('btnGuardarTexto').textContent = 'Crear proyecto';
-    document.getElementById('proyectoId').value = '';
-    document.getElementById('proyectoNombre').value = '';
-    document.getElementById('proyectoEstado').value = 'Pendiente';
-    document.getElementById('proyectoFechaInicio').value = '';
-    document.getElementById('proyectoFechaFin').value = '';
-    
-    ocultarAlertaProyecto();
-    document.getElementById('modalProyectoOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    await poblarSelectClientes();
+async function abrirModal() {
+    editId=null;
+    document.getElementById('mTitle').textContent='Nuevo Proyecto';
+    document.getElementById('mSub').textContent='Completa los campos para crear un nuevo proyecto.';
+    document.getElementById('mBtnTxt').textContent='Crear proyecto';
+    ['mId','mNombre','mFechaInicio','mFechaFin'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('mEstado').value='Pendiente';
+    ocultarAlert();
+    document.getElementById('overlayProyecto').classList.add('open');
+    document.body.style.overflow='hidden';
+    await cargarClientes();
 }
 
-function cerrarModalProyecto() {
-    document.getElementById('modalProyectoOverlay').classList.remove('open');
-    document.body.style.overflow = '';
+async function abrirEditar(id) {
+    const p=proyectos.find(x=>x.id===id); if(!p)return;
+    editId=id;
+    document.getElementById('mTitle').textContent='Editar Proyecto';
+    document.getElementById('mSub').textContent='Modifica los campos del proyecto.';
+    document.getElementById('mBtnTxt').textContent='Guardar cambios';
+    document.getElementById('mId').value=p.id;
+    document.getElementById('mNombre').value=p.nombre;
+    document.getElementById('mEstado').value=p.estado;
+    document.getElementById('mFechaInicio').value=p.fechaInicio;
+    document.getElementById('mFechaFin').value=p.fechaFin;
+    ocultarAlert();
+    document.getElementById('overlayProyecto').classList.add('open');
+    document.body.style.overflow='hidden';
+    await cargarClientes(p.idCliente);
 }
 
-document.getElementById('modalProyectoOverlay').addEventListener('click', function(e){ 
-    if(e.target===this) cerrarModalProyecto(); 
-});
+function cerrarModal() { document.getElementById('overlayProyecto').classList.remove('open'); document.body.style.overflow=''; }
 
-async function abrirModalEditar(id) {
-    const p = proyectos.find(x => x.id===id); 
-    if(!p) return;
-    
-    modoEdicion = true; 
-    proyectoEditId = id;
-    document.getElementById('modalProyectoTitle').textContent = 'Editar Proyecto';
-    document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los campos del proyecto.';
-    document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
-    document.getElementById('proyectoNombre').value = p.nombre;
-    document.getElementById('proyectoEstado').value = p.estado;
-    document.getElementById('proyectoFechaInicio').value = p.fechaInicio;
-    document.getElementById('proyectoFechaFin').value = p.fechaFin;
-    
-    ocultarAlertaProyecto();
-    document.getElementById('modalProyectoOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    await poblarSelectClientes(p.idCliente);
-}
+document.getElementById('overlayProyecto').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarModal();});
 
 function guardarProyecto() {
-    const nombre      = document.getElementById('proyectoNombre').value.trim();
-    const sel         = document.getElementById('sel-cliente');
-    const idCliente   = sel.value;
-    const nombreCliente = sel.options[sel.selectedIndex]?.dataset.nombre || sel.options[sel.selectedIndex]?.text || '';
-    const estado      = document.getElementById('proyectoEstado').value;
-    const fechaInicio = document.getElementById('proyectoFechaInicio').value;
-    const fechaFin    = document.getElementById('proyectoFechaFin').value;
-    
-    if (!nombre)      return mostrarAlertaProyecto('El nombre del proyecto es requerido.');
-    if (!idCliente)   return mostrarAlertaProyecto('Selecciona un cliente.');
-    if (!fechaInicio) return mostrarAlertaProyecto('La fecha de inicio es requerida.');
-    if (!fechaFin)    return mostrarAlertaProyecto('La fecha de fin es requerida.');
-    if (fechaFin < fechaInicio) return mostrarAlertaProyecto('La fecha de fin debe ser posterior a la de inicio.');
-    
-    if (modoEdicion) {
-        const idx = proyectos.findIndex(x => x.id===proyectoEditId);
-        if (idx !== -1) proyectos[idx] = { id: proyectoEditId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin };
+    const nombre=document.getElementById('mNombre').value.trim();
+    const sel=document.getElementById('sel-cliente');
+    const idCliente=sel.value;
+    const nombreCliente=sel.options[sel.selectedIndex]?.dataset.nombre||'';
+    const estado=document.getElementById('mEstado').value;
+    const fechaInicio=document.getElementById('mFechaInicio').value;
+    const fechaFin=document.getElementById('mFechaFin').value;
+
+    if(!nombre) return mostrarAlert('El nombre del proyecto es requerido.');
+    if(!idCliente) return mostrarAlert('Selecciona un cliente.');
+    if(!fechaInicio) return mostrarAlert('La fecha de inicio es requerida.');
+    if(!fechaFin) return mostrarAlert('La fecha de fin es requerida.');
+    if(fechaFin<fechaInicio) return mostrarAlert('La fecha de fin debe ser posterior al inicio.');
+
+    if(editId!==null){
+        const idx=proyectos.findIndex(x=>x.id===editId);
+        if(idx!==-1) proyectos[idx]={...proyectos[idx],nombre,idCliente,nombreCliente,estado,fechaInicio,fechaFin};
     } else {
-        const tempId = Date.now(); 
-        proyectos.push({ id: tempId, nombre, idCliente, nombreCliente, estado, fechaInicio, fechaFin });
+        proyectos.push({id:nextId++,nombre,idCliente,nombreCliente,estado,fechaInicio,fechaFin});
     }
-    
-    cerrarModalProyecto();
-    renderTabla();
+    cerrarModal(); render();
 }
 
-function mostrarAlertaProyecto(msg) {
-    const el = document.getElementById('modalProyectoAlerta');
-    el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
-    el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
+function abrirEliminar(id) {
+    delId=id;
+    const p=proyectos.find(x=>x.id===id); if(!p)return;
+    document.getElementById('delNombre').textContent='"'+p.nombre+'"';
+    document.getElementById('overlayEliminar').classList.add('open');
+    document.body.style.overflow='hidden';
 }
 
-function ocultarAlertaProyecto() {
-    const el = document.getElementById('modalProyectoAlerta');
-    el.style.display = 'none'; 
-    el.innerHTML = '';
-}
+function cerrarEliminar() { document.getElementById('overlayEliminar').classList.remove('open'); document.body.style.overflow=''; delId=null; }
 
-function abrirModalEliminar(id) {
-    proyectoEliminarId = id;
-    const p = proyectos.find(x => x.id===id); 
-    if(!p) return;
-    
-    document.getElementById('eliminarNombreProyecto').textContent = '"' + p.nombre + '"';
-    document.getElementById('modalEliminarOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
+document.getElementById('overlayEliminar').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarEliminar();});
 
-function cerrarModalEliminar() {
-    document.getElementById('modalEliminarOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-    proyectoEliminarId = null;
-}
-
-document.getElementById('modalEliminarOverlay').addEventListener('click', function(e){ 
-    if(e.target===this) cerrarModalEliminar(); 
+document.getElementById('btnConfDel').addEventListener('click',()=>{
+    if(delId===null)return;
+    proyectos=proyectos.filter(x=>x.id!==delId);
+    cerrarEliminar(); render();
 });
 
-document.getElementById('btnConfirmarEliminar').addEventListener('click', () => {
-    if (proyectoEliminarId === null) return;
-    proyectos = proyectos.filter(x => x.id !== proyectoEliminarId);
-    cerrarModalEliminar();
-    renderTabla();
-});
+function mostrarAlert(msg){
+    const el=document.getElementById('mAlert');
+    el.style.cssText='display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
+    el.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> '+msg;
+}
 
-// ===== INICIALIZAR =====
-async function inicializar() {
+function ocultarAlert(){const el=document.getElementById('mAlert');el.style.display='none';el.innerHTML='';}
+
+async function init() {
     try {
-        const res  = await fetch('php/dashboard_data.php');
-        const data = await res.json();
-        
-        if (data.error) { 
-            window.location.href = 'login.html'; 
-            return; 
-        }
-        
-        document.getElementById('sidebarNombre').textContent = data.usuario;
-        document.getElementById('sidebarRol').textContent    = data.rol;
-        
-        if (data.rol === 'Administrador') {
-            document.getElementById('adminSection').style.display = 'block';
-            document.getElementById('btnAbrirModalUsuario').style.display = 'flex';
-        }
-    } catch(e) {
-        document.getElementById('sidebarNombre').textContent = 'Admin';
-        document.getElementById('sidebarRol').textContent    = 'Administrador';
-    }
-    
-    document.getElementById('loadingProyectos').style.display = 'none';
-    document.getElementById('proyectosCard').style.display    = 'block';
-    renderTabla();
+        const res=await fetch('php/dashboard_data.php');
+        const data=await res.json();
+        if(data.error){window.location.href='login.html';return;}
+        document.getElementById('topNombre').textContent=data.usuario;
+        document.getElementById('topRol').textContent=data.rol;
+        document.getElementById('topAvatar').textContent=data.usuario.charAt(0).toUpperCase();
+    } catch(e){}
+    document.getElementById('loadingBox').style.display='none';
+    document.getElementById('tableWrap').style.display='block';
+    render();
 }
 
-inicializar();
+async function cerrarSesion(){try{await fetch('php/logout.php')}catch(e){}window.location.href='login.html';}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarModal();cerrarEliminar();}});
+
+init();
 </script>
 </body>
 </html>
