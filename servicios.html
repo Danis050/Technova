@@ -16,11 +16,37 @@
         <h2>Sistema de Gestión</h2>
         <p>Panel Administrador</p>
     </div>
-    <nav class="sidebar-nav">
-        <a class="nav-item" href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-        <a class="nav-item" href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-        <a class="nav-item active" href="servicios.html"><i class="fa-solid fa-gear"></i> Servicios</a>
-    </nav>
+<nav class="sidebar-nav">
+    <div class="menu-section-label">Principal</div>
+    <a class="nav-item" href="dashboard.html">
+        <i class="fa-solid fa-gauge"></i> Dashboard
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fa-solid fa-users"></i> Clientes
+    </a>
+    <a class="nav-item" href="proyectos.html">
+        <i class="fa-solid fa-diagram-project"></i> Proyectos
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fa-solid fa-hand-holding-dollar"></i> Pagos
+    </a>
+    <a class="nav-item active" href="servicios.html">
+        <i class="fa-solid fa-screwdriver-wrench"></i> Servicios
+    </a>
+    <a class="nav-item" href="#">
+        <i class="fa-solid fa-chart-bar"></i> Reportes
+    </a>
+
+    <div id="adminSection" style="display:none;">
+        <div class="menu-section-label">Administración</div>
+        <a class="nav-item" href="usuarios.html">
+            <i class="fa-solid fa-user-shield"></i> Usuarios
+        </a>
+    </div>
+</nav>
     <div class="sidebar-footer">
         <button class="btn-logout-side" onclick="cerrarSesion()">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión

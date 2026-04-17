@@ -1,35 +1,38 @@
 <?php
-session_start();
-header('Content-Type: application/json');
-require_once 'conexion.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if (!isset($_SESSION['id_usuario'])) {
-    echo json_encode(['error' => true, 'mensaje' => 'No autorizado']);
-    exit;
-}
+header('Content-Type: application/json');
+
+require 'conexion.php';
 
 $conn = getConexion();
 
-$result = $conn->query(
-    "SELECT p.id_proyecto, p.nombre AS nombre_proyecto, p.id_cliente,
-            c.nombre_empresa AS nombre_cliente,
-            p.estado, p.fecha_inicio, p.fecha_entrega AS fecha_fin
-     FROM proyecto p
-     LEFT JOIN cliente c ON p.id_cliente = c.id_cliente
-     ORDER BY p.id_proyecto DESC"
-);
+$sql = "SELECT 
+    p.id_proyecto,
+    p.nombre,
+    p.estado,
+    p.fecha_inicio,
+    p.fecha_entrega,
+    c.id_cliente AS id_cliente,
+    c.nombre_empresa
+FROM proyecto p
+INNER JOIN cliente c ON p.id_cliente = c.id_cliente";
 
-if (!$result) {
-    echo json_encode(['error' => true, 'mensaje' => 'Error al consultar']);
-    $conn->close();
-    exit;
-}
+$result = $conn->query($sql);
 
 $proyectos = [];
+
 while ($row = $result->fetch_assoc()) {
-    $proyectos[] = $row;
+    $proyectos[] = [
+        "id" => (int)$row["id_proyecto"],
+        "nombre" => $row["nombre"],
+        "estado" => $row["estado"],
+        "fechaInicio" => $row["fecha_inicio"],
+        "fechaFin" => $row["fecha_entrega"],
+        "idCliente" => $row["id_cliente"],
+        "nombreCliente" => $row["nombre_empresa"]
+    ];
 }
 
-$conn->close();
-echo json_encode(['error' => false, 'proyectos' => $proyectos]);
-?>
+echo json_encode($proyectos);
