@@ -45,17 +45,14 @@
                 <label>Contraseña</label>
                 <input type="password" id="password" name="password" placeholder="Tu contraseña" required>
             </div>
-            
-            <div class="field" style="margin-bottom:20px;">
-                <label for="tipoUsuario">Tipo de Usuario</label>
-                <select id="tipoUsuario" name="tipoUsuario" required>
-                    <option value="">Selecciona tu tipo de usuario</option>
-                    <option value="Vendedor">Vendedor</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Cajero">Cajero</option>
-                </select>
-            </div>
+            <label for="tipoUsuario">Tipo de Usuario</label>
+            <select id="tipoUsuario" name="tipoUsuario" required>
+                <option value="">Selecciona tu tipo de usuario</option>
+                <option value="Cliente">Vendedor</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Administrador">Cajero</option>
 
+            </select>
             <button type="submit" class="btn-submit" id="btnLogin">
                 <span id="btnTexto">Iniciar Sesión</span>
                 <i class="fa-solid fa-arrow-right-to-bracket"></i>

@@ -31,7 +31,7 @@
             <div class="menu-section-label">Principal</div>
             <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
             <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="#"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
             <a href="#"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
             <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
             <a href="#"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
@@ -95,6 +95,13 @@
             <div class="tables-grid">
                 <div class="table-card">
                     <h3><i class="fa-solid fa-diagram-project" style="color:#6d28d9;"></i> Proyectos Recientes</h3>
+                    <select id="filtroEstado" onchange="filtrarProyectos()" style="margin-bottom:12px;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;font-family:inherit;color:#334155;background:#f8fafc;cursor:pointer;outline:none;">
+                        <option value="">Todos los estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Proceso">En Proceso</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
                     <table>
                         <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th><th id="thAccion" style="display:none;">Acción</th></tr></thead>
                         <tbody id="tablaProyectos">
@@ -376,6 +383,41 @@ async function crearUsuario() {
     txt.textContent = 'Crear Usuario';
 }
 
+// ===== FILTRO PROYECTOS =====
+let todosLosProyectos = [];
+let esAdminGlobal = false;
+
+function filtrarProyectos() {
+    const filtro = document.getElementById('filtroEstado').value;
+    const lista  = filtro ? todosLosProyectos.filter(p => p.estado === filtro) : todosLosProyectos;
+    const badges = { 'Pendiente':'badge-pendiente','En Proceso':'badge-proceso','Completado':'badge-completado','Cancelado':'badge-anulada' };
+
+    if (lista.length === 0) {
+        document.getElementById('tablaProyectos').innerHTML =
+            `<tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin proyectos con ese estado</td></tr>`;
+        return;
+    }
+
+    document.getElementById('tablaProyectos').innerHTML = lista.map(p => {
+        const estaActivo = (p.estado === 'Pendiente' || p.estado === 'En Proceso');
+        const btnHtml = esAdminGlobal ? `
+            <button onclick="alert('Estado actual: ${p.estado}')"
+                style="padding:4px 10px;border-radius:999px;font-size:0.72rem;font-weight:600;
+                       border:none;cursor:pointer;
+                       background:${estaActivo ? '#d1fae5' : '#fee2e2'};
+                       color:${estaActivo ? '#065f46' : '#991b1b'};">
+                ${estaActivo ? '✔ Activo' : '✖ Cerrado'}
+            </button>` : '';
+        return `
+            <tr>
+                <td>${p.nombre}</td>
+                <td>${p.nombre_empresa}</td>
+                <td><span class="badge-estado ${badges[p.estado] || ''}">${p.estado}</span></td>
+                ${esAdminGlobal ? `<td>${btnHtml}</td>` : ''}
+            </tr>`;
+    }).join('');
+}
+
 // ===== DASHBOARD DATA =====
 async function cargarDashboard() {
     try {
@@ -400,32 +442,12 @@ async function cargarDashboard() {
         }
 
         // Tabla proyectos
-       if (data.proyectos.length > 0) {
-           const badges = { 'Pendiente':'badge-pendiente','En Proceso':'badge-proceso','Completado':'badge-completado','Cancelado':'badge-anulada' };
-           const esAdmin = (data.rol === 'Administrador');
-
-        if (esAdmin) document.getElementById('thAccion').style.display = '';
-
-           document.getElementById('tablaProyectos').innerHTML = data.proyectos.map(p => {
-           const estaActivo  = (p.estado === 'Pendiente' || p.estado === 'En Proceso');
-           const btnHtml = esAdmin ? `
-            <button onclick="alert('Estado actual: ${p.estado}')"
-                style="padding:4px 10px; border-radius:999px; font-size:0.72rem; font-weight:600;
-                       border:none; cursor:pointer;
-                       background:${estaActivo ? '#d1fae5' : '#fee2e2'};
-                       color:${estaActivo ? '#065f46' : '#991b1b'};">
-                ${estaActivo ? '✔ Activo' : '✖ Cerrado'}
-            </button>` : '';
-
-        return `
-            <tr>
-                <td>${p.nombre}</td>
-                <td>${p.nombre_empresa}</td>
-                <td><span class="badge-estado ${badges[p.estado] || ''}">${p.estado}</span></td>
-                ${esAdmin ? `<td>${btnHtml}</td>` : ''}
-            </tr>`;
-    }).join('');
-}
+        if (data.proyectos.length > 0) {
+            esAdminGlobal = (data.rol === 'Administrador');
+            if (esAdminGlobal) document.getElementById('thAccion').style.display = '';
+            todosLosProyectos = data.proyectos;
+            filtrarProyectos();
+        }
 
 
         // Tabla facturas

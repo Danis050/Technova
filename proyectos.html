@@ -251,26 +251,85 @@ async function abrirEditar(id) {
 function cerrarModal() { document.getElementById('overlayProyecto').classList.remove('open'); document.body.style.overflow=''; }
 document.getElementById('overlayProyecto').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarModal();});
 
-function guardarProyecto() {
-    const nombre=document.getElementById('mNombre').value.trim();
-    const sel=document.getElementById('sel-cliente');
-    const idCliente=sel.value;
-    const nombreCliente=sel.options[sel.selectedIndex]?.dataset.nombre||'';
-    const estado=document.getElementById('mEstado').value;
-    const fechaInicio=document.getElementById('mFechaInicio').value;
-    const fechaFin=document.getElementById('mFechaFin').value;
-    if(!nombre)      return mostrarAlert('El nombre del proyecto es requerido.');
-    if(!idCliente)   return mostrarAlert('Selecciona un cliente.');
-    if(!fechaInicio) return mostrarAlert('La fecha de inicio es requerida.');
-    if(!fechaFin)    return mostrarAlert('La fecha de fin es requerida.');
-    if(fechaFin<fechaInicio) return mostrarAlert('La fecha de fin debe ser posterior al inicio.');
-    if(editId!==null){
-        const idx=proyectos.findIndex(x=>x.id===editId);
-        if(idx!==-1) proyectos[idx]={...proyectos[idx],nombre,idCliente,nombreCliente,estado,fechaInicio,fechaFin};
-    } else {
-        proyectos.push({id:nextId++,nombre,idCliente,nombreCliente,estado,fechaInicio,fechaFin});
+async function guardarProyecto() {
+    const nombre      = document.getElementById('proyectoNombre').value.trim();
+    const sel         = document.getElementById('sel-cliente');
+    const idCliente   = sel.value;
+    const nombreCliente = sel.options[sel.selectedIndex]?.dataset.nombre || sel.options[sel.selectedIndex]?.text || '';
+    const estado      = document.getElementById('proyectoEstado').value;
+    const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+    const fechaFin    = document.getElementById('proyectoFechaFin').value;
+
+    // Validaciones
+    if (!nombre)      return mostrarAlertaProyecto('El nombre del proyecto es requerido.');
+    if (!idCliente)   return mostrarAlertaProyecto('Selecciona un cliente.');
+    if (!fechaInicio) return mostrarAlertaProyecto('La fecha de inicio es requerida.');
+    if (!fechaFin)    return mostrarAlertaProyecto('La fecha de fin es requerida.');
+    if (fechaFin < fechaInicio) return mostrarAlertaProyecto('La fecha de fin debe ser posterior a la de inicio.');
+
+    if (modoEdicion) {
+        try {
+            const res = await fetch('php/proyectos_actualizar.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: proyectoEditId,
+                    nombre,
+                    idCliente,
+                    estado,
+                    fechaInicio,
+                    fechaFin
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                await cargarProyectos();
+                cerrarModalProyecto();
+            } else {
+                mostrarAlertaProyecto("Error al actualizar el proyecto");
+            }
+
+        } catch (error) {
+            console.error(error);
+            mostrarAlertaProyecto("Error de conexión con el servidor");
+        }
+
+    } 
+    
+else {
+    try {
+        const res = await fetch('php/proyectos_crear.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre,
+                idCliente,
+                estado,
+                fechaInicio,
+                fechaFin
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            await cargarProyectos(); // 🔥 recarga desde BD
+            cerrarModalProyecto();
+        } else {
+            mostrarAlertaProyecto("Error al crear el proyecto");
+        }
+
+    } catch (error) {
+        console.error(error);
+        mostrarAlertaProyecto("Error de conexión");
     }
-    cerrarModal(); render();
+}
 }
 
 function abrirEliminar(id) {
@@ -280,44 +339,80 @@ function abrirEliminar(id) {
     document.getElementById('overlayEliminar').classList.add('open');
     document.body.style.overflow='hidden';
 }
-function cerrarEliminar() { document.getElementById('overlayEliminar').classList.remove('open'); document.body.style.overflow=''; delId=null; }
-document.getElementById('overlayEliminar').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarEliminar();});
-document.getElementById('btnConfDel').addEventListener('click',()=>{
-    if(delId===null)return;
-    proyectos=proyectos.filter(x=>x.id!==delId);
-    cerrarEliminar(); render();
+
+function cerrarModalEliminar() {
+    document.getElementById('modalEliminarOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    proyectoEliminarId = null;
+}
+
+document.getElementById('modalEliminarOverlay').addEventListener('click', function(e){ 
+    if(e.target===this) cerrarModalEliminar(); 
+});
+
+document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
+    if (proyectoEliminarId === null) return;
+
+    try {
+        const res = await fetch('php/proyectos_eliminar.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: proyectoEliminarId })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            await cargarProyectos();
+            cerrarModalEliminar();
+        } else {
+            alert("Error al eliminar el proyecto");
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Error de conexión");
+    }
 });
 
 function mostrarAlert(msg){const el=document.getElementById('mAlert');el.style.cssText='display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';el.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> '+msg;}
 function ocultarAlert(){const el=document.getElementById('mAlert');el.style.display='none';el.innerHTML='';}
 
+//cargar proyecto 
+async function cargarProyectos() {
+    const res = await fetch('php/proyectos_lista.php');
+    const data = await res.json();
+
+    proyectos = data;
+    renderTabla();
+}
+
 async function init() {
     try {
-        const res=await fetch('php/dashboard_data.php');
-        const data=await res.json();
-        if(data.error){window.location.href='login.html';return;}
-        document.getElementById('topNombre').textContent=data.usuario;
-        document.getElementById('topRol').textContent=data.rol;
-        document.getElementById('topAvatar').textContent=data.usuario.charAt(0).toUpperCase();
-        // cargar proyectos
-        const rp = await fetch('php/proyectos_lista.php');
-        const dp = await rp.json();
-        if (!dp.error) {
-            proyectos = dp.proyectos.map(p => ({
-                id:           parseInt(p.id_proyecto||p.id),
-                nombre:       p.nombre_proyecto||p.nombre||'',
-                idCliente:    String(p.id_cliente||''),
-                nombreCliente:p.nombre_cliente||p.nombre_empresa||'',
-                estado:       p.estado||'Pendiente',
-                fechaInicio:  p.fecha_inicio||'',
-                fechaFin:     p.fecha_fin||''
-            }));
-            if (proyectos.length) nextId = Math.max(...proyectos.map(x=>x.id)) + 1;
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+
+        if (data.error) { 
+            window.location.href = 'login.html'; 
+            return; 
         }
-    } catch(e) { console.error(e); }
-    document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('tableWrap').style.display  = '';
-    render();
+
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+
+        if (data.rol === 'Administrador') {
+            document.getElementById('adminSection').style.display = 'block';
+            document.getElementById('btnAbrirModalUsuario').style.display = 'flex';
+        }
+
+    } catch(e) {}
+
+    document.getElementById('loadingProyectos').style.display = 'none';
+    document.getElementById('proyectosCard').style.display    = 'block';
+
+    await cargarProyectos();
 }
 
 function cerrarSesion() {
