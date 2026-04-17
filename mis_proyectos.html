@@ -32,7 +32,7 @@
         <div class="topbar-left"><h1>Mis Proyectos</h1></div>
         <div class="topbar-user">
             <div class="user-info">
-                <div class="user-name" id="topNombre">Cliente Demo</div>
+                <div class="user-name" id="topNombre">Cliente</div>
                 <div class="user-role" id="topRol">Cliente</div>
             </div>
             <div class="avatar" id="topAvatar">C</div>
@@ -56,48 +56,52 @@
             <i class="fa-solid fa-folder-open"></i>
             <p>No tienes proyectos asignados aún.</p>
         </div>
+
+        <div id="errorBox" class="state-box" style="display:none;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <p id="errorMsg">Ocurrió un error al cargar tus proyectos.</p>
+        </div>
     </div>
 </div>
 
 <script>
-// Utilidades de formato y seguridad
+// ─── Utilidades ───────────────────────────────────────────────
 function fmt(f) {
-    if (!f) return '-';
-    const [y,m,d] = f.split('-');
+    if (!f || f === '0000-00-00') return '-';
+    const [y, m, d] = f.split('-');
     return `${d}/${m}/${y}`;
 }
 
-function escH(s) { 
-    const d = document.createElement('div'); 
-    d.textContent = s; 
-    return d.innerHTML; 
+function escH(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
 }
 
-// Mapeo de estilos según el estado del proyecto
 function badgeClass(estado) {
     const map = {
-        'Activo':      'badge-en-proceso',
-        'En Proceso':  'badge-en-proceso',
-        'Completado':  'badge-completado',
-        'Pausado':     'badge-pausado',
-        'Cerrado':     'badge-cerrado',
-        'Cancelado':   'badge-cerrado',
-        'Pendiente':   'badge-pendiente',
+        'Activo':  'badge-en-proceso',
+        'Pausado': 'badge-pausado',
+        'Cerrado': 'badge-cerrado'
     };
     return map[estado] || 'badge-pendiente';
 }
 
+// ─── Render de cards ──────────────────────────────────────────
 function renderCards(proyectos) {
-    const grid = document.getElementById('cardsGrid');
+    const grid     = document.getElementById('cardsGrid');
     const emptyBox = document.getElementById('emptyBox');
+    const loading  = document.getElementById('loadingBox');
+
+    loading.style.display = 'none';
 
     if (!proyectos || proyectos.length === 0) {
-        grid.style.display = 'none';
+        grid.style.display     = 'none';
         emptyBox.style.display = 'block';
         return;
     }
 
-    grid.style.display = 'grid';
+    grid.style.display     = 'grid';
     emptyBox.style.display = 'none';
 
     grid.innerHTML = proyectos.map(p => `
@@ -105,48 +109,67 @@ function renderCards(proyectos) {
             <div class="card-nombre">${escH(p.nombre)}</div>
             <span class="badge-sv ${badgeClass(p.estado)}">${escH(p.estado)}</span>
             <hr class="card-divider">
-            <div class="card-detail">
-                <i class="fa-solid fa-briefcase"></i>
-                <span>${escH(p.servicio || 'Sin servicio asignado')}</span>
-            </div>
+            ${p.descripcion ? `<div class="card-detail">
+                <i class="fa-solid fa-align-left"></i>
+                <span>${escH(p.descripcion)}</span>
+            </div>` : ''}
             <div class="card-detail">
                 <i class="fa-regular fa-calendar"></i>
-                <span>${fmt(p.fechaInicio)} - ${fmt(p.fechaFin)}</span>
+                <span>${fmt(p.fechaInicio)} → ${fmt(p.fechaFin)}</span>
             </div>
             <p class="card-id">Proyecto ID: #${p.id}</p>
         </div>
     `).join('');
 }
 
+// ─── Mostrar error ────────────────────────────────────────────
+function mostrarError(msg) {
+    document.getElementById('loadingBox').style.display = 'none';
+    document.getElementById('errorBox').style.display   = 'block';
+    document.getElementById('errorMsg').textContent     = msg;
+}
+
+// ─── Init ─────────────────────────────────────────────────────
 async function init() {
     try {
-        // Verificación de sesión
-        const res = await fetch('php/dashboard_data.php');
-        const data = await res.json();
-        
-        if (data.error) { 
-            window.location.href = 'login.html'; 
-            return; 
+        // Verificar sesión
+        const resSesion = await fetch('php/dashboard_data.php');
+        const sesion    = await resSesion.json();
+
+        if (sesion.error) {
+            window.location.href = 'login.html';
+            return;
         }
 
-        document.getElementById('topNombre').textContent = data.usuario;
-        document.getElementById('topRol').textContent = data.rol;
-        document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
+        // Redirigir si no es Cliente
+        if (sesion.rol !== 'Cliente') {
+            window.location.href = 'dashboard.html';
+            return;
+        }
 
-        renderCards([]);
-        
-    } catch(e) {
-        console.error("Error al cargar datos:", e);
-        renderCards([]);
+        document.getElementById('topNombre').textContent = sesion.usuario;
+        document.getElementById('topRol').textContent    = sesion.rol;
+        document.getElementById('topAvatar').textContent = sesion.usuario.charAt(0).toUpperCase();
+
+        // Cargar proyectos del cliente — T17
+        const resProy = await fetch('php/mis_proyectos.php');
+        const proyectos = await resProy.json();
+
+        if (proyectos.error) {
+            mostrarError(proyectos.mensaje || 'Error al cargar proyectos.');
+            return;
+        }
+
+        renderCards(proyectos);
+
+    } catch (e) {
+        console.error('Error init:', e);
+        mostrarError('No se pudo conectar con el servidor.');
     }
-
-    document.getElementById('loadingBox').style.display = 'none';
 }
 
 async function cerrarSesion() {
-    try { 
-        await fetch('php/logout.php'); 
-    } catch(e) {}
+    try { await fetch('php/logout.php'); } catch (e) {}
     window.location.href = 'login.html';
 }
 
