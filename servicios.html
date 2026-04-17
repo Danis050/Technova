@@ -16,37 +16,36 @@
         <h2>Sistema de Gestión</h2>
         <p>Panel Administrador</p>
     </div>
-<nav class="sidebar-nav">
-    <div class="menu-section-label">Principal</div>
-    <a class="nav-item" href="dashboard.html">
-        <i class="fa-solid fa-gauge"></i> Dashboard
-    </a>
-    <a class="nav-item" href="#">
-        <i class="fa-solid fa-users"></i> Clientes
-    </a>
-    <a class="nav-item" href="proyectos.html">
-        <i class="fa-solid fa-diagram-project"></i> Proyectos
-    </a>
-    <a class="nav-item" href="#">
-        <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
-    </a>
-    <a class="nav-item" href="#">
-        <i class="fa-solid fa-hand-holding-dollar"></i> Pagos
-    </a>
-    <a class="nav-item active" href="servicios.html">
-        <i class="fa-solid fa-screwdriver-wrench"></i> Servicios
-    </a>
-    <a class="nav-item" href="#">
-        <i class="fa-solid fa-chart-bar"></i> Reportes
-    </a>
-
-    <div id="adminSection" style="display:none;">
-        <div class="menu-section-label">Administración</div>
-        <a class="nav-item" href="usuarios.html">
-            <i class="fa-solid fa-user-shield"></i> Usuarios
+    <nav class="sidebar-nav">
+        <div class="menu-section-label">Principal</div>
+        <a class="nav-item" href="dashboard.html">
+            <i class="fa-solid fa-gauge"></i> Dashboard
         </a>
-    </div>
-</nav>
+        <a class="nav-item" href="#">
+            <i class="fa-solid fa-users"></i> Clientes
+        </a>
+        <a class="nav-item" href="proyectos.html">
+            <i class="fa-solid fa-diagram-project"></i> Proyectos
+        </a>
+        <a class="nav-item" href="#">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
+        </a>
+        <a class="nav-item" href="#">
+            <i class="fa-solid fa-hand-holding-dollar"></i> Pagos
+        </a>
+        <a class="nav-item active" href="servicios.html">
+            <i class="fa-solid fa-screwdriver-wrench"></i> Servicios
+        </a>
+        <a class="nav-item" href="#">
+            <i class="fa-solid fa-chart-bar"></i> Reportes
+        </a>
+        <div id="adminSection" style="display:none;">
+            <div class="menu-section-label">Administración</div>
+            <a class="nav-item" href="usuarios.html">
+                <i class="fa-solid fa-user-shield"></i> Usuarios
+            </a>
+        </div>
+    </nav>
     <div class="sidebar-footer">
         <button class="btn-logout-side" onclick="cerrarSesion()">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
@@ -137,13 +136,6 @@
                 </div>
             </div>
             <div class="field">
-                <label>Estado</label>
-                <select id="mEstado">
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                </select>
-            </div>
-            <div class="field">
                 <label>Descripción (opcional)</label>
                 <input type="text" id="mDescripcion" placeholder="Breve descripción del servicio">
             </div>
@@ -159,137 +151,253 @@
     </div>
 </div>
 
-<!-- MODAL CONFIRMAR ELIMINAR -->
+<!-- MODAL CONFIRMAR ELIMINAR / DESACTIVAR -->
 <div class="overlay" id="overlayEliminar">
     <div class="modal modal-confirm">
         <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
-        <h3>¿Eliminar servicio?</h3>
-        <p>Esta acción no se puede deshacer. El servicio <strong id="delNombre"></strong> será eliminado.</p>
+        <h3>¿Desactivar servicio?</h3>
+        <p>El servicio <strong id="delNombre"></strong> quedará inactivo y no aparecerá en nuevas asignaciones.</p>
         <div class="confirm-btns">
             <button class="btn-cancel-m" onclick="cerrarEliminar()">Cancelar</button>
             <button class="btn-del-confirm" id="btnConfDel">
-                <i class="fa-solid fa-trash"></i> Eliminar
+                <i class="fa-solid fa-ban"></i> Desactivar
             </button>
         </div>
     </div>
 </div>
 
 <script>
+// ─── Estado global ────────────────────────────────────────────
 let servicios = [];
-let nextId = 1, editId = null, delId = null;
+let editId    = null;
+let delId     = null;
 
-function fmtPrecio(p) { return '$' + parseFloat(p||0).toLocaleString('es-MX',{minimumFractionDigits:0}); }
-function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+// ─── Utilidades ───────────────────────────────────────────────
+function fmtPrecio(p) {
+    return '$' + parseFloat(p || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
+function escH(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+// ─── T12: cargarServicios() — fetch al backend ────────────────
+async function cargarServicios() {
+    try {
+        const res  = await fetch('php/servicios.php?accion=listar');
+        const data = await res.json();
+
+        if (data.error) {
+            mostrarAlert(data.mensaje || 'Error al cargar servicios.');
+            return;
+        }
+
+        servicios = Array.isArray(data) ? data : [];
+        render();
+
+    } catch (e) {
+        console.error('Error cargarServicios:', e);
+        mostrarAlert('No se pudo conectar con el servidor.');
+    } finally {
+        document.getElementById('loadingBox').style.display = 'none';
+        document.getElementById('tableWrap').style.display  = 'block';
+    }
+}
+
+// ─── Render de tabla ──────────────────────────────────────────
 function render() {
     const tbody = document.getElementById('tbody');
+
     if (servicios.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="state-box"><i class="fa-solid fa-box-open"></i><p>No hay servicios registrados aún</p></div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5">
+            <div class="state-box">
+                <i class="fa-solid fa-box-open"></i>
+                <p>No hay servicios registrados aún</p>
+            </div></td></tr>`;
         return;
     }
+
     tbody.innerHTML = servicios.map(s => `
-        <tr>
+        <tr style="${s.activo == 0 ? 'opacity:0.5;' : ''}">
             <td class="col-nombre">${escH(s.nombre)}</td>
-            <td>${escH(s.categoria)}</td>
-            <td class="col-precio">${fmtPrecio(s.precio)}</td>
-            <td><span class="badge-sv ${s.estado==='Activo'?'badge-activo':'badge-inactivo'}">${escH(s.estado)}</span></td>
+            <td>${escH(s.categoria || '-')}</td>
+            <td class="col-precio">${fmtPrecio(s.precio_base)}</td>
+            <td>
+                <span class="badge-sv ${s.activo == 1 ? 'badge-activo' : 'badge-inactivo'}">
+                    ${s.activo == 1 ? 'Activo' : 'Inactivo'}
+                </span>
+            </td>
             <td><div class="acciones">
-                <button class="btn-icon btn-edit" onclick="abrirEditar(${s.id})"><i class="fa-regular fa-pen-to-square"></i></button>
-                <button class="btn-icon btn-del"  onclick="abrirEliminar(${s.id})"><i class="fa-regular fa-trash-can"></i></button>
+                <button class="btn-icon btn-edit" onclick="abrirEditar(${s.id_servicio})" title="Editar">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="btn-icon btn-del" onclick="abrirEliminar(${s.id_servicio})"
+                    title="${s.activo == 1 ? 'Desactivar' : 'Ya inactivo'}"
+                    ${s.activo == 0 ? 'disabled' : ''}>
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
             </div></td>
         </tr>`).join('');
 }
 
+// ─── Modal crear ──────────────────────────────────────────────
 function abrirModal() {
     editId = null;
     document.getElementById('mTitle').textContent  = 'Nuevo Servicio';
     document.getElementById('mSub').textContent    = 'Completa los campos para crear un nuevo servicio.';
     document.getElementById('mBtnTxt').textContent = 'Crear servicio';
-    ['mId','mNombre','mPrecio','mDescripcion'].forEach(id => document.getElementById(id).value = '');
+    ['mId', 'mNombre', 'mPrecio', 'mDescripcion'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('mCategoria').value = '';
-    document.getElementById('mEstado').value = 'Activo';
     ocultarAlert();
     document.getElementById('overlayServicio').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
+// ─── Modal editar ─────────────────────────────────────────────
 function abrirEditar(id) {
-    const s = servicios.find(x => x.id===id); if(!s) return;
+    const s = servicios.find(x => x.id_servicio == id);
+    if (!s) return;
     editId = id;
     document.getElementById('mTitle').textContent  = 'Editar Servicio';
     document.getElementById('mSub').textContent    = 'Modifica los campos del servicio.';
     document.getElementById('mBtnTxt').textContent = 'Guardar cambios';
-    document.getElementById('mId').value = s.id;
-    document.getElementById('mNombre').value = s.nombre;
-    document.getElementById('mCategoria').value = s.categoria;
-    document.getElementById('mPrecio').value = s.precio;
-    document.getElementById('mEstado').value = s.estado;
-    document.getElementById('mDescripcion').value = s.descripcion || '';
+    document.getElementById('mId').value           = s.id_servicio;
+    document.getElementById('mNombre').value       = s.nombre;
+    document.getElementById('mCategoria').value    = s.categoria || '';
+    document.getElementById('mPrecio').value       = s.precio_base;
+    document.getElementById('mDescripcion').value  = s.descripcion || '';
     ocultarAlert();
     document.getElementById('overlayServicio').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal() { document.getElementById('overlayServicio').classList.remove('open'); document.body.style.overflow = ''; }
-document.getElementById('overlayServicio').addEventListener('click', e => { if(e.target===e.currentTarget) cerrarModal(); });
+function cerrarModal() {
+    document.getElementById('overlayServicio').classList.remove('open');
+    document.body.style.overflow = '';
+}
+document.getElementById('overlayServicio').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModal();
+});
 
-function guardarServicio() {
-    const nombre     = document.getElementById('mNombre').value.trim();
-    const categoria  = document.getElementById('mCategoria').value;
-    const precio     = document.getElementById('mPrecio').value;
-    const estado     = document.getElementById('mEstado').value;
-    const descripcion= document.getElementById('mDescripcion').value.trim();
+// ─── T12: guardarServicio() — crear o editar via fetch ────────
+async function guardarServicio() {
+    const nombre      = document.getElementById('mNombre').value.trim();
+    const categoria   = document.getElementById('mCategoria').value;
+    const precio_base = document.getElementById('mPrecio').value;
+    const descripcion = document.getElementById('mDescripcion').value.trim();
+
     if (!nombre)    return mostrarAlert('El nombre del servicio es requerido.');
     if (!categoria) return mostrarAlert('Selecciona una categoría.');
-    if (!precio || isNaN(precio) || Number(precio) < 0) return mostrarAlert('Ingresa un precio válido.');
-    if (editId !== null) {
-        const idx = servicios.findIndex(x => x.id===editId);
-        if (idx !== -1) servicios[idx] = { ...servicios[idx], nombre, categoria, precio:Number(precio), estado, descripcion };
-    } else {
-        servicios.push({ id:nextId++, nombre, categoria, precio:Number(precio), estado, descripcion });
+    if (!precio_base || isNaN(precio_base) || Number(precio_base) < 0)
+        return mostrarAlert('Ingresa un precio válido.');
+
+    const accion  = editId ? 'editar' : 'crear';
+    const payload = { nombre, categoria, precio_base: Number(precio_base), descripcion };
+    if (editId) payload.id_servicio = editId;
+
+    try {
+        const res  = await fetch(`php/servicios.php?accion=${accion}`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) return mostrarAlert(data.mensaje || 'Error al guardar.');
+
+        cerrarModal();
+        await cargarServicios();
+
+    } catch (e) {
+        console.error('Error guardarServicio:', e);
+        mostrarAlert('No se pudo conectar con el servidor.');
     }
-    cerrarModal(); render();
 }
 
+// ─── Modal desactivar ─────────────────────────────────────────
 function abrirEliminar(id) {
+    const s = servicios.find(x => x.id_servicio == id);
+    if (!s) return;
     delId = id;
-    const s = servicios.find(x=>x.id===id); if(!s) return;
     document.getElementById('delNombre').textContent = '"' + s.nombre + '"';
     document.getElementById('overlayEliminar').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
-function cerrarEliminar() { document.getElementById('overlayEliminar').classList.remove('open'); document.body.style.overflow=''; delId=null; }
-document.getElementById('overlayEliminar').addEventListener('click', e => { if(e.target===e.currentTarget) cerrarEliminar(); });
-document.getElementById('btnConfDel').addEventListener('click', () => {
-    if(delId===null) return;
-    servicios = servicios.filter(x=>x.id!==delId);
-    cerrarEliminar(); render();
+
+function cerrarEliminar() {
+    document.getElementById('overlayEliminar').classList.remove('open');
+    document.body.style.overflow = '';
+    delId = null;
+}
+document.getElementById('overlayEliminar').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarEliminar();
 });
 
-function mostrarAlert(msg) {
-    const el=document.getElementById('mAlert');
-    el.style.cssText='display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
-    el.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> '+msg;
-}
-function ocultarAlert() { const el=document.getElementById('mAlert'); el.style.display='none'; el.innerHTML=''; }
+// ─── T12: toggleActivo() — soft delete via fetch ──────────────
+document.getElementById('btnConfDel').addEventListener('click', async () => {
+    if (delId === null) return;
 
+    try {
+        const res  = await fetch('php/servicios.php?accion=desactivar', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ id_servicio: delId })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+            cerrarEliminar();
+            mostrarAlert(data.mensaje || 'Error al desactivar.');
+            return;
+        }
+
+        cerrarEliminar();
+        await cargarServicios();
+
+    } catch (e) {
+        console.error('Error toggleActivo:', e);
+        mostrarAlert('No se pudo conectar con el servidor.');
+    }
+});
+
+// ─── Alertas ──────────────────────────────────────────────────
+function mostrarAlert(msg) {
+    const el = document.getElementById('mAlert');
+    el.style.cssText = 'display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
+    el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
+}
+function ocultarAlert() {
+    const el = document.getElementById('mAlert');
+    el.style.display = 'none';
+    el.innerHTML = '';
+}
+
+// ─── Cerrar sesión ────────────────────────────────────────────
+async function cerrarSesion() {
+    try { await fetch('php/logout.php'); } catch (e) {}
+    window.location.href = 'login.html';
+}
+
+// ─── Init ─────────────────────────────────────────────────────
 async function init() {
     try {
         const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
-        if (data.error) { window.location.href='login.html'; return; }
+        if (data.error) { window.location.href = 'login.html'; return; }
         document.getElementById('topNombre').textContent = data.usuario;
         document.getElementById('topRol').textContent    = data.rol;
         document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
-     
-    } catch(e) {}
-    document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('tableWrap').style.display  = 'block';
-    render();
+    } catch (e) { window.location.href = 'login.html'; }
+
+    await cargarServicios();
 }
 
-async function cerrarSesion() { try{await fetch('php/logout.php')}catch(e){} window.location.href='login.html'; }
-document.addEventListener('keydown', e => { if(e.key==='Escape'){cerrarModal();cerrarEliminar();} });
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { cerrarModal(); cerrarEliminar(); }
+});
+
 init();
 </script>
 </body>
