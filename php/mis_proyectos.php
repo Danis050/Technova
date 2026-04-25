@@ -1,89 +1,107 @@
 <?php
-// ============================================================
-// mis_proyectos.php
-// T17 | HU-10 | Sprint 2 – TechNova
-// Responsable: Danis Ismael Vides Aparicio
-// Descripción: Retorna JSON con los proyectos del cliente
-//              logueado. Solo lectura. Valida rol Cliente.
-// ============================================================
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 session_start();
 header('Content-Type: application/json; charset=utf-8');
-
 require_once 'conexion.php';
 
-// ── Validar sesión activa ──────────────────────────────────
 if (!isset($_SESSION['id_usuario'])) {
-    http_response_code(401);
-    echo json_encode(['error' => true, 'mensaje' => 'No autorizado. Inicia sesión.']);
+    echo json_encode([
+        'error' => true,
+        'mensaje' => 'No autorizado'
+    ]);
     exit;
 }
 
-// ── Validar rol Cliente ────────────────────────────────────
 if ($_SESSION['rol'] !== 'Cliente') {
-    http_response_code(403);
-    echo json_encode(['error' => true, 'mensaje' => 'Acceso denegado.']);
+    echo json_encode([
+        'error' => true,
+        'mensaje' => 'Acceso denegado'
+    ]);
     exit;
 }
 
 $conn = getConexion();
 
-// ── Obtener id_cliente desde id_usuario en sesión ─────────
 $id_usuario = (int) $_SESSION['id_usuario'];
 
-$stmtCliente = $conn->prepare(
-    "SELECT id_cliente FROM cliente WHERE id_usuario = ? LIMIT 1"
-);
-$stmtCliente->bind_param("i", $id_usuario);
-$stmtCliente->execute();
-$resCliente = $stmtCliente->get_result();
+/* =====================================================
+   BUSCAR CLIENTE DEL USUARIO
+===================================================== */
+$stmtCliente = $conn->prepare("
+    SELECT id_cliente
+    FROM cliente
+    WHERE id_usuario = ?
+    LIMIT 1
+");
 
-if ($resCliente->num_rows === 0) {
-    // Usuario con rol Cliente pero sin registro en tabla cliente
-    echo json_encode([]);
-    $stmtCliente->close();
-    $conn->close();
+if (!$stmtCliente) {
+    echo json_encode([
+        'error' => true,
+        'mensaje' => $conn->error
+    ]);
     exit;
 }
 
-$id_cliente = (int) $resCliente->fetch_assoc()['id_cliente'];
+$stmtCliente->bind_param("i", $id_usuario);
+$stmtCliente->execute();
+
+$resCliente = $stmtCliente->get_result();
+
+if ($resCliente->num_rows == 0) {
+    echo json_encode([]);
+    exit;
+}
+
+$fila = $resCliente->fetch_assoc();
+$id_cliente = (int)$fila['id_cliente'];
+
 $stmtCliente->close();
 
-// ── Consultar proyectos del cliente ───────────────────────
-$stmtProyectos = $conn->prepare(
-    "SELECT 
-        p.id_proyecto,
-        p.nombre,
-        p.descripcion,
-        p.fecha_inicio,
-        p.fecha_fin,
-        p.estado,
-        p.creado_en
-     FROM proyecto p
-     WHERE p.id_cliente = ?
-     ORDER BY p.creado_en DESC"
-);
+/* =====================================================
+   PROYECTOS DEL CLIENTE
+===================================================== */
+$stmtProyectos = $conn->prepare("
+SELECT
+    id_proyecto,
+    nombre,
+    descripcion,
+    fecha_inicio,
+    fecha_entrega,
+    estado,
+    creado_en
+FROM proyecto
+WHERE id_cliente = ?
+ORDER BY creado_en DESC
+");
+if (!$stmtProyectos) {
+    echo json_encode([
+        'error' => true,
+        'mensaje' => $conn->error
+    ]);
+    exit;
+}
+
 $stmtProyectos->bind_param("i", $id_cliente);
 $stmtProyectos->execute();
-$resProyectos = $stmtProyectos->get_result();
 
-// ── Construir array de proyectos ──────────────────────────
+$res = $stmtProyectos->get_result();
+
 $proyectos = [];
-while ($row = $resProyectos->fetch_assoc()) {
+
+while ($row = $res->fetch_assoc()) {
     $proyectos[] = [
-        'id'          => (int) $row['id_proyecto'],
-        'nombre'      => $row['nombre'],
-        'descripcion' => $row['descripcion'],
-        'fechaInicio' => $row['fecha_inicio'],
-        'fechaFin'    => $row['fecha_fin'],
-        'estado'      => $row['estado'],
-        'creadoEn'    => $row['creado_en']
+        'id'            => $row['id_proyecto'],
+        'nombre'        => $row['nombre'],
+        'fechaInicio'   => $row['fecha_inicio'],
+        'fechaEntrega'  => $row['fecha_entrega'],
+        'estado'        => $row['estado']
     ];
 }
 
 $stmtProyectos->close();
 $conn->close();
 
-// ── Retornar JSON (array vacío si no tiene proyectos) ─────
 echo json_encode($proyectos, JSON_UNESCAPED_UNICODE);
 ?>
