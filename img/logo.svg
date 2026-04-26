@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 38" width="210" height="38">
+  <defs>
+
+    <linearGradient id="textBase" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#3b82f6"/>
+      <stop offset="50%"  stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+
+    <linearGradient id="hexBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+
+    <filter id="hexGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="1.2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="textGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="dotGlow" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="1.4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!--
+      Hexágono: centro (28, 19) — mismo que el centro visual de "TechNova"
+      (baseline y=29, font-size=27, cap-height≈20px → centro y≈19)
+      Altura 24 px: y=7 a y=31 | Anchura 28 px: x=14 a x=42
+    -->
+    <clipPath id="hexClip">
+      <polygon points="21,7 35,7 42,19 35,31 21,31 14,19"/>
+    </clipPath>
+
+    <clipPath id="tClip">
+      <text x="53" y="29"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-weight="800" font-size="27">TechNova</text>
+    </clipPath>
+
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="rgba(0,0,0,0)"/>
+      <stop offset="30%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="50%"  stop-color="#ffffff">
+        <animate attributeName="stop-color"
+          values="#60a5fa;#67e8f9;#818cf8;#c084fc;#e879f9;#a78bfa;#60a5fa"
+          dur="3s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="70%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </linearGradient>
+
+    <linearGradient id="beam2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="rgba(0,0,0,0)"/>
+      <stop offset="30%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="50%"  stop-color="#ffffff">
+        <animate attributeName="stop-color"
+          values="#c084fc;#e879f9;#a78bfa;#60a5fa;#67e8f9;#818cf8;#c084fc"
+          dur="3s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="70%"  stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- HEXÁGONO -->
+  <polygon points="21,7 35,7 42,19 35,31 21,31 14,19"
+    fill="url(#hexBg)" filter="url(#hexGlow)"/>
+
+  <g clip-path="url(#hexClip)">
+
+    <!-- Trazas superiores -->
+    <path d="M25,14 L25,10" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M28,14 L28,9"  stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M31,14 L31,10" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+
+    <!-- Trazas inferiores -->
+    <path d="M25,24 L25,28" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M28,24 L28,29" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M31,24 L31,28" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+
+    <!-- Trazas izquierdas -->
+    <path d="M23,17 L19,17 L19,13" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M23,19 L16,19"        stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M23,21 L19,21 L19,25" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Trazas derechas -->
+    <path d="M33,17 L37,17 L37,13" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33,19 L40,19"        stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+    <path d="M33,21 L37,21 L37,25" stroke="rgba(255,255,255,0.65)" stroke-width="0.85" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Pads -->
+    <circle cx="25" cy="10" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="28" cy="9"  r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="31" cy="10" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="25" cy="28" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="28" cy="29" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="31" cy="28" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="19" cy="13" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="16" cy="19" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="19" cy="25" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="37" cy="13" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="40" cy="19" r="1.2" fill="rgba(255,255,255,0.85)"/>
+    <circle cx="37" cy="25" r="1.2" fill="rgba(255,255,255,0.85)"/>
+
+    <!-- Chip (x=23–33, y=14–24, centro 28,19) -->
+    <rect x="23" y="14" width="10" height="10" rx="1"
+      fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.85)" stroke-width="0.85"/>
+
+    <!-- Pines superiores -->
+    <line x1="25" y1="12" x2="25" y2="14" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="27" y1="12" x2="27" y2="14" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="29" y1="12" x2="29" y2="14" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="31" y1="12" x2="31" y2="14" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+
+    <!-- Pines inferiores -->
+    <line x1="25" y1="24" x2="25" y2="26" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="27" y1="24" x2="27" y2="26" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="29" y1="24" x2="29" y2="26" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="31" y1="24" x2="31" y2="26" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+
+    <!-- Pines izquierdos -->
+    <line x1="21" y1="17" x2="23" y2="17" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="21" y1="19" x2="23" y2="19" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="21" y1="21" x2="23" y2="21" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+
+    <!-- Pines derechos -->
+    <line x1="33" y1="17" x2="35" y2="17" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="33" y1="19" x2="35" y2="19" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+    <line x1="33" y1="21" x2="35" y2="21" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" stroke-linecap="square"/>
+
+    <!-- Die interior -->
+    <rect x="26" y="17" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.9)"/>
+
+    <!-- Señales animadas -->
+    <circle r="1.5" filter="url(#dotGlow)">
+      <animate attributeName="fill" values="#ffffff;#ddd6fe;#ffffff;#e0e7ff;#ffffff" dur="3s" repeatCount="indefinite"/>
+      <animateMotion dur="1.4s" repeatCount="indefinite" calcMode="linear" path="M33,19 L47,19"/>
+    </circle>
+    <circle r="1.5" filter="url(#dotGlow)">
+      <animate attributeName="fill" values="#ddd6fe;#ffffff;#e0e7ff;#ffffff;#ddd6fe" dur="3s" repeatCount="indefinite"/>
+      <animateMotion dur="1.4s" begin="0.7s" repeatCount="indefinite" calcMode="linear" path="M23,19 L9,19"/>
+    </circle>
+
+  </g>
+
+  <!-- Borde del hexágono -->
+  <polygon points="21,7 35,7 42,19 35,31 21,31 14,19"
+    fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1" filter="url(#hexGlow)">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+  </polygon>
+
+  <!-- TEXTO TechNova — baseline y=29, centro visual y=19 -->
+  <text x="53" y="29"
+    font-family="'Segoe UI', Arial, sans-serif"
+    font-weight="800" font-size="27"
+    fill="url(#textBase)">TechNova</text>
+
+  <g clip-path="url(#tClip)" filter="url(#textGlow)">
+    <rect y="0" height="38" width="50" fill="url(#beam)">
+      <animate attributeName="x" from="-50" to="215" dur="2.5s" repeatCount="indefinite" calcMode="linear"/>
+    </rect>
+    <rect y="0" height="38" width="50" fill="url(#beam2)" opacity="0.85">
+      <animate attributeName="x" from="-50" to="215" dur="2.5s" begin="1.25s" repeatCount="indefinite" calcMode="linear"/>
+    </rect>
+  </g>
+
+</svg>
