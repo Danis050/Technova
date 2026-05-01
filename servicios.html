@@ -8,78 +8,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="admin">
+<body class="dash-body">
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-    <div class="sidebar-brand">
-        <h2>Sistema de Gestión</h2>
-        <p>Panel Administrador</p>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="menu-section-label">Principal</div>
-        <a class="nav-item" href="dashboard.html">
-            <i class="fa-solid fa-gauge"></i> Dashboard
-        </a>
-        <a class="nav-item" href="#">
-            <i class="fa-solid fa-users"></i> Clientes
-        </a>
-        <a class="nav-item" href="proyectos.html">
-            <i class="fa-solid fa-diagram-project"></i> Proyectos
-        </a>
-        <a class="nav-item" href="#">
-            <i class="fa-solid fa-file-invoice-dollar"></i> Facturación
-        </a>
-        <a class="nav-item" href="#">
-            <i class="fa-solid fa-hand-holding-dollar"></i> Pagos
-        </a>
-        <a class="nav-item active" href="servicios.html">
-            <i class="fa-solid fa-screwdriver-wrench"></i> Servicios
-        </a>
-        <a class="nav-item" href="#">
-            <i class="fa-solid fa-chart-bar"></i> Reportes
-        </a>
-        <div id="adminSection" style="display:none;">
-            <div class="menu-section-label">Administración</div>
-            <a class="nav-item" href="usuarios.html">
-                <i class="fa-solid fa-user-shield"></i> Usuarios
-            </a>
+<!-- TOPBAR MÓVIL -->
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
         </div>
-    </nav>
-    <div class="sidebar-footer">
-        <button class="btn-logout-side" onclick="cerrarSesion()">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
-        </button>
-    </div>
-</aside>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
+            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+            <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+            <a href="servicios.html" class="active"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
 
-<!-- MAIN -->
-<div class="main-wrap">
-    <div class="topbar">
-        <div class="topbar-left"><h1>Catálogo de Servicios</h1></div>
-        <div class="topbar-user">
-            <div class="user-info">
-                <div class="user-name" id="topNombre">Admin Usuario</div>
-                <div class="user-role"  id="topRol">Administrador</div>
+            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+        <!-- Encabezado -->
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-screwdriver-wrench" style="color:#6d28d9;margin-right:10px;"></i>Servicios</h1>
+                <p id="saludo">Catálogo de servicios disponibles</p>
             </div>
-            <div class="avatar" id="topAvatar">A</div>
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </button>
         </div>
-    </div>
 
-    <div class="content">
-        <div class="content-card">
-            <div class="content-card-header">
-                <div>
-                    <h2>Catálogo de Servicios</h2>
-                    <p>Administra los servicios disponibles</p>
-                </div>
-                <button class="btn-primary" onclick="abrirModal()">
+        <!-- Tabla -->
+        <div class="table-card admin">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0;">
+                    <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
+                    Catálogo de Servicios
+                </h3>
+                <button class="btn-save" onclick="abrirModal()">
                     <i class="fa-solid fa-plus"></i> Nuevo Servicio
                 </button>
             </div>
 
             <div id="loadingBox" class="state-box">
-                <i class="fa-solid fa-spinner fa-spin"></i>
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
                 <p>Cargando servicios...</p>
             </div>
 
@@ -98,27 +91,33 @@
                 </table>
             </div>
         </div>
-    </div>
+
+    </main>
 </div>
 
 <!-- MODAL NUEVO / EDITAR -->
-<div class="overlay" id="overlayServicio">
-    <div class="modal">
-        <div class="modal-head">
+<div class="modal-overlay" id="overlayServicio">
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal-header">
             <div>
-                <h3 id="mTitle">Nuevo Servicio</h3>
-                <p id="mSub">Completa los campos para crear un nuevo servicio.</p>
+                <h2>
+                    <span class="modal-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                    <span id="mTitle">Nuevo Servicio</span>
+                </h2>
+                <p class="modal-subtitle" id="mSub">Completa los campos para crear un nuevo servicio.</p>
             </div>
-            <button class="btn-close" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="btn-close-modal" onclick="cerrarModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="mId">
-            <div class="field">
+            <div class="mfield">
                 <label>Nombre del servicio</label>
                 <input type="text" id="mNombre" placeholder="Ej. Desarrollo Web Personalizado">
             </div>
-            <div class="row2">
-                <div class="field">
+            <div class="form-row-2">
+                <div class="mfield">
                     <label>Categoría</label>
                     <select id="mCategoria">
                         <option value="">Selecciona</option>
@@ -130,30 +129,27 @@
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <div class="field">
+                <div class="mfield">
                     <label>Precio ($)</label>
                     <input type="number" id="mPrecio" placeholder="0.00" min="0" step="0.01">
                 </div>
             </div>
-            <div class="field">
+            <div class="mfield">
                 <label>Descripción (opcional)</label>
                 <input type="text" id="mDescripcion" placeholder="Breve descripción del servicio">
             </div>
-            <div class="modal-alert" id="mAlert"></div>
-            <div class="modal-foot">
-                <button class="btn-cancel-m" onclick="cerrarModal()">Cancelar</button>
-                <button class="btn-save" onclick="guardarServicio()">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span id="mBtnTxt">Crear servicio</span>
-                </button>
-            </div>
+            <div id="modalAlerta"></div>
+            <button class="btn-modal-submit" onclick="guardarServicio()">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="mBtnTxt">Crear servicio</span>
+            </button>
         </div>
     </div>
 </div>
 
-<!-- MODAL CONFIRMAR ELIMINAR / DESACTIVAR -->
-<div class="overlay" id="overlayEliminar">
-    <div class="modal modal-confirm">
+<!-- MODAL CONFIRMAR DESACTIVAR -->
+<div class="modal-overlay" id="overlayEliminar">
+    <div class="modal modal-confirm" role="dialog" aria-modal="true">
         <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
         <h3>¿Desactivar servicio?</h3>
         <p>El servicio <strong id="delNombre"></strong> quedará inactivo y no aparecerá en nuevas asignaciones.</p>
@@ -167,6 +163,18 @@
 </div>
 
 <script>
+// Sidebar móvil
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+});
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+});
+
 // ─── Estado global ────────────────────────────────────────────
 let servicios = [];
 let editId    = null;
@@ -176,29 +184,21 @@ let delId     = null;
 function fmtPrecio(p) {
     return '$' + parseFloat(p || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
 function escH(s) {
     const d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
 }
 
-// ─── T12: cargarServicios() — fetch al backend ────────────────
+// ─── cargarServicios ──────────────────────────────────────────
 async function cargarServicios() {
     try {
         const res  = await fetch('php/servicios.php?accion=listar');
         const data = await res.json();
-
-        if (data.error) {
-            mostrarAlert(data.mensaje || 'Error al cargar servicios.');
-            return;
-        }
-
+        if (data.error) { mostrarAlert(data.mensaje || 'Error al cargar servicios.'); return; }
         servicios = Array.isArray(data) ? data : [];
         render();
-
     } catch (e) {
-        console.error('Error cargarServicios:', e);
         mostrarAlert('No se pudo conectar con el servidor.');
     } finally {
         document.getElementById('loadingBox').style.display = 'none';
@@ -206,29 +206,22 @@ async function cargarServicios() {
     }
 }
 
-// ─── Render de tabla ──────────────────────────────────────────
+// ─── Render tabla ─────────────────────────────────────────────
 function render() {
     const tbody = document.getElementById('tbody');
-
     if (servicios.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5">
-            <div class="state-box">
-                <i class="fa-solid fa-box-open"></i>
-                <p>No hay servicios registrados aún</p>
-            </div></td></tr>`;
+            <div class="state-box"><i class="fa-solid fa-box-open"></i>
+            <p>No hay servicios registrados aún</p></div></td></tr>`;
         return;
     }
-
     tbody.innerHTML = servicios.map(s => `
         <tr style="${s.activo == 0 ? 'opacity:0.5;' : ''}">
             <td class="col-nombre">${escH(s.nombre)}</td>
             <td>${escH(s.categoria || '-')}</td>
             <td class="col-precio">${fmtPrecio(s.precio_base)}</td>
-            <td>
-                <span class="badge-sv ${s.activo == 1 ? 'badge-activo' : 'badge-inactivo'}">
-                    ${s.activo == 1 ? 'Activo' : 'Inactivo'}
-                </span>
-            </td>
+            <td><span class="badge-sv ${s.activo == 1 ? 'badge-activo' : 'badge-inactivo'}">
+                ${s.activo == 1 ? 'Activo' : 'Inactivo'}</span></td>
             <td><div class="acciones">
                 <button class="btn-icon btn-edit" onclick="abrirEditar(${s.id_servicio})" title="Editar">
                     <i class="fa-regular fa-pen-to-square"></i>
@@ -242,20 +235,19 @@ function render() {
         </tr>`).join('');
 }
 
-// ─── Modal crear ──────────────────────────────────────────────
+// ─── Modales ──────────────────────────────────────────────────
 function abrirModal() {
     editId = null;
     document.getElementById('mTitle').textContent  = 'Nuevo Servicio';
     document.getElementById('mSub').textContent    = 'Completa los campos para crear un nuevo servicio.';
     document.getElementById('mBtnTxt').textContent = 'Crear servicio';
-    ['mId', 'mNombre', 'mPrecio', 'mDescripcion'].forEach(id => document.getElementById(id).value = '');
+    ['mId','mNombre','mPrecio','mDescripcion'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('mCategoria').value = '';
     ocultarAlert();
     document.getElementById('overlayServicio').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
 
-// ─── Modal editar ─────────────────────────────────────────────
 function abrirEditar(id) {
     const s = servicios.find(x => x.id_servicio == id);
     if (!s) return;
@@ -281,7 +273,6 @@ document.getElementById('overlayServicio').addEventListener('click', e => {
     if (e.target === e.currentTarget) cerrarModal();
 });
 
-// ─── T12: guardarServicio() — crear o editar via fetch ────────
 async function guardarServicio() {
     const nombre      = document.getElementById('mNombre').value.trim();
     const categoria   = document.getElementById('mCategoria').value;
@@ -299,24 +290,16 @@ async function guardarServicio() {
 
     try {
         const res  = await fetch(`php/servicios.php?accion=${accion}`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify(payload)
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
-
         if (data.error) return mostrarAlert(data.mensaje || 'Error al guardar.');
-
         cerrarModal();
         await cargarServicios();
-
-    } catch (e) {
-        console.error('Error guardarServicio:', e);
-        mostrarAlert('No se pudo conectar con el servidor.');
-    }
+    } catch (e) { mostrarAlert('No se pudo conectar con el servidor.'); }
 }
 
-// ─── Modal desactivar ─────────────────────────────────────────
 function abrirEliminar(id) {
     const s = servicios.find(x => x.id_servicio == id);
     if (!s) return;
@@ -335,46 +318,33 @@ document.getElementById('overlayEliminar').addEventListener('click', e => {
     if (e.target === e.currentTarget) cerrarEliminar();
 });
 
-// ─── T12: toggleActivo() — soft delete via fetch ──────────────
 document.getElementById('btnConfDel').addEventListener('click', async () => {
     if (delId === null) return;
-
     try {
         const res  = await fetch('php/servicios.php?accion=desactivar', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ id_servicio: delId })
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_servicio: delId })
         });
         const data = await res.json();
-
-        if (data.error) {
-            cerrarEliminar();
-            mostrarAlert(data.mensaje || 'Error al desactivar.');
-            return;
-        }
-
+        if (data.error) { cerrarEliminar(); mostrarAlert(data.mensaje || 'Error al desactivar.'); return; }
         cerrarEliminar();
         await cargarServicios();
-
-    } catch (e) {
-        console.error('Error toggleActivo:', e);
-        mostrarAlert('No se pudo conectar con el servidor.');
-    }
+    } catch (e) { mostrarAlert('No se pudo conectar con el servidor.'); }
 });
 
 // ─── Alertas ──────────────────────────────────────────────────
 function mostrarAlert(msg) {
-    const el = document.getElementById('mAlert');
-    el.style.cssText = 'display:block;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;';
+    const el = document.getElementById('modalAlerta');
+    el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
     el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
 }
 function ocultarAlert() {
-    const el = document.getElementById('mAlert');
+    const el = document.getElementById('modalAlerta');
     el.style.display = 'none';
     el.innerHTML = '';
 }
 
-// ─── Cerrar sesión ────────────────────────────────────────────
+// ─── Sesión ───────────────────────────────────────────────────
 async function cerrarSesion() {
     try { await fetch('php/logout.php'); } catch (e) {}
     window.location.href = 'login.html';
@@ -386,11 +356,11 @@ async function init() {
         const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
         if (data.error) { window.location.href = 'login.html'; return; }
-        document.getElementById('topNombre').textContent = data.usuario;
-        document.getElementById('topRol').textContent    = data.rol;
-        document.getElementById('topAvatar').textContent = data.usuario.charAt(0).toUpperCase();
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
     } catch (e) { window.location.href = 'login.html'; }
-
     await cargarServicios();
 }
 
