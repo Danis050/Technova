@@ -210,30 +210,6 @@
                 </div>
             </div>
 
-            <!-- Cambiar estado (solo admin) -->
-            <div id="seccionCambioEstado" style="display:none;">
-                <hr class="divider">
-                <p style="font-size:.78rem;font-weight:700;color:#374151;margin-bottom:8px;">
-                    <i class="fa-solid fa-pen"></i> Cambiar estado manualmente
-                </p>
-                <div class="estado-selector">
-                    <button class="btn-estado-op pendiente" onclick="seleccionarEstado('Pendiente', this)">
-                        <i class="fa-solid fa-clock"></i> Pendiente
-                    </button>
-                    <button class="btn-estado-op pagada" onclick="seleccionarEstado('Pagada', this)">
-                        <i class="fa-solid fa-circle-check"></i> Pagada
-                    </button>
-                    <button class="btn-estado-op anulada" onclick="seleccionarEstado('Anulada', this)">
-                        <i class="fa-solid fa-ban"></i> Anulada
-                    </button>
-                </div>
-                <div id="modalAlerta" style="margin-top:12px;"></div>
-                <button class="btn-modal-submit" id="btnGuardarEstado" onclick="guardarEstado()"
-                    style="margin-top:14px;">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span id="btnGuardarTexto">Guardar Estado</span>
-                </button>
-            </div>
         </div>
     </div>
 </div>
@@ -243,8 +219,6 @@
 let todasLasFacturas = [];
 let filtroActual     = '';
 let rolUsuario       = '';
-let facturaActual    = null;
-let estadoNuevo      = '';
 
 // ───── SIDEBAR MÓVIL ───────────────────────────────────────────────────────
 const sidebar       = document.getElementById('sidebar');
@@ -352,25 +326,18 @@ function renderTabla(lista) {
             <td class="monto">$${total.toFixed(2)}</td>
             <td class="${classPago}">$${pagado.toFixed(2)}</td>
             <td><span class="badge-estado ${BADGES[f.estado] || ''}">${f.estado}</span></td>
-            <td style="white-space:nowrap;">
+            <td>
                 <button class="btn-accion btn-ver" onclick="abrirDetalle(${i})">
                     <i class="fa-solid fa-eye"></i> Ver
                 </button>
-                ${rolUsuario === 'Administrador' ? `
-                <button class="btn-accion btn-estado" onclick="abrirDetalle(${i}, true)" style="margin-left:4px;">
-                    <i class="fa-solid fa-pen"></i> Estado
-                </button>` : ''}
             </td>
         </tr>`;
     }).join('');
 }
 
 // ───── DETALLE / MODAL ─────────────────────────────────────────────────────
-function abrirDetalle(idx, abrirEdicion = false) {
-    facturaActual = todasLasFacturas[idx];
-    estadoNuevo   = facturaActual.estado;
-
-    const f      = facturaActual;
+function abrirDetalle(idx) {
+    const f      = todasLasFacturas[idx];
     const pagado = parseFloat(f.total_pagado);
     const total  = parseFloat(f.total);
     const pct    = Math.min(100, Math.round((pagado / total) * 100)) || 0;
@@ -394,67 +361,8 @@ function abrirDetalle(idx, abrirEdicion = false) {
     document.getElementById('dPorcentaje').textContent = pct + '%';
     document.getElementById('barraPago').style.width   = pct + '%';
 
-    // Sección edición de estado (solo admin)
-    const seccion = document.getElementById('seccionCambioEstado');
-    seccion.style.display = (rolUsuario === 'Administrador') ? 'block' : 'none';
-
-    if (rolUsuario === 'Administrador') {
-        // Marcar estado actual
-        document.querySelectorAll('.btn-estado-op').forEach(b => b.classList.remove('seleccionado'));
-        const mapa = { Pendiente: 'pendiente', Pagada: 'pagada', Anulada: 'anulada' };
-        document.querySelector(`.btn-estado-op.${mapa[f.estado]}`)?.classList.add('seleccionado');
-        ocultarAlerta();
-    }
-
     document.getElementById('modalOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
-}
-
-function seleccionarEstado(estado, btn) {
-    estadoNuevo = estado;
-    document.querySelectorAll('.btn-estado-op').forEach(b => b.classList.remove('seleccionado'));
-    btn.classList.add('seleccionado');
-    ocultarAlerta();
-}
-
-async function guardarEstado() {
-    if (!facturaActual || !estadoNuevo) return;
-    if (estadoNuevo === facturaActual.estado) {
-        return mostrarAlerta('La factura ya tiene ese estado.', 'error');
-    }
-
-    const btn = document.getElementById('btnGuardarEstado');
-    const txt = document.getElementById('btnGuardarTexto');
-    btn.disabled = true;
-    txt.textContent = 'Guardando...';
-
-    try {
-        const res  = await fetch('php/cambiar_estado_factura.php', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ id_factura: facturaActual.id_factura, estado: estadoNuevo })
-        });
-        const data = await res.json();
-
-        if (data.error) {
-            mostrarAlerta(data.mensaje, 'error');
-        } else {
-            mostrarAlerta(data.mensaje, 'ok');
-            // Actualizar localmente sin recargar
-            facturaActual.estado = estadoNuevo;
-            document.getElementById('dEstado').innerHTML =
-                `<span class="badge-estado ${BADGES[estadoNuevo] || ''}">${estadoNuevo}</span>`;
-            setTimeout(() => {
-                cerrarModal();
-                cargarFacturas(filtroActual); // refresca tabla y stats
-            }, 1200);
-        }
-    } catch(err) {
-        mostrarAlerta('Error de conexión con el servidor.', 'error');
-    }
-
-    btn.disabled = false;
-    txt.textContent = 'Guardar Estado';
 }
 
 // ───── FILTROS Y BÚSQUEDA ──────────────────────────────────────────────────
@@ -476,22 +384,6 @@ function buscarFactura() {
             f.nombre_proyecto.toLowerCase().includes(q))
         : base;
     renderTabla(filtrada);
-}
-
-// ───── ALERTAS MODAL ───────────────────────────────────────────────────────
-function mostrarAlerta(msg, tipo) {
-    const el = document.getElementById('modalAlerta');
-    if (tipo === 'ok') {
-        el.style.cssText = 'padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
-        el.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + msg;
-    } else {
-        el.style.cssText = 'padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
-        el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
-    }
-}
-function ocultarAlerta() {
-    document.getElementById('modalAlerta').style.cssText = '';
-    document.getElementById('modalAlerta').innerHTML = '';
 }
 
 // ───── SESIÓN ──────────────────────────────────────────────────────────────
