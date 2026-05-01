@@ -1116,7 +1116,8 @@ body.dash-body { background: #f1f5f9; }
 
 .modal-overlay.open { display: flex; }
 
-.dash-layout .modal { 
+.dash-layout .modal,
+.modal-overlay .modal {
     background: white; 
     border-radius: 20px; 
     width: 100%; 
@@ -1189,7 +1190,9 @@ body.dash-body { background: #f1f5f9; }
     color: #dc2626; 
 }
 
-.dash-layout .modal-body { padding: 0 24px 24px; }
+.dash-layout .modal-body,
+.modal-overlay .modal-body { padding: 0 24px 24px; }
+
 
 /* Role selector dashboard */
 .role-selector { 
