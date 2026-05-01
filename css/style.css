@@ -2061,3 +2061,184 @@ body.admin {
 .admin tbody tr:hover {
     background: transparent !important;
 }
+
+/* ═══════════════════════════════════════════════
+   FACTURACIÓN — facturas.html
+   ═══════════════════════════════════════════════ */
+
+/* Notificación auto-pago */
+.notif-autopago {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #d1fae5;
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    animation: fadeIn .4s ease;
+}
+.notif-autopago.visible { display: flex; }
+
+/* Filtros de estado */
+.filtros-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+.btn-filtro {
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+}
+.btn-filtro:hover  { border-color: #818cf8; color: #4f46e5; }
+.btn-filtro.activo { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+
+.input-busqueda {
+    margin-left: auto;
+    padding: 7px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: .82rem;
+    font-family: inherit;
+    color: #334155;
+    outline: none;
+    width: 220px;
+    transition: border-color .2s;
+}
+.input-busqueda:focus { border-color: #818cf8; }
+
+/* Tabla facturas */
+.facturas-table-wrap { overflow-x: auto; }
+.facturas-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .83rem;
+}
+.facturas-table th {
+    padding: 10px 12px;
+    text-align: left;
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1.5px solid #e2e8f0;
+    white-space: nowrap;
+}
+.facturas-table td {
+    padding: 11px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: middle;
+}
+.facturas-table tr:last-child td { border-bottom: none; }
+.facturas-table tr:hover td     { background: #f8fafc; }
+
+.num-factura {
+    font-weight: 700;
+    color: #4f46e5;
+    letter-spacing: .3px;
+}
+.monto          { font-weight: 600; color: #0f172a; }
+.monto-pagado   { color: #059669; font-weight: 600; }
+.monto-pendiente{ color: #d97706; font-weight: 600; }
+
+/* Botones de acción en tabla */
+.btn-accion {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: .75rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .2s;
+}
+.btn-accion:hover { opacity: .8; }
+.btn-ver    { background: #ede9fe; color: #6d28d9; }
+.btn-estado { background: #dbeafe; color: #1d4ed8; }
+
+/* Modal detalle factura */
+.detalle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+    margin-bottom: 20px;
+}
+.detalle-item label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 3px;
+}
+.detalle-item span {
+    font-size: .9rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+.detalle-full { grid-column: 1 / -1; }
+
+/* Barra de progreso de pago */
+.barra-pago-wrap { margin: 16px 0; }
+.barra-pago-wrap label {
+    font-size: .78rem;
+    font-weight: 700;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.barra-pago-bg {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 10px;
+    overflow: hidden;
+}
+.barra-pago-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width .5s ease;
+}
+
+/* Selector de estado en modal */
+.estado-selector {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+.btn-estado-op {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    font-size: .82rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+}
+.btn-estado-op.pendiente   { background: #fef3c7; color: #d97706; border-color: #fde68a; }
+.btn-estado-op.pagada      { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.btn-estado-op.anulada     { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+.btn-estado-op:hover       { filter: brightness(.95); }
+.btn-estado-op.seleccionado{ box-shadow: 0 0 0 3px rgba(99,102,241,.35); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+}
