@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .badge-estado-tabla { padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600; }
+        .badge-en-progreso  { background:#e0f2fe;color:#0369a1; }
+        .badge-completado   { background:#dcfce7;color:#15803d; }
+        .badge-pendiente    { background:#fef3c7;color:#b45309; }
+        .badge-cancelado    { background:#f1f5f9;color:#475569; }
+    </style>
+</head>
+<body class="dash-body">
+
+<!-- TOPBAR MÓVIL -->
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
+            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="proyectos.html" class="active"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+            <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+        <!-- Encabezado -->
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos</h1>
+                <p id="saludo">Gestión de proyectos</p>
+            </div>
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div>
+                    <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                        <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
+                        Lista de Proyectos
+                    </h3>
+                    <p id="proyectosCount" style="font-size:.8rem;color:#64748b;margin:0;">0 proyectos en total</p>
+                </div>
+                <button class="btn-save" onclick="abrirModalProyecto()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+                </button>
+            </div>
+
+            <div id="loadingBox" style="text-align:center;padding:40px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+                <p style="margin-top:8px;color:#94a3b8;">Cargando proyectos...</p>
+            </div>
+
+            <div class="table-wrap" id="tableWrap" style="display:none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Cliente</th>
+                            <th>Estado</th>
+                            <th>Fechas</th>
+                            <th style="text-align:right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProyectosBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- MODAL CREAR / EDITAR PROYECTO -->
+<div class="modal-overlay" id="modalProyectoOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal-header">
+            <div>
+                <h2>
+                    <span class="modal-icon"><i class="fa-solid fa-diagram-project"></i></span>
+                    <span id="modalProyectoTitle">Nuevo Proyecto</span>
+                </h2>
+                <p class="modal-subtitle" id="modalProyectoSubtitle">Completa los campos para el proyecto.</p>
+            </div>
+            <button class="btn-close-modal" onclick="cerrarModalProyecto()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="proyectoId">
+            <div class="mfield">
+                <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="proyectoNombre" placeholder="Ej. Sitio Web Corporativo">
+            </div>
+            <div class="mfield">
+                <label>Cliente <span style="color:#ef4444;">*</span></label>
+                <select id="sel-cliente"><option value="">Selecciona un cliente</option></select>
+            </div>
+            <div class="mfield">
+                <label>Estado</label>
+                <select id="proyectoEstado">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En Proceso">En Proceso</option>
+                    <option value="Completado">Completado</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+            </div>
+            <div class="form-row-2">
+                <div class="mfield">
+                    <label>Fecha de inicio <span style="color:#ef4444;">*</span></label>
+                    <input type="date" id="proyectoFechaInicio">
+                </div>
+                <div class="mfield">
+                    <label>Fecha de fin <span style="color:#ef4444;">*</span></label>
+                    <input type="date" id="proyectoFechaFin">
+                </div>
+            </div>
+            <div id="modalProyectoAlerta" style="display:none;"></div>
+            <button class="btn-modal-submit" onclick="guardarProyecto()">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="btnGuardarTexto">Crear proyecto</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ELIMINAR PROYECTO -->
+<div class="modal-overlay" id="modalEliminarOverlay">
+    <div class="modal modal-confirm" role="dialog" aria-modal="true">
+        <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
+        <h3>¿Eliminar proyecto?</h3>
+        <p>Esta acción es permanente. El proyecto <strong id="eliminarNombreProyecto"></strong> será borrado.</p>
+        <div class="confirm-btns">
+            <button class="btn-cancel-m" onclick="cerrarModalEliminar()">Cancelar</button>
+            <button class="btn-del-confirm" id="btnConfirmarEliminar">
+                <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Sidebar móvil
+const sidebar       = document.getElementById('sidebar');
+const sidebarOvl    = document.getElementById('sidebarOverlay');
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarOvl.classList.toggle('visible');
+});
+sidebarOvl.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOvl.classList.remove('visible');
+});
+
+// Cerrar modales con Escape o click fuera
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
+});
+document.getElementById('modalProyectoOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModalProyecto();
+});
+document.getElementById('modalEliminarOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModalEliminar();
+});
+
+// ─── Estado global ────────────────────────────────────────────
+let proyectos = [];
+let modoEdicion = false;
+let proyectoEditId = null;
+let proyectoEliminarId = null;
+
+// ─── Utilidades ───────────────────────────────────────────────
+function formatFecha(f) {
+    if (!f || f === '0000-00-00') return '-';
+    const [y,m,d] = f.split('-');
+    return `${d}/${m}/${y}`;
+}
+function getBadgeClass(e) {
+    return { 'En Proceso':'badge-en-progreso','Completado':'badge-completado',
+             'Pendiente':'badge-pendiente','Cancelado':'badge-cancelado' }[e] || 'badge-pendiente';
+}
+function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+// ─── Carga y render ───────────────────────────────────────────
+async function cargarProyectos() {
+    try {
+        const res  = await fetch('php/proyectos_lista.php');
+        const data = await res.json();
+        proyectos  = Array.isArray(data) ? data : (data.proyectos || []);
+        renderTabla();
+    } catch (e) { console.error('Error:', e); }
+}
+
+function renderTabla() {
+    const tbody = document.getElementById('tablaProyectosBody');
+    document.getElementById('proyectosCount').textContent =
+        `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
+
+    if (proyectos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8;text-align:center;padding:28px;">
+            No hay proyectos registrados</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = proyectos.map(p => `
+        <tr>
+            <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
+            <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
+            <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
+            <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
+            <td style="text-align:right;">
+                <button class="btn-icon btn-edit" onclick="abrirModalEditar(${p.id || p.id_proyecto})">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="btn-icon btn-del" onclick="abrirModalEliminar(${p.id || p.id_proyecto})">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>`).join('');
+}
+
+// ─── Select de clientes ───────────────────────────────────────
+async function poblarSelectClientes(idSeleccionado = '') {
+    const sel = document.getElementById('sel-cliente');
+    sel.innerHTML = '<option value="">Cargando...</option>';
+    try {
+        const res  = await fetch('php/clientes_lista.php');
+        const data = await res.json();
+        sel.innerHTML = '<option value="">Selecciona un cliente</option>';
+        data.forEach(c => {
+            const o = document.createElement('option');
+            o.value = c.id;
+            o.textContent = c.nombre_empresa;
+            if (String(c.id) === String(idSeleccionado)) o.selected = true;
+            sel.appendChild(o);
+        });
+    } catch(e) { sel.innerHTML = '<option>Error cargando clientes</option>'; }
+}
+
+// ─── Guardar proyecto ─────────────────────────────────────────
+async function guardarProyecto() {
+    const nombre     = document.getElementById('proyectoNombre').value.trim();
+    const idCliente  = document.getElementById('sel-cliente').value;
+    const estado     = document.getElementById('proyectoEstado').value;
+    const fechaInicio= document.getElementById('proyectoFechaInicio').value;
+    const fechaFin   = document.getElementById('proyectoFechaFin').value;
+
+    if (!nombre || !idCliente || !fechaInicio || !fechaFin) {
+        return mostrarAlertaProyecto('Todos los campos son obligatorios.');
+    }
+
+    const datos = { nombre, idCliente, estado, fechaInicio, fechaFin };
+    if (modoEdicion) datos.id = proyectoEditId;
+
+    try {
+        const url = modoEdicion ? 'php/proyectos_actualizar.php' : 'php/proyectos_crear.php';
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+        const resp = await res.json();
+        if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
+        else mostrarAlertaProyecto('Error en el servidor');
+    } catch (e) { mostrarAlertaProyecto('Error de conexión'); }
+}
+
+// ─── Modales ──────────────────────────────────────────────────
+async function abrirModalProyecto() {
+    modoEdicion = false;
+    document.getElementById('modalProyectoTitle').textContent   = 'Nuevo Proyecto';
+    document.getElementById('btnGuardarTexto').textContent      = 'Crear proyecto';
+    document.getElementById('proyectoId').value                 = '';
+    document.getElementById('proyectoNombre').value             = '';
+    document.getElementById('proyectoFechaInicio').value        = '';
+    document.getElementById('proyectoFechaFin').value           = '';
+    ocultarAlertaProyecto();
+    document.getElementById('modalProyectoOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    await poblarSelectClientes();
+}
+
+async function abrirModalEditar(id) {
+    const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+    if (!p) return;
+    modoEdicion    = true;
+    proyectoEditId = id;
+    document.getElementById('modalProyectoTitle').textContent = 'Editar Proyecto';
+    document.getElementById('btnGuardarTexto').textContent    = 'Guardar cambios';
+    document.getElementById('proyectoNombre').value           = p.nombre || p.nombre_proyecto;
+    document.getElementById('proyectoEstado').value           = p.estado;
+    document.getElementById('proyectoFechaInicio').value      = p.fechaInicio || p.fecha_inicio;
+    document.getElementById('proyectoFechaFin').value         = p.fechaFin   || p.fecha_fin;
+    ocultarAlertaProyecto();
+    document.getElementById('modalProyectoOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    await poblarSelectClientes(p.idCliente || p.id_cliente);
+}
+
+function cerrarModalProyecto() {
+    document.getElementById('modalProyectoOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function abrirModalEliminar(id) {
+    proyectoEliminarId = id;
+    const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+    document.getElementById('eliminarNombreProyecto').textContent = p ? (p.nombre || p.nombre_proyecto) : '';
+    document.getElementById('modalEliminarOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalEliminar() {
+    document.getElementById('modalEliminarOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
+    try {
+        const res = await fetch('php/proyectos_eliminar.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: proyectoEliminarId })
+        });
+        if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
+    } catch (e) { alert('Error al eliminar'); }
+});
+
+// ─── Alertas modal proyecto ───────────────────────────────────
+function mostrarAlertaProyecto(m) {
+    const el = document.getElementById('modalProyectoAlerta');
+    el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + m;
+}
+function ocultarAlertaProyecto() {
+    const el = document.getElementById('modalProyectoAlerta');
+    el.style.display = 'none';
+    el.innerHTML = '';
+}
+
+// ─── Sesión ───────────────────────────────────────────────────
+function cerrarSesion() {
+    fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
+}
+
+// ─── Init ─────────────────────────────────────────────────────
+async function inicializar() {
+    try {
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
+
+        await cargarProyectos();
+        document.getElementById('loadingBox').style.display = 'none';
+        document.getElementById('tableWrap').style.display  = 'block';
+    } catch(e) { console.error(e); }
+}
+
+inicializar();
+</script>
+</body>
+</html>
