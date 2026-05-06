@@ -34,7 +34,6 @@ if ($monto <= 0) {
     echo json_encode(['success' => false, 'error' => 'El monto del proyecto debe ser mayor a 0']); exit;
 }
 
-// ── Validaciones anticipo ──
 if (!$anticipo_fecha) {
     echo json_encode(['success' => false, 'error' => 'La fecha del anticipo es requerida']); exit;
 }
@@ -46,6 +45,7 @@ $conn = getConexion();
 $conn->begin_transaction();
 
 try {
+    // 1. Insertar proyecto con anticipo_pagado = 1 desde el inicio
     $stmt1 = $conn->prepare(
         "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_entrega, id_cliente, monto, anticipo_pagado)
          VALUES (?, ?, ?, ?, ?, ?, 1)"
@@ -71,6 +71,35 @@ try {
     $stmt2->close();
 
     $conn->commit();
+
+    $IVA_PCT          = 0.13;
+    $monto_factura    = $anticipo_monto;
+    $subtotal_factura = round($monto_factura / (1 + $IVA_PCT), 2);
+    $iva_factura      = round($monto_factura - $subtotal_factura, 2);
+    $id_usuario       = $_SESSION['id_usuario'];
+    $fecha_emision    = date('Y-m-d');
+    $anio             = date('Y');
+
+    $stmt_n = $conn->prepare("SELECT COUNT(*) AS cnt FROM factura WHERE YEAR(fecha_emision) = ?");
+    $stmt_n->bind_param("i", $anio);
+    $stmt_n->execute();
+    $cnt = $stmt_n->get_result()->fetch_assoc()['cnt'];
+    $stmt_n->close();
+    $numero_factura = 'TN-' . $anio . '-' . str_pad($cnt + 1, 6, '0', STR_PAD_LEFT);
+
+    $stmt_f = $conn->prepare(
+        "INSERT INTO factura (numero_factura, id_cliente, id_proyecto, subtotal, iva, total,
+                              estado, generada_por, fecha_emision)
+         VALUES (?, ?, ?, ?, ?, ?, 'Pendiente', ?, ?)"
+    );
+    $stmt_f->bind_param("siidddis",
+        $numero_factura, $idCliente, $id_proyecto,
+        $subtotal_factura, $iva_factura, $monto_factura,
+        $id_usuario, $fecha_emision
+    );
+    $stmt_f->execute();
+    $stmt_f->close();
+
     echo json_encode(['success' => true, 'id_proyecto' => $id_proyecto]);
 
 } catch (Exception $e) {

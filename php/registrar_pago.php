@@ -20,11 +20,9 @@ $comprobante = trim($_POST['comprobante'] ?? '');
 if (!$id_proyecto || !$tipo_pago || !$fecha_pago || !$metodo) {
     echo json_encode(['error' => true, 'mensaje' => 'Todos los campos son requeridos.']); exit;
 }
-
 if (!in_array($tipo_pago, ['Parcial', 'Saldo Final'])) {
-    echo json_encode(['error' => true, 'mensaje' => 'Tipo de pago no permitido. Los anticipos se registran al crear el proyecto.']); exit;
+    echo json_encode(['error' => true, 'mensaje' => 'Tipo de pago no permitido.']); exit;
 }
-
 if ($monto <= 0) {
     echo json_encode(['error' => true, 'mensaje' => 'El monto debe ser mayor a 0.']); exit;
 }
@@ -34,6 +32,7 @@ if (!in_array($metodo, ['Efectivo', 'Transferencia', 'Cheque'])) {
 
 $conn = getConexion();
 
+// Saldo pendiente del proyecto
 $stmt = $conn->prepare(
     "SELECT p.monto AS monto_proyecto,
             COALESCE(SUM(pg.monto), 0) AS total_pagado
@@ -76,11 +75,49 @@ if (!$stmt2->execute()) {
     echo json_encode(['error' => true, 'mensaje' => 'Error al guardar el pago: ' . $stmt2->error]); exit;
 }
 $stmt2->close();
+
+$IVA_PCT          = 0.13;
+$subtotal_factura = round($monto / (1 + $IVA_PCT), 2);
+$iva_factura      = round($monto - $subtotal_factura, 2);
+$id_usuario       = $_SESSION['id_usuario'];
+$fecha_emision    = date('Y-m-d');
+$anio             = date('Y');
+
+$stmt_c = $conn->prepare("SELECT id_cliente FROM proyecto WHERE id_proyecto = ?");
+$stmt_c->bind_param("i", $id_proyecto);
+$stmt_c->execute();
+$row_c = $stmt_c->get_result()->fetch_assoc();
+$stmt_c->close();
+
+if ($row_c) {
+    $id_cliente = $row_c['id_cliente'];
+
+    $stmt_n = $conn->prepare("SELECT COUNT(*) AS cnt FROM factura WHERE YEAR(fecha_emision) = ?");
+    $stmt_n->bind_param("i", $anio);
+    $stmt_n->execute();
+    $cnt = $stmt_n->get_result()->fetch_assoc()['cnt'];
+    $stmt_n->close();
+    $numero_factura = 'TN-' . $anio . '-' . str_pad($cnt + 1, 6, '0', STR_PAD_LEFT);
+
+    $stmt_f = $conn->prepare(
+        "INSERT INTO factura (numero_factura, id_cliente, id_proyecto, subtotal, iva, total,
+                              estado, generada_por, fecha_emision)
+         VALUES (?, ?, ?, ?, ?, ?, 'Pendiente', ?, ?)"
+    );
+    $stmt_f->bind_param("siidddis",
+        $numero_factura, $id_cliente, $id_proyecto,
+        $subtotal_factura, $iva_factura, $monto,
+        $id_usuario, $fecha_emision
+    );
+    $stmt_f->execute();
+    $stmt_f->close();
+}
+
 $conn->close();
 
 $msg = $tipo_pago === 'Saldo Final'
-    ? 'Saldo final registrado. El proyecto queda saldado.'
-    : 'Pago parcial registrado exitosamente.';
+    ? 'Saldo final registrado. Factura generada.'
+    : 'Pago parcial registrado. Factura generada.';
 
 echo json_encode(['error' => false, 'mensaje' => $msg]);
 ?>
