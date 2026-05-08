@@ -7,6 +7,208 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ── PRINT STYLES ─────────────────────────────────────────────────── */
+        @media print {
+            /* Ocultar todo excepto la factura imprimible */
+            body * { visibility: hidden; }
+            #facturaImprimible,
+            #facturaImprimible * { visibility: visible; }
+
+            #facturaImprimible {
+                position: fixed;
+                top: 0; left: 0;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+        }
+
+        /* ── FACTURA IMPRIMIBLE (oculta en pantalla) ──────────────────────── */
+        #facturaImprimible {
+            display: none;
+            font-family: 'Inter', sans-serif;
+            background: #fff;
+            color: #1e1e2e;
+            padding: 40px;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .fi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #6d28d9;
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+        .fi-brand {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #6d28d9;
+            letter-spacing: -0.5px;
+        }
+
+        .fi-brand span {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: #64748b;
+            margin-top: 2px;
+            letter-spacing: 0;
+        }
+
+        .fi-numero {
+            text-align: right;
+        }
+
+        .fi-numero h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e1e2e;
+            margin: 0 0 4px 0;
+        }
+
+        .fi-numero p {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .fi-badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .fi-badge.Pendiente { background: #fef3c7; color: #d97706; }
+        .fi-badge.Pagada    { background: #d1fae5; color: #059669; }
+        .fi-badge.Anulada   { background: #fee2e2; color: #dc2626; }
+
+        .fi-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .fi-info-box h4 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin: 0 0 8px 0;
+        }
+
+        .fi-info-box p {
+            font-size: 0.9rem;
+            color: #1e1e2e;
+            margin: 0 0 3px 0;
+            font-weight: 500;
+        }
+
+        .fi-info-box p.sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .fi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .fi-table thead tr {
+            background: #6d28d9;
+            color: #fff;
+        }
+
+        .fi-table th {
+            padding: 10px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .fi-table th:last-child,
+        .fi-table td:last-child { text-align: right; }
+
+        .fi-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+
+        .fi-table td {
+            padding: 12px 14px;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+
+        .fi-totales {
+            margin-left: auto;
+            width: 260px;
+        }
+
+        .fi-totales table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .fi-totales td {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .fi-totales td:last-child { text-align: right; font-weight: 600; }
+
+        .fi-totales tr.total-final td {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #6d28d9;
+            border-top: 2px solid #6d28d9;
+            padding-top: 10px;
+        }
+
+        .fi-footer {
+            margin-top: 36px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        /* ── BOTÓN PDF EN MODAL ──────────────────────────────────────────── */
+        .btn-pdf {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #6d28d9;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 16px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-pdf:hover { background: #5b21b6; }
+    </style>
 </head>
 <body class="dash-body">
 
@@ -140,7 +342,7 @@
     </main>
 </div>
 
-<!-- ===== MODAL DETALLE / CAMBIAR ESTADO ===== -->
+<!-- ===== MODAL DETALLE ===== -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal" role="dialog" aria-modal="true" style="max-width:580px;">
 
@@ -210,19 +412,98 @@
                 </div>
             </div>
 
+            <!-- ── BOTÓN DESCARGAR PDF (HU-14) ── -->
+            <button class="btn-pdf" onclick="descargarPDF()">
+                <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+            </button>
+
         </div>
     </div>
 </div>
 
+<!-- ===== FACTURA IMPRIMIBLE) ===== -->
+<div id="facturaImprimible">
+    <div class="fi-header">
+        <div class="fi-brand">
+            🔷 TechNova
+            <span>Servicios de Tecnología</span>
+        </div>
+        <div class="fi-numero">
+            <h2 id="fiNumero">—</h2>
+            <p id="fiFecha">—</p>
+            <span class="fi-badge" id="fiEstadoBadge">—</span>
+        </div>
+    </div>
+
+    <div class="fi-info-grid">
+        <div class="fi-info-box">
+            <h4>Facturado a</h4>
+            <p id="fiCliente">—</p>
+            <p class="sub" id="fiProyecto">—</p>
+        </div>
+        <div class="fi-info-box">
+            <h4>Generado por</h4>
+            <p id="fiGenerado">—</p>
+            <p class="sub">TechNova</p>
+        </div>
+    </div>
+
+    <table class="fi-table">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Subtotal</th>
+                <th>IVA (13%)</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="fiDescripcion">—</td>
+                <td id="fiSubtotal">—</td>
+                <td id="fiIva">—</td>
+                <td id="fiTotal">—</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="fi-totales">
+        <table>
+            <tr>
+                <td>Subtotal</td>
+                <td id="fiTotSubtotal">—</td>
+            </tr>
+            <tr>
+                <td>IVA (13%)</td>
+                <td id="fiTotIva">—</td>
+            </tr>
+            <tr>
+                <td>Total Pagado</td>
+                <td id="fiTotPagado">—</td>
+            </tr>
+            <tr class="total-final">
+                <td>TOTAL</td>
+                <td id="fiTotTotal">—</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="fi-footer">
+        <p>TechNova — Documento generado el <span id="fiGeneradoEn">—</span></p>
+        <p>Este documento es una representación válida de la factura emitida.</p>
+    </div>
+</div>
+
 <script>
-// ───── GLOBALS ─────────────────────────────────────────────────────────────
+// ───── GLOBALS ──────────────────────────────────────────────────────────────
 let todasLasFacturas = [];
 let filtroActual     = '';
 let rolUsuario       = '';
+let facturaActual    = null; 
 
-// ───── SIDEBAR MÓVIL ───────────────────────────────────────────────────────
-const sidebar       = document.getElementById('sidebar');
-const overlay       = document.getElementById('sidebarOverlay');
+// ───── SIDEBAR MÓVIL ────────────────────────────────────────────────────────
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
 document.getElementById('btnMenuToggle').addEventListener('click', () => {
     sidebar.classList.toggle('open');
     overlay.classList.toggle('visible');
@@ -232,17 +513,18 @@ overlay.addEventListener('click', () => {
     overlay.classList.remove('visible');
 });
 
-// ───── MODAL ───────────────────────────────────────────────────────────────
+// ───── MODAL ────────────────────────────────────────────────────────────────
 function cerrarModal() {
     document.getElementById('modalOverlay').classList.remove('open');
     document.body.style.overflow = '';
+    facturaActual = null;
 }
 document.getElementById('modalOverlay').addEventListener('click', function(e) {
     if (e.target === this) cerrarModal();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
-// ───── CARGA DE DATOS ──────────────────────────────────────────────────────
+// ───── CARGA DE DATOS ───────────────────────────────────────────────────────
 async function cargarFacturas(estado = '') {
     try {
         const url  = 'php/facturas_lista.php' + (estado ? `?estado=${estado}` : '');
@@ -261,14 +543,12 @@ async function cargarFacturas(estado = '') {
             document.getElementById('adminSection').style.display = 'block';
         }
 
-        // Estadísticas
         const s = data.stats;
         document.getElementById('statTotal').textContent      = s.total;
         document.getElementById('statPendientes').textContent = s.pendientes;
         document.getElementById('statPagadas').textContent    = s.pagadas;
         document.getElementById('statMonto').textContent      = '$' + parseFloat(s.monto_total).toFixed(2);
 
-        // Notificación auto-pago
         if (data.auto_actualizadas > 0) {
             const n = data.auto_actualizadas;
             document.getElementById('notifTexto').textContent =
@@ -279,7 +559,7 @@ async function cargarFacturas(estado = '') {
         todasLasFacturas = data.facturas;
         renderTabla(todasLasFacturas);
 
-        document.getElementById('loading').style.display  = 'none';
+        document.getElementById('loading').style.display   = 'none';
         document.getElementById('contenido').style.display = 'block';
 
     } catch(err) {
@@ -287,7 +567,7 @@ async function cargarFacturas(estado = '') {
     }
 }
 
-// ───── RENDER TABLA ────────────────────────────────────────────────────────
+// ───── RENDER TABLA ─────────────────────────────────────────────────────────
 const BADGES = {
     Pendiente: 'badge-pendiente',
     Pagada:    'badge-pagada',
@@ -335,9 +615,11 @@ function renderTabla(lista) {
     }).join('');
 }
 
-// ───── DETALLE / MODAL ─────────────────────────────────────────────────────
+// ───── DETALLE / MODAL ──────────────────────────────────────────────────────
 function abrirDetalle(idx) {
     const f      = todasLasFacturas[idx];
+    facturaActual = f; // HU-14: guardar referencia para el PDF
+
     const pagado = parseFloat(f.total_pagado);
     const total  = parseFloat(f.total);
     const pct    = Math.min(100, Math.round((pagado / total) * 100)) || 0;
@@ -365,7 +647,49 @@ function abrirDetalle(idx) {
     document.body.style.overflow = 'hidden';
 }
 
-// ───── FILTROS Y BÚSQUEDA ──────────────────────────────────────────────────
+// ───── HU-14: DESCARGAR PDF ─────────────────────────────────────────────────
+function descargarPDF() {
+    if (!facturaActual) return;
+
+    const f      = facturaActual;
+    const pagado = parseFloat(f.total_pagado);
+    const total  = parseFloat(f.total);
+    const fecha  = new Date(f.fecha_emision).toLocaleDateString('es-SV', {
+        day:'2-digit', month:'long', year:'numeric'
+    });
+    const ahora  = new Date().toLocaleDateString('es-SV', {
+        day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+
+    // Poblar la factura imprimible
+    document.getElementById('fiNumero').textContent       = f.numero_factura;
+    document.getElementById('fiFecha').textContent        = 'Fecha de emisión: ' + fecha;
+    document.getElementById('fiCliente').textContent      = f.nombre_empresa;
+    document.getElementById('fiProyecto').textContent     = 'Proyecto: ' + f.nombre_proyecto;
+    document.getElementById('fiGenerado').textContent     = f.generado_por || '—';
+    document.getElementById('fiDescripcion').textContent  = 'Servicios de desarrollo — ' + f.nombre_proyecto;
+    document.getElementById('fiSubtotal').textContent     = '$' + parseFloat(f.subtotal).toFixed(2);
+    document.getElementById('fiIva').textContent          = '$' + parseFloat(f.iva).toFixed(2);
+    document.getElementById('fiTotal').textContent        = '$' + total.toFixed(2);
+    document.getElementById('fiTotSubtotal').textContent  = '$' + parseFloat(f.subtotal).toFixed(2);
+    document.getElementById('fiTotIva').textContent       = '$' + parseFloat(f.iva).toFixed(2);
+    document.getElementById('fiTotPagado').textContent    = '$' + pagado.toFixed(2);
+    document.getElementById('fiTotTotal').textContent     = '$' + total.toFixed(2);
+    document.getElementById('fiGeneradoEn').textContent   = ahora;
+
+    // Badge de estado
+    const badge = document.getElementById('fiEstadoBadge');
+    badge.textContent  = f.estado;
+    badge.className    = 'fi-badge ' + f.estado;
+
+    // Mostrar brevemente para imprimir y luego ocultar
+    const el = document.getElementById('facturaImprimible');
+    el.style.display = 'block';
+    window.print();
+    el.style.display = 'none';
+}
+
+// ───── FILTROS Y BÚSQUEDA ───────────────────────────────────────────────────
 function aplicarFiltro(estado, btnEl) {
     filtroActual = estado;
     document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('activo'));
@@ -386,13 +710,13 @@ function buscarFactura() {
     renderTabla(filtrada);
 }
 
-// ───── SESIÓN ──────────────────────────────────────────────────────────────
+// ───── SESIÓN ───────────────────────────────────────────────────────────────
 async function cerrarSesion() {
     await fetch('php/logout.php');
     window.location.href = 'login.html';
 }
 
-// ───── INICIO ──────────────────────────────────────────────────────────────
+// ───── INICIO ───────────────────────────────────────────────────────────────
 cargarFacturas();
 </script>
 </body>
