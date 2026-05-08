@@ -662,23 +662,32 @@ async function cargarProyectos() {
             return;
         }
 
-        sel.innerHTML = '<option value="">— Selecciona un proyecto —</option>' +
-            lista.map(p => {
-                const saldado = p.saldado == 1;
-                return `<option
-                    value="${saldado ? '' : p.id_proyecto}"
-                    data-empresa="${p.nombre_empresa}"
-                    data-estado="${p.estado}"
-                    data-entrega="${p.fecha_entrega || ''}"
-                    ${saldado ? 'disabled style="color:#94a3b8;"' : ''}
-                >${saldado ? '✓ Saldado — ' : ''}${p.nombre} · ${p.nombre_empresa}</option>`;
-            }).join('');
+        sel.innerHTML = '<option value="">— Selecciona un proyecto —</option>';
+
+        lista.forEach(p => {
+            const opt = document.createElement('option');
+            const saldado = p.saldado == 1;
+
+            if (saldado) {
+                opt.value    = '';
+                opt.disabled = true;
+                opt.text     = '✓ Saldado · ' + p.nombre + ' — ' + p.nombre_empresa;
+                opt.style.color = '#94a3b8';
+            } else {
+                opt.value                  = p.id_proyecto;
+                opt.dataset.empresa        = p.nombre_empresa;
+                opt.dataset.estado         = p.estado;
+                opt.dataset.entrega        = p.fecha_entrega || '';
+                opt.text                   = p.nombre + ' · ' + p.nombre_empresa;
+            }
+
+            sel.appendChild(opt);
+        });
 
     } catch(e) {
         document.getElementById('fProyecto').innerHTML = '<option value="">Error al cargar</option>';
     }
 }
-
 let proyectoActual = null; // { monto, total_pagado, saldo_pendiente }
 
 function onProyectoChange() {
