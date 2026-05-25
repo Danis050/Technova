@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="main-header">
+    <nav class="navbar">
+        <div class="logo"><a href="index.html"><img src="img/logo.svg" alt="Logo TechNova" width="190" height="34"></a></div>
+        <button class="hamburger" id="hamburger" aria-label="Menú"><span></span><span></span><span></span></button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="index.html#productos">Productos</a></li>
+            <li><a href="index.html#services_page">Servicios</a></li>
+            <li><a href="index.html#projects">Proyectos</a></li>
+            <li><a href="index.html#contacto">Contacto</a></li>
+        </ul>
+        <div class="nav-actions" id="navActions">
+            <a href="login.html" class="btn-login">Inicio de Sesión</a>
+        </div>
+    </nav>
+</header>
+
+<section class="recovery-wrapper">
+    <div class="recovery-container">
+        <div class="recovery-header">
+            <div class="icon-circle"><i class="fa-solid fa-key"></i></div>
+            <h2 id="headerTitle">Recuperar Contraseña</h2>
+            <p id="headerDesc">Ingresa tu correo para recibir un código de verificación</p>
+        </div>
+
+        <div class="steps-indicator">
+            <div class="step-dot active" id="sd1">1</div>
+            <div class="step-line" id="sl1"></div>
+            <div class="step-dot" id="sd2">2</div>
+            <div class="step-line" id="sl2"></div>
+            <div class="step-dot" id="sd3">3</div>
+        </div>
+
+        <div class="alerta-rec" id="alerta"></div>
+
+        <!-- PASO 1: Email -->
+        <div class="step-panel active" id="panel1">
+            <div class="field-recovery">
+                <label>Correo electrónico</label>
+                <input type="email" id="recEmail" placeholder="tu@email.com">
+            </div>
+            <button class="btn-recovery" onclick="enviarCodigo()">
+                <i class="fa-solid fa-paper-plane"></i> Enviar Código
+            </button>
+        </div>
+
+        <!-- PASO 2: Código -->
+        <div class="step-panel" id="panel2">
+            <p style="text-align:center;font-size:.85rem;color:#64748b;margin-bottom:8px;">Ingresa el código de 4 dígitos enviado a tu correo</p>
+            <div class="code-inputs">
+                <input type="text" maxlength="1" id="c1" oninput="autoTab(this,'c2')">
+                <input type="text" maxlength="1" id="c2" oninput="autoTab(this,'c3')">
+                <input type="text" maxlength="1" id="c3" oninput="autoTab(this,'c4')">
+                <input type="text" maxlength="1" id="c4" oninput="autoTab(this,null)">
+            </div>
+            <button class="btn-recovery" onclick="verificarCodigo()">
+                <i class="fa-solid fa-shield-halved"></i> Verificar Código
+            </button>
+            <p style="text-align:center;margin-top:14px;font-size:.82rem;color:#94a3b8;">¿No recibiste el código? <a href="#" onclick="reenviar()" style="color:#6d28d9;font-weight:600;">Reenviar</a></p>
+        </div>
+
+        <!-- PASO 3: Nueva contraseña -->
+        <div class="step-panel" id="panel3">
+            <div class="field-recovery">
+                <label>Nueva contraseña</label>
+                <input type="password" id="newPass" placeholder="Mínimo 6 caracteres" oninput="checkStrength()">
+                <div class="password-strength"><div class="bar" id="strengthBar"></div></div>
+                <p class="strength-text" id="strengthText"></p>
+            </div>
+            <div class="field-recovery">
+                <label>Confirmar contraseña</label>
+                <input type="password" id="confirmPass" placeholder="Repite la contraseña">
+            </div>
+            <button class="btn-recovery" onclick="cambiarContrasena()">
+                <i class="fa-solid fa-lock"></i> Cambiar Contraseña
+            </button>
+        </div>
+
+        <!-- ÉXITO -->
+        <div class="step-panel" id="panelOk">
+            <div class="success-check">
+                <i class="fa-solid fa-circle-check"></i>
+                <h3>¡Contraseña actualizada!</h3>
+                <p>Tu contraseña ha sido cambiada exitosamente. Ya puedes iniciar sesión.</p>
+            </div>
+            <a href="login.html" class="btn-recovery" style="text-decoration:none;margin-top:12px;">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Ir al Login
+            </a>
+        </div>
+
+        <a href="login.html" class="link-back" id="linkBack"><i class="fa-solid fa-arrow-left" style="margin-right:4px;"></i> Volver al login</a>
+    </div>
+</section>
+
+<script>
+const hamburger=document.getElementById('hamburger');const navLinks=document.getElementById('navLinks');const navActions=document.getElementById('navActions');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');navLinks.classList.toggle('open');navActions.classList.toggle('open');});
+
+let currentStep=1;
+function setStep(n){
+    currentStep=n;
+    for(let i=1;i<=3;i++){
+        document.getElementById('panel'+i).classList.toggle('active',i===n);
+        const dot=document.getElementById('sd'+i);
+        dot.className='step-dot'+(i<n?' done':i===n?' active':'');
+        dot.innerHTML=i<n?'<i class="fa-solid fa-check" style="font-size:.7rem;"></i>':i;
+    }
+    if(n===1){document.getElementById('sl1').className='step-line';document.getElementById('sl2').className='step-line';}
+    if(n===2){document.getElementById('sl1').className='step-line done';document.getElementById('sl2').className='step-line';}
+    if(n>=3){document.getElementById('sl1').className='step-line done';document.getElementById('sl2').className='step-line done';}
+    document.getElementById('alerta').className='alerta-rec';
+}
+
+function showAlert(msg,type='error'){
+    const al=document.getElementById('alerta');
+    al.className='alerta-rec '+type;
+    al.innerHTML=`<i class="fa-solid fa-${type==='ok'?'circle-check':'circle-exclamation'}"></i> ${msg}`;
+    setTimeout(()=>{al.className='alerta-rec';},4000);
+}
+
+function enviarCodigo(){
+    const email=document.getElementById('recEmail').value.trim();
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showAlert('Ingresa un correo válido.');return;}
+    showAlert('Código enviado a '+email,'ok');
+    document.getElementById('headerTitle').textContent='Verificar Código';
+    document.getElementById('headerDesc').textContent='Revisa tu bandeja de entrada';
+    setTimeout(()=>setStep(2),800);
+}
+
+function autoTab(el,nextId){
+    el.value=el.value.replace(/[^0-9]/g,'');
+    if(el.value&&nextId)document.getElementById(nextId).focus();
+}
+
+function verificarCodigo(){
+    const code=[1,2,3,4].map(i=>document.getElementById('c'+i).value).join('');
+    if(code.length<4){showAlert('Ingresa el código completo.');return;}
+    document.getElementById('headerTitle').textContent='Nueva Contraseña';
+    document.getElementById('headerDesc').textContent='Crea tu nueva contraseña segura';
+    setStep(3);
+}
+
+function reenviar(){showAlert('Código reenviado exitosamente.','ok');}
+
+function checkStrength(){
+    const p=document.getElementById('newPass').value;
+    const bar=document.getElementById('strengthBar');
+    const txt=document.getElementById('strengthText');
+    let s=0;if(p.length>=6)s++;if(p.length>=10)s++;if(/[A-Z]/.test(p))s++;if(/[0-9]/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;
+    const levels=[{w:'0%',c:'#e2e8f0',t:''},{w:'20%',c:'#ef4444',t:'Muy débil'},{w:'40%',c:'#f97316',t:'Débil'},{w:'60%',c:'#f59e0b',t:'Media'},{w:'80%',c:'#22c55e',t:'Fuerte'},{w:'100%',c:'#059669',t:'Muy fuerte'}];
+    const l=levels[s];bar.style.width=l.w;bar.style.background=l.c;txt.textContent=l.t;txt.style.color=l.c;
+}
+
+function cambiarContrasena(){
+    const p=document.getElementById('newPass').value;
+    const c=document.getElementById('confirmPass').value;
+    if(p.length<6){showAlert('La contraseña debe tener al menos 6 caracteres.');return;}
+    if(p!==c){showAlert('Las contraseñas no coinciden.');return;}
+    document.getElementById('headerTitle').textContent='¡Listo!';
+    document.getElementById('headerDesc').textContent='Proceso completado';
+    document.getElementById('panel3').classList.remove('active');
+    document.getElementById('panelOk').classList.add('active');
+    document.getElementById('linkBack').style.display='none';
+    for(let i=1;i<=3;i++){document.getElementById('sd'+i).className='step-dot done';document.getElementById('sd'+i).innerHTML='<i class="fa-solid fa-check" style="font-size:.7rem;"></i>';}
+    document.getElementById('sl1').className='step-line done';document.getElementById('sl2').className='step-line done';
+}
+</script>
+</body>
+</html>
