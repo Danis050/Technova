@@ -2245,3 +2245,21 @@ body.admin {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: none; }
 }
+
+#navActions {
+    display: flex;
+    align-items: center; /* Alinea verticalmente los elementos del contenedor */
+    gap: 15px;           /* Espacio entre el botón de login y el icono */
+}
+
+.nav-user-icon {
+    display: flex;
+    align-items: center;
+    color: #333;         /* Ajusta este color al color de tus enlaces */
+    text-decoration: none;
+    font-size: 1.2rem;   /* Ajusta el tamaño del icono según prefieras */
+}
+
+.nav-user-icon:hover {
+    color: #007BFF;      /* Opcional: cambio de color al pasar el mouse */
+}
