@@ -7,188 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .inc-layout {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-        @media (max-width: 1024px) { .inc-layout { grid-template-columns: 1fr; } }
-
-        .form-panel {
-            background: #fff;
-            border-radius: 16px;
-            border: 1.5px solid #e2e8f0;
-            overflow: hidden;
-            position: sticky;
-            top: 24px;
-        }
-        .form-panel-header {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            padding: 22px 24px;
-            color: #fff;
-        }
-        .form-panel-header h2 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin: 0 0 4px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .form-panel-header p { font-size: 0.78rem; opacity: 0.82; margin: 0; }
-        .form-panel-body { padding: 24px; }
-
-        .field-group { margin-bottom: 16px; }
-        .field-group label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-        }
-        .field-group label .req { color: #ef4444; margin-left: 2px; }
-        .field-group input,
-        .field-group select,
-        .field-group textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-family: inherit;
-            color: #1e293b;
-            background: #f8fafc;
-            outline: none;
-            transition: border-color .15s, box-shadow .15s;
-            box-sizing: border-box;
-        }
-        .field-group textarea { resize: vertical; min-height: 100px; }
-        .field-group input:focus,
-        .field-group select:focus,
-        .field-group textarea:focus {
-            border-color: #dc2626;
-            box-shadow: 0 0 0 3px rgba(220,38,38,.1);
-            background: #fff;
-        }
-
-        .prioridad-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .prio-opt input { display: none; }
-        .prio-card {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #64748b;
-            background: #f8fafc;
-            transition: all .15s;
-        }
-        .prio-opt input:checked + .prio-card[data-p="Baja"]    { border-color:#22c55e; background:#f0fdf4; color:#15803d; }
-        .prio-opt input:checked + .prio-card[data-p="Media"]   { border-color:#f59e0b; background:#fffbeb; color:#b45309; }
-        .prio-opt input:checked + .prio-card[data-p="Alta"]    { border-color:#f97316; background:#fff7ed; color:#c2410c; }
-        .prio-opt input:checked + .prio-card[data-p="Crítica"] { border-color:#dc2626; background:#fef2f2; color:#b91c1c; }
-        .prio-card:hover { border-color: #cbd5e1; background: #f1f5f9; }
-
-        .alerta {
-            display: none;
-            padding: 11px 14px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            font-size: 0.82rem;
-            font-weight: 500;
-            align-items: center;
-            gap: 8px;
-        }
-        .alerta.error { display: flex; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
-        .alerta.ok    { display: flex; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
-
-        .btn-enviar {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.88rem;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: opacity .15s, transform .1s;
-        }
-        .btn-enviar:hover { opacity: .9; }
-        .btn-enviar:active { transform: scale(.98); }
-        .btn-enviar:disabled { opacity: .6; cursor: not-allowed; }
-
-        /* Tabla de incidencias */
-        .card { background: #fff; border-radius: 16px; border: 1.5px solid #e2e8f0; overflow: hidden; }
-        .card-header {
-            padding: 18px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .card-header h2 { font-size: 0.95rem; font-weight: 700; margin: 0; }
-        .card-body { padding: 0; }
-
-        .inc-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
-        .inc-table th {
-            background: #f8fafc;
-            padding: 11px 16px;
-            text-align: left;
-            font-size: 0.73rem;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .inc-table td {
-            padding: 13px 16px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #1e293b;
-            vertical-align: top;
-        }
-        .inc-table tr:last-child td { border-bottom: none; }
-        .inc-table tr:hover td { background: #fafafa; }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 600;
-        }
-        .badge-baja    { background: #dcfce7; color: #15803d; }
-        .badge-media   { background: #fef9c3; color: #854d0e; }
-        .badge-alta    { background: #ffedd5; color: #c2410c; }
-        .badge-critica { background: #fee2e2; color: #b91c1c; }
-        .badge-abierta   { background: #dbeafe; color: #1d4ed8; }
-        .badge-en-proceso { background: #fef9c3; color: #854d0e; }
-        .badge-resuelta  { background: #dcfce7; color: #15803d; }
-        .badge-cerrada   { background: #f1f5f9; color: #64748b; }
-
-        .empty-state {
-            padding: 48px 24px;
-            text-align: center;
-            color: #94a3b8;
-        }
-        .empty-state i { font-size: 2rem; margin-bottom: 12px; display: block; }
-    </style>
 </head>
 <body class="dash-body">
 
@@ -261,6 +79,28 @@
                     <div class="field-group">
                         <label>Descripción <span class="req">*</span></label>
                         <textarea id="descripcion" placeholder="Describe el problema con el mayor detalle posible..."></textarea>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Categoría <span class="req">*</span></label>
+                        <div class="prioridad-grid">
+                            <label class="prio-opt">
+                                <input type="radio" name="categoria" value="Bug">
+                                <span class="prio-card" data-p="Alta" style="border-color:#e2e8f0;"><i class="fa-solid fa-bug" style="color:#ef4444;font-size:.8rem;"></i> Bug</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="categoria" value="Funcionalidad">
+                                <span class="prio-card" data-p="Media" style="border-color:#e2e8f0;"><i class="fa-solid fa-puzzle-piece" style="color:#3b82f6;font-size:.8rem;"></i> Funcionalidad</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="categoria" value="Rendimiento">
+                                <span class="prio-card" data-p="Baja" style="border-color:#e2e8f0;"><i class="fa-solid fa-gauge-high" style="color:#f59e0b;font-size:.8rem;"></i> Rendimiento</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="categoria" value="Otro">
+                                <span class="prio-card" data-p="Baja" style="border-color:#e2e8f0;"><i class="fa-solid fa-ellipsis" style="color:#64748b;font-size:.8rem;"></i> Otro</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="field-group">
