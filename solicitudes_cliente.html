@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Solicitudes | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dash-body">
+<div class="mobile-topbar"><span class="brand">🔷 TechNova</span><button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dash-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo"><img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova</div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Mi Portal</div>
+            <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+            <a href="solicitudes_cliente.html" class="active"><i class="fa-solid fa-ticket"></i> Mis Solicitudes</a>
+            <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia</a>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user"><strong id="sidebarNombre">Cliente</strong><span id="sidebarRol">Cliente</span></div>
+    </aside>
+
+    <main class="dash-main">
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:10px;"></i>Mis Solicitudes</h1>
+                <p>Visualiza el estado de tus solicitudes de soporte</p>
+            </div>
+            <button class="btn-logout" onclick="location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </div>
+
+        <!-- SCRUM-88: Alertas de prioridad alta -->
+        <div class="alert-banner critica" id="alertaCritica">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>Tienes <strong>1 solicitud crítica</strong> pendiente de atención</span>
+            <button class="alert-close" onclick="this.parentElement.style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="stats-mini">
+            <div class="stat-mini"><div class="num" style="color:#2563eb;">5</div><div class="label">Total</div></div>
+            <div class="stat-mini"><div class="num" style="color:#d97706;">2</div><div class="label">En Proceso</div></div>
+            <div class="stat-mini"><div class="num" style="color:#059669;">2</div><div class="label">Resueltas</div></div>
+            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Críticas</div></div>
+        </div>
+
+        <div class="table-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0;"><i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>Listado de Solicitudes</h3>
+            </div>
+            <div class="filtros-sol">
+                <button class="chip active" onclick="filtrar('todos',this)">Todas</button>
+                <button class="chip" onclick="filtrar('Abierta',this)">Abiertas</button>
+                <button class="chip" onclick="filtrar('En Proceso',this)">En Proceso</button>
+                <button class="chip" onclick="filtrar('Resuelta',this)">Resueltas</button>
+                <button class="chip" onclick="filtrar('Cerrada',this)">Cerradas</button>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="sol-table">
+                    <thead><tr><th>ID</th><th>Asunto</th><th>Proyecto</th><th>Prioridad</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+                    <tbody id="tablaSol"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+document.getElementById('btnMenuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');});
+document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');});
+
+const solicitudes=[
+    {id:'SOL-001',asunto:'Error en módulo de pagos',proyecto:'Sitio Web Corporativo',prioridad:'Crítica',estado:'Abierta',fecha:'2026-05-20',desc:'El módulo de pagos muestra un error 500 al procesar tarjetas de crédito.'},
+    {id:'SOL-002',asunto:'Ajuste de colores en diseño',proyecto:'App Móvil Delivery',prioridad:'Baja',estado:'Resuelta',fecha:'2026-05-18',desc:'Los colores del header no coinciden con la guía de marca.'},
+    {id:'SOL-003',asunto:'Lentitud en carga de reportes',proyecto:'Sistema ERP Finanzas',prioridad:'Alta',estado:'En Proceso',fecha:'2026-05-22',desc:'Los reportes financieros tardan más de 30 segundos en cargar.'},
+    {id:'SOL-004',asunto:'Agregar filtro de búsqueda',proyecto:'Sitio Web Corporativo',prioridad:'Media',estado:'En Proceso',fecha:'2026-05-15',desc:'Se necesita un filtro de búsqueda en la sección de productos.'},
+    {id:'SOL-005',asunto:'Corrección de factura duplicada',proyecto:'Sistema ERP Finanzas',prioridad:'Media',estado:'Resuelta',fecha:'2026-05-10',desc:'Se generó una factura duplicada para el cliente ABC Corp.'}
+];
+
+const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Crítica':'b-critica'};
+const estClass={'Abierta':'b-abierta','En Proceso':'b-en-proceso','Resuelta':'b-resuelta','Cerrada':'b-cerrada'};
+
+function diasDesde(f){return Math.floor((new Date()-new Date(f))/(1000*60*60*24));}
+
+function render(lista){
+    document.getElementById('tablaSol').innerHTML=lista.map((s,i)=>{
+        const esAlta=s.prioridad==='Alta'||s.prioridad==='Crítica';
+        return`
+        <tr>
+            <td><strong>${s.id}</strong></td>
+            <td>${s.asunto}</td>
+            <td style="color:#64748b;">${s.proyecto}</td>
+            <td><span class="badge-sol ${prioClass[s.prioridad]} ${esAlta?'prio-alta-indicator':''}">${s.prioridad}</span></td>
+            <td><span class="badge-sol ${estClass[s.estado]}">${s.estado}</span></td>
+            <td><span class="tiempo-badge"><i class="fa-regular fa-clock"></i>hace ${diasDesde(s.fecha)}d</span></td>
+            <td><button class="sol-detail-toggle" onclick="toggleDetail('det${i}')">Ver detalle</button></td>
+        </tr>
+        <tr class="sol-detail-row" id="det${i}">
+            <td colspan="7"><div class="sol-detail-content"><strong>Descripción:</strong> ${s.desc}</div></td>
+        </tr>`;
+    }).join('');
+}
+
+function toggleDetail(id){document.getElementById(id).classList.toggle('open');}
+
+function filtrar(estado,btn){
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    render(estado==='todos'?solicitudes:solicitudes.filter(s=>s.estado===estado));
+}
+
+render(solicitudes);
+</script>
+</body>
+</html>
