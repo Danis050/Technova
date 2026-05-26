@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Solicitudes | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dash-body">
+    <div class="mobile-topbar"><span class="brand">🔷 TechNova</span><button class="btn-menu-toggle"
+            id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="dash-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo"><img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova</div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html" class="active"><i class="fa-solid fa-ticket"></i> Solicitudes <span
+                        class="counter-badge">3</span></a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user"><strong>Administrador</strong><span>Administrador</span></div>
+        </aside>
+
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:10px;"></i>Gestión de
+                        Solicitudes</h1>
+                    <p>Administra todas las solicitudes de soporte</p>
+                </div>
+                <button class="btn-logout" onclick="location.href='login.html'"><i
+                        class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            </div>
+
+            <div class="alert-top" id="alertaTop">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span><strong>2 solicitudes críticas</strong> requieren atención inmediata</span>
+                <button class="close-al" onclick="this.parentElement.style.display='none'"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-g">
+                    <div class="n" style="color:#2563eb">8</div>
+                    <div class="l">Total</div>
+                </div>
+                <div class="stat-g">
+                    <div class="n" style="color:#d97706">3</div>
+                    <div class="l">Abiertas</div>
+                </div>
+                <div class="stat-g">
+                    <div class="n" style="color:#0369a1">2</div>
+                    <div class="l">En Proceso</div>
+                </div>
+                <div class="stat-g">
+                    <div class="n" style="color:#059669">2</div>
+                    <div class="l">Resueltas</div>
+                </div>
+                <div class="stat-g">
+                    <div class="n" style="color:#dc2626">1</div>
+                    <div class="l">Cerradas</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div
+                    style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+                    <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0;"><i class="fa-solid fa-list-check"
+                            style="color:#6d28d9;margin-right:6px;"></i>Todas las Solicitudes</h3>
+                </div>
+                <div class="filtros-admin">
+                    <button class="chip-f active" onclick="filtrar('todos',this)">Todas</button>
+                    <button class="chip-f" onclick="filtrar('Abierta',this)">Abiertas</button>
+                    <button class="chip-f" onclick="filtrar('En Proceso',this)">En Proceso</button>
+                    <button class="chip-f" onclick="filtrar('Resuelta',this)">Resueltas</button>
+                    <button class="chip-f" onclick="filtrar('Cerrada',this)">Cerradas</button>
+                    <select id="filtroPrio" onchange="filtrarPrio()">
+                        <option value="">Todas las prioridades</option>
+                        <option value="Crítica">Crítica</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Media">Media</option>
+                        <option value="Baja">Baja</option>
+                    </select>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="gest-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Asunto</th>
+                                <th>Proyecto</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Asignado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaGest"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL DETALLE -->
+    <div class="modal-overlay" id="modalDetalle">
+        <div class="modal" role="dialog">
+            <div class="modal-header">
+                <div>
+                    <h2><span class="modal-icon"><i class="fa-solid fa-ticket"></i></span><span
+                            id="mdTitle">Detalle</span></h2>
+                    <p class="modal-subtitle" id="mdSub">Información de la solicitud</p>
+                </div>
+                <button class="btn-close-modal" onclick="cerrarMD()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="mdBody"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('btnMenuToggle').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('visible'); });
+        document.getElementById('sidebarOverlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('visible'); });
+
+        const sols = [
+            { id: 'SOL-001', cliente: 'Empresa ABC', asunto: 'Error en módulo de pagos', proyecto: 'Sitio Web Corporativo', prioridad: 'Crítica', estado: 'Abierta', asignado: 'Carlos L.', fecha: '2026-05-20', desc: 'Error 500 al procesar pagos con tarjeta de crédito.' },
+            { id: 'SOL-002', cliente: 'Corp XYZ', asunto: 'Ajuste de colores', proyecto: 'App Móvil Delivery', prioridad: 'Baja', estado: 'Resuelta', asignado: 'Ana M.', fecha: '2026-05-18', desc: 'Los colores del header no coinciden con la guía de marca.' },
+            { id: 'SOL-003', cliente: 'Tech Solutions', asunto: 'Lentitud en reportes', proyecto: 'Sistema ERP', prioridad: 'Alta', estado: 'En Proceso', asignado: 'Diego T.', fecha: '2026-05-22', desc: 'Reportes financieros tardan más de 30 segundos.' },
+            { id: 'SOL-004', cliente: 'Empresa ABC', asunto: 'Filtro de búsqueda', proyecto: 'Sitio Web Corporativo', prioridad: 'Media', estado: 'En Proceso', asignado: 'Sofía H.', fecha: '2026-05-15', desc: 'Se necesita un filtro de búsqueda en productos.' },
+            { id: 'SOL-005', cliente: 'Corp XYZ', asunto: 'Factura duplicada', proyecto: 'Sistema ERP', prioridad: 'Media', estado: 'Resuelta', asignado: 'Pedro R.', fecha: '2026-05-10', desc: 'Factura duplicada generada para cliente.' },
+            { id: 'SOL-006', cliente: 'Innovatech', asunto: 'Caída del servidor', proyecto: 'Hosting Cloud', prioridad: 'Crítica', estado: 'Abierta', asignado: null, fecha: '2026-05-24', desc: 'Servidor de producción inaccesible desde las 8am.' },
+            { id: 'SOL-007', cliente: 'Tech Solutions', asunto: 'Actualizar certificado SSL', proyecto: 'Sistema ERP', prioridad: 'Alta', estado: 'Abierta', asignado: null, fecha: '2026-05-23', desc: 'Certificado SSL expira en 3 días.' },
+            { id: 'SOL-008', cliente: 'Innovatech', asunto: 'Mejora de diseño', proyecto: 'Hosting Cloud', prioridad: 'Baja', estado: 'Cerrada', asignado: 'Laura S.', fecha: '2026-05-05', desc: 'Solicitud de rediseño del panel de control.' }
+        ];
+
+        const pCls = { 'Baja': 'bp-baja', 'Media': 'bp-media', 'Alta': 'bp-alta', 'Crítica': 'bp-critica' };
+        const eCls = { 'Abierta': 'bg-abierta', 'En Proceso': 'bg-proceso', 'Resuelta': 'bg-resuelta', 'Cerrada': 'bg-cerrada' };
+        let filtroEstado = 'todos', filtroPrioridad = '';
+
+        function getInit(n) { return n.split(' ').map(w => w[0]).join('').toUpperCase(); }
+
+        function render(lista) {
+            document.getElementById('tablaGest').innerHTML = lista.map(s => {
+                const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
+                const asig = s.asignado ? `<span class="asignado-badge"><span class="av">${getInit(s.asignado)}</span>${s.asignado}</span>` : '<span style="color:#94a3b8;font-size:.78rem;">Sin asignar</span>';
+                return `<tr>
+            <td><strong>${s.id}</strong></td>
+            <td>${s.cliente}</td>
+            <td>${s.asunto}</td>
+            <td style="color:#64748b;font-size:.8rem;">${s.proyecto}</td>
+            <td><span class="badge-g ${pCls[s.prioridad]} ${esAlta ? 'prio-pulse' : ''}">${s.prioridad}</span></td>
+            <td><span class="badge-g ${eCls[s.estado]}">${s.estado}</span></td>
+            <td>${asig}</td>
+            <td style="white-space:nowrap;">
+                <button class="btn-accion-g btn-ver-g" onclick="verDetalle('${s.id}')"><i class="fa-solid fa-eye" style="margin-right:3px;"></i>Ver</button>
+                ${!s.asignado ? `<button class="btn-accion-g btn-asignar-g" onclick="asignarRapido('${s.id}')"><i class="fa-solid fa-user-plus" style="margin-right:3px;"></i>Asignar</button>` : ''}
+            </td>
+        </tr>`;
+            }).join('');
+        }
+
+        function aplicarFiltros() {
+            let lista = sols;
+            if (filtroEstado !== 'todos') lista = lista.filter(s => s.estado === filtroEstado);
+            if (filtroPrioridad) lista = lista.filter(s => s.prioridad === filtroPrioridad);
+            render(lista);
+        }
+        function filtrar(est, btn) {
+            document.querySelectorAll('.chip-f').forEach(c => c.classList.remove('active')); btn.classList.add('active');
+            filtroEstado = est; aplicarFiltros();
+        }
+        function filtrarPrio() { filtroPrioridad = document.getElementById('filtroPrio').value; aplicarFiltros(); }
+
+        function verDetalle(id) {
+            const s = sols.find(x => x.id === id); if (!s) return;
+            document.getElementById('mdTitle').textContent = s.id + ' — ' + s.asunto;
+            document.getElementById('mdSub').textContent = s.cliente + ' · ' + s.proyecto;
+            document.getElementById('mdBody').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Prioridad</label><span class="badge-g ${pCls[s.prioridad]}">${s.prioridad}</span></div>
+            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Estado</label><span class="badge-g ${eCls[s.estado]}">${s.estado}</span></div>
+            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Fecha</label><span style="font-size:.88rem;font-weight:600;color:#1e293b;">${s.fecha}</span></div>
+            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Asignado</label><span style="font-size:.88rem;font-weight:600;color:#1e293b;">${s.asignado || 'Sin asignar'}</span></div>
+        </div>
+        <div style="margin-bottom:18px;"><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:6px;">Descripción</label><p style="font-size:.88rem;color:#475569;line-height:1.6;background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;">${s.desc}</p></div>
+        <div class="mfield"><label>Cambiar estado</label><select id="nuevoEstado" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;"><option ${s.estado === 'Abierta' ? 'selected' : ''}>Abierta</option><option ${s.estado === 'En Proceso' ? 'selected' : ''}>En Proceso</option><option ${s.estado === 'Resuelta' ? 'selected' : ''}>Resuelta</option><option ${s.estado === 'Cerrada' ? 'selected' : ''}>Cerrada</option></select></div>
+        <button class="btn-modal-submit" onclick="cambiarEstado('${s.id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>`;
+            document.getElementById('modalDetalle').classList.add('open'); document.body.style.overflow = 'hidden';
+        }
+        function cerrarMD() { document.getElementById('modalDetalle').classList.remove('open'); document.body.style.overflow = ''; }
+        document.getElementById('modalDetalle').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarMD(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarMD(); });
+
+        function cambiarEstado(id) {
+            const s = sols.find(x => x.id === id); if (!s) return;
+            s.estado = document.getElementById('nuevoEstado').value;
+            cerrarMD(); aplicarFiltros();
+        }
+        function asignarRapido(id) {
+            const s = sols.find(x => x.id === id); if (!s) return;
+            s.asignado = 'Carlos L.'; aplicarFiltros();
+        }
+
+        render(sols);
+    </script>
+</body>
+
+</html>
