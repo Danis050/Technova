@@ -7,518 +7,528 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages/pagos.css">
 </head>
-
 <body class="dash-body">
 
-    <div class="mobile-topbar">
-        <span class="brand">🔷 TechNova</span>
-        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-    </div>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="dash-layout">
+<div class="dash-layout">
 
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-logo">
-                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-                TechNova
-            </div>
-            <nav class="sidebar-menu">
-                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
-                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-                <a href="pagos.html" class="active"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-            </nav>
-            <div class="sidebar-user">
-                <strong id="sidebarNombre">Cargando...</strong>
-                <span id="sidebarRol"></span>
-            </div>
-        </aside>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
+            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+            <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+            <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+            <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+            <a href="pagos.html" class="active"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
 
-        <main class="dash-main">
+            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+            <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                <i class="fa-solid fa-user-plus"></i>
+                Crear Usuario
+                <span class="badge-new">ADMIN</span>
+            </button>
 
-            <div id="loading">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
-                <p style="margin-top:12px;">Cargando datos...</p>
-            </div>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
 
-            <div id="contenido" style="display:none;">
+    <main class="dash-main">
 
-                <div class="dash-header">
-                    <div>
-                        <h1>Pagos</h1>
-                        <p id="saludo">Gestión de pagos por proyecto</p>
-                    </div>
-                    <button class="btn-logout" onclick="cerrarSesion()">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-                    </button>
+        <div id="loading">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
+            <p style="margin-top:12px;">Cargando datos...</p>
+        </div>
+
+        <div id="contenido" style="display:none;">
+
+            <div class="dash-header">
+                <div>
+                    <h1>Pagos</h1>
+                    <p id="saludo">Gestión de pagos por proyecto</p>
                 </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
+            </div>
 
-                <div class="pagos-layout">
+            <div class="pagos-layout">
 
-                    <div class="form-panel" id="formPanel">
-                        <div class="form-panel-header">
-                            <h2>
-                                <i class="fa-solid fa-money-bill-transfer"></i>
-                                Registrar Pago
-                            </h2>
+                <div class="form-panel" id="formPanel">
+                    <div class="form-panel-header">
+                        <h2>
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                            Registrar Pago
+                        </h2>
+                    </div>
+                    <div class="form-panel-body">
+
+                        <div class="alerta" id="formAlerta"></div>
+
+                        <div class="sin-proyectos" id="sinProyectos" style="display:none;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            No hay proyectos pendientes de anticipo en este momento.
                         </div>
-                        <div class="form-panel-body">
 
-                            <div class="alerta" id="formAlerta"></div>
-
-                            <div class="sin-proyectos" id="sinProyectos" style="display:none;">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                No hay proyectos pendientes de anticipo en este momento.
+                        <div id="formCampos">
+                            <div class="field-group">
+                                <label>Proyecto <span class="req">*</span></label>
+                                <select id="fProyecto" onchange="onProyectoChange()">
+                                    <option value="">Cargando proyectos...</option>
+                                </select>
+                                <div class="proyecto-info" id="proyectoInfo">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span id="proyectoInfoTxt"></span>
+                                </div>
                             </div>
 
-                            <div id="formCampos">
-                                <div class="field-group">
-                                    <label>Proyecto <span class="req">*</span></label>
-                                    <select id="fProyecto" onchange="onProyectoChange()">
-                                        <option value="">Cargando proyectos...</option>
-                                    </select>
-                                    <div class="proyecto-info" id="proyectoInfo">
-                                        <i class="fa-solid fa-circle-info"></i>
-                                        <span id="proyectoInfoTxt"></span>
+                            <div class="field-group" id="grupTipo" style="display:none;">
+                                <label>Tipo de pago <span class="req">*</span></label>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                                    <div class="metodo-opt">
+                                        <input type="radio" name="tipoPago" id="tParcial" value="Parcial" onchange="onTipoChange()">
+                                        <label class="tipo-card" for="tParcial">
+                                            <i class="fa-solid fa-money-bill-transfer"></i>
+                                            <strong>Parcial</strong>
+                                            <span>Monto personalizado</span>
+                                        </label>
+                                    </div>
+                                    <div class="metodo-opt">
+                                        <input type="radio" name="tipoPago" id="tSaldo" value="Saldo Final" onchange="onTipoChange()">
+                                        <label class="tipo-card" for="tSaldo">
+                                            <i class="fa-solid fa-circle-check"></i>
+                                            <strong>Saldo Final</strong>
+                                            <span>Lo que falta pagar</span>
+                                        </label>
                                     </div>
                                 </div>
-
-                                <div class="field-group" id="grupTipo" style="display:none;">
-                                    <label>Tipo de pago <span class="req">*</span></label>
-                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                                        <div class="metodo-opt">
-                                            <input type="radio" name="tipoPago" id="tParcial" value="Parcial"
-                                                onchange="onTipoChange()">
-                                            <label class="tipo-card" for="tParcial">
-                                                <i class="fa-solid fa-money-bill-transfer"></i>
-                                                <strong>Parcial</strong>
-                                                <span>Monto personalizado</span>
-                                            </label>
-                                        </div>
-                                        <div class="metodo-opt">
-                                            <input type="radio" name="tipoPago" id="tSaldo" value="Saldo Final"
-                                                onchange="onTipoChange()">
-                                            <label class="tipo-card" for="tSaldo">
-                                                <i class="fa-solid fa-circle-check"></i>
-                                                <strong>Saldo Final</strong>
-                                                <span>Lo que falta pagar</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div id="saldoInfo" style="display:none;margin-top:8px;padding:9px 12px;
+                                <div id="saldoInfo" style="display:none;margin-top:8px;padding:9px 12px;
                                      background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;
                                      font-size:.76rem;color:#15803d;align-items:center;gap:6px;">
-                                        <i class="fa-solid fa-scale-balanced"></i>
-                                        <span id="saldoInfoTxt"></span>
+                                    <i class="fa-solid fa-scale-balanced"></i>
+                                    <span id="saldoInfoTxt"></span>
+                                </div>
+                            </div>
+
+                            <div class="field-group" id="grupMonto" style="display:none;">
+                                <label id="labelMonto">Monto <span class="req">*</span></label>
+                                <input type="number" id="fMonto" min="1" step="0.01"
+                                       placeholder="0.00" oninput="limpiarError('fMonto')">
+                                <p id="montoHint" style="margin:5px 0 0;font-size:.73rem;color:#94a3b8;display:none;"></p>
+                            </div>
+
+                            <div class="field-group">
+                                <label>Fecha de pago <span class="req">*</span></label>
+                                <input type="date" id="fFecha" oninput="limpiarError('fFecha')">
+                            </div>
+
+                            <div class="field-group">
+                                <label>Método de pago <span class="req">*</span></label>
+                                <div class="metodo-grid">
+                                    <div class="metodo-opt">
+                                        <input type="radio" name="metodo" id="mEfectivo" value="Efectivo">
+                                        <label class="metodo-card" for="mEfectivo">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
+                                            Efectivo
+                                        </label>
+                                    </div>
+                                    <div class="metodo-opt">
+                                        <input type="radio" name="metodo" id="mTransferencia" value="Transferencia">
+                                        <label class="metodo-card" for="mTransferencia">
+                                            <i class="fa-solid fa-building-columns"></i>
+                                            Transferencia
+                                        </label>
+                                    </div>
+                                    <div class="metodo-opt">
+                                        <input type="radio" name="metodo" id="mCheque" value="Cheque">
+                                        <label class="metodo-card" for="mCheque">
+                                            <i class="fa-solid fa-money-check"></i>
+                                            Cheque
+                                        </label>
                                     </div>
                                 </div>
-
-                                <div class="field-group" id="grupMonto" style="display:none;">
-                                    <label id="labelMonto">Monto <span class="req">*</span></label>
-                                    <input type="number" id="fMonto" min="1" step="0.01" placeholder="0.00"
-                                        oninput="limpiarError('fMonto')">
-                                    <p id="montoHint"
-                                        style="margin:5px 0 0;font-size:.73rem;color:#94a3b8;display:none;"></p>
-                                </div>
-
-                                <div class="field-group">
-                                    <label>Fecha de pago <span class="req">*</span></label>
-                                    <input type="date" id="fFecha" oninput="limpiarError('fFecha')">
-                                </div>
-
-                                <div class="field-group">
-                                    <label>Método de pago <span class="req">*</span></label>
-                                    <div class="metodo-grid">
-                                        <div class="metodo-opt">
-                                            <input type="radio" name="metodo" id="mEfectivo" value="Efectivo">
-                                            <label class="metodo-card" for="mEfectivo">
-                                                <i class="fa-solid fa-money-bill-wave"></i>
-                                                Efectivo
-                                            </label>
-                                        </div>
-                                        <div class="metodo-opt">
-                                            <input type="radio" name="metodo" id="mTransferencia" value="Transferencia">
-                                            <label class="metodo-card" for="mTransferencia">
-                                                <i class="fa-solid fa-building-columns"></i>
-                                                Transferencia
-                                            </label>
-                                        </div>
-                                        <div class="metodo-opt">
-                                            <input type="radio" name="metodo" id="mCheque" value="Cheque">
-                                            <label class="metodo-card" for="mCheque">
-                                                <i class="fa-solid fa-money-check"></i>
-                                                Cheque
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="field-group">
-                                    <label>N° Comprobante <span class="opt">(opcional)</span></label>
-                                    <input type="text" id="fComprobante" placeholder="TRF-2026-XXXX">
-                                </div>
-
-                                <div class="form-divider"></div>
-
-                                <button class="btn-guardar" id="btnGuardar" onclick="guardarPago()">
-                                    <i class="fa-solid fa-floppy-disk"></i>
-                                    <span id="txtGuardar">Guardar Pago</span>
-                                </button>
-                                <button class="btn-limpiar" onclick="limpiarFormulario()">
-                                    <i class="fa-solid fa-rotate-left"></i> Limpiar campos
-                                </button>
                             </div>
 
+                            <div class="field-group">
+                                <label>N° Comprobante <span class="opt">(opcional)</span></label>
+                                <input type="text" id="fComprobante" placeholder="TRF-2026-XXXX">
+                            </div>
+
+                            <div class="form-divider"></div>
+
+                            <button class="btn-guardar" id="btnGuardar" onclick="guardarPago()">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span id="txtGuardar">Guardar Pago</span>
+                            </button>
+                            <button class="btn-limpiar" onclick="limpiarFormulario()">
+                                <i class="fa-solid fa-rotate-left"></i> Limpiar campos
+                            </button>
                         </div>
-                    </div>
 
-                    <div>
-                        <div class="historial-card">
-                            <div class="historial-header">
-                                <h3>
-                                    <i class="fa-solid fa-clock-rotate-left" style="color:#6d28d9;"></i>
-                                    Historial de Pagos
-                                </h3>
-                                <div class="filtros-row">
-                                    <select id="filtroTipo" onchange="filtrarHistorial()">
-                                        <option value="">Todos los tipos</option>
-                                        <option value="Anticipo">Anticipo</option>
-                                        <option value="Parcial">Parcial</option>
-                                        <option value="Saldo Final">Saldo Final</option>
-                                    </select>
-                                    <select id="filtroMetodo" onchange="filtrarHistorial()">
-                                        <option value="">Todos los métodos</option>
-                                        <option value="Efectivo">Efectivo</option>
-                                        <option value="Transferencia">Transferencia</option>
-                                        <option value="Cheque">Cheque</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="historial-table-wrap">
-                                <table class="historial-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Proyecto</th>
-                                            <th>Cliente</th>
-                                            <th>Tipo</th>
-                                            <th>Monto</th>
-                                            <th>Fecha</th>
-                                            <th>Método</th>
-                                            <th>Comprobante</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaPagos">
-                                        <tr>
-                                            <td colspan="7">
-                                                <div class="empty-state">
-                                                    <i class="fa-solid fa-spinner fa-spin"></i>
-                                                    <p>Cargando historial...</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
-
                 </div>
+
+                <div>
+                    <div class="historial-card">
+                        <div class="historial-header">
+                            <h3>
+                                <i class="fa-solid fa-clock-rotate-left" style="color:#6d28d9;"></i>
+                                Historial de Pagos
+                            </h3>
+                            <div class="filtros-row">
+                                <select id="filtroTipo" onchange="filtrarHistorial()">
+                                    <option value="">Todos los tipos</option>
+                                    <option value="Anticipo">Anticipo</option>
+                                    <option value="Parcial">Parcial</option>
+                                    <option value="Saldo Final">Saldo Final</option>
+                                </select>
+                                <select id="filtroMetodo" onchange="filtrarHistorial()">
+                                    <option value="">Todos los métodos</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Cheque">Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="historial-table-wrap">
+                            <table class="historial-table">
+                                <thead>
+                                    <tr>
+                                        <th>Proyecto</th>
+                                        <th>Cliente</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Fecha</th>
+                                        <th>Método</th>
+                                        <th>Comprobante</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaPagos">
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="empty-state">
+                                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                                <p>Cargando historial...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
 
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const btnMenuToggle = document.getElementById('btnMenuToggle');
-        btnMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('visible');
-        });
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('visible');
-        });
+<script>
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+const btnMenuToggle = document.getElementById('btnMenuToggle');
+btnMenuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+});
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+});
 
-        let todosLosPagos = [];
-        let rolActual = '';
+let todosLosPagos  = [];
+let rolActual      = '';
 
-        const fmt = n => '$' + parseFloat(n || 0).toFixed(2);
+const fmt = n => '$' + parseFloat(n || 0).toFixed(2);
 
-        function mostrarAlerta(msg, tipo = 'error') {
-            const el = document.getElementById('formAlerta');
-            el.className = 'alerta ' + tipo;
-            el.innerHTML = `<i class="fa-solid ${tipo === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> ${msg}`;
-            el.style.display = 'flex';
-        }
-        function ocultarAlerta() {
-            const el = document.getElementById('formAlerta');
-            el.style.display = 'none';
-            el.className = 'alerta';
-        }
-        function limpiarError(id) {
-            document.getElementById(id)?.classList.remove('error');
-            ocultarAlerta();
-        }
+function mostrarAlerta(msg, tipo = 'error') {
+    const el = document.getElementById('formAlerta');
+    el.className = 'alerta ' + tipo;
+    el.innerHTML = `<i class="fa-solid ${tipo === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> ${msg}`;
+    el.style.display = 'flex';
+}
+function ocultarAlerta() {
+    const el = document.getElementById('formAlerta');
+    el.style.display = 'none';
+    el.className = 'alerta';
+}
+function limpiarError(id) {
+    document.getElementById(id)?.classList.remove('error');
+    ocultarAlerta();
+}
 
-        async function cargarProyectos() {
-            try {
-                const res = await fetch('php/get_proyectos_pendientes_pago.php');
-                const data = await res.json();
-                const lista = data.proyectos || [];
-                const sel = document.getElementById('fProyecto');
+async function cargarProyectos() {
+    try {
+        const res  = await fetch('php/get_proyectos_pendientes_pago.php');
+        const data = await res.json();
+        const lista = data.proyectos || [];
+        const sel   = document.getElementById('fProyecto');
 
-                if (!lista.length) {
-                    sel.innerHTML = '<option value="">Sin proyectos registrados</option>';
-                    return;
-                }
-
-                sel.innerHTML = '<option value="">— Selecciona un proyecto —</option>';
-
-                lista.forEach(p => {
-                    const opt = document.createElement('option');
-                    const saldado = p.saldado == 1;
-
-                    if (saldado) {
-                        opt.value = '';
-                        opt.disabled = true;
-                        opt.text = '✓ Saldado · ' + p.nombre + ' — ' + p.nombre_empresa;
-                        opt.style.color = '#94a3b8';
-                    } else {
-                        opt.value = p.id_proyecto;
-                        opt.dataset.empresa = p.nombre_empresa;
-                        opt.dataset.estado = p.estado;
-                        opt.dataset.entrega = p.fecha_entrega || '';
-                        opt.text = p.nombre + ' · ' + p.nombre_empresa;
-                    }
-
-                    sel.appendChild(opt);
-                });
-
-            } catch (e) {
-                document.getElementById('fProyecto').innerHTML = '<option value="">Error al cargar</option>';
-            }
-        }
-        let proyectoActual = null; // { monto, total_pagado, saldo_pendiente }
-
-        function onProyectoChange() {
-            const sel = document.getElementById('fProyecto');
-            const info = document.getElementById('proyectoInfo');
-            const txt = document.getElementById('proyectoInfoTxt');
-            ocultarAlerta();
-
-            // Reset
-            document.querySelectorAll('input[name="tipoPago"]').forEach(r => r.checked = false);
-            document.getElementById('grupTipo').style.display = 'none';
-            document.getElementById('grupMonto').style.display = 'none';
-            document.getElementById('saldoInfo').style.display = 'none';
-            document.getElementById('fMonto').value = '';
-            document.getElementById('fMonto').readOnly = false;
-            document.getElementById('fMonto').style.cssText = '';
-            document.getElementById('montoHint').style.display = 'none';
-            proyectoActual = null;
-
-            if (!sel.value) { info.classList.remove('visible'); return; }
-
-            const opt = sel.options[sel.selectedIndex];
-            const entrega = opt.dataset.entrega
-                ? 'Entrega: ' + new Date(opt.dataset.entrega + 'T00:00:00').toLocaleDateString('es-SV', { day: '2-digit', month: 'short', year: 'numeric' })
-                : 'Sin fecha de entrega';
-            txt.textContent = `${opt.dataset.estado} · ${entrega}`;
-            info.classList.add('visible');
-
-            document.getElementById('grupTipo').style.display = 'block';
-
-            cargarSaldoProyecto(sel.value);
+        if (!lista.length) {
+            sel.innerHTML = '<option value="">Sin proyectos registrados</option>';
+            return;
         }
 
-        async function cargarSaldoProyecto(idProyecto) {
-            try {
-                const res = await fetch(`php/get_saldo_proyecto.php?id=${idProyecto}`);
-                const data = await res.json();
-                if (data.error) return;
-                proyectoActual = data;
+        sel.innerHTML = '<option value="">— Selecciona un proyecto —</option>';
 
-                const tipoActivo = document.querySelector('input[name="tipoPago"]:checked')?.value;
-                if (tipoActivo) onTipoChange();
+        lista.forEach(p => {
+            const opt = document.createElement('option');
+            const saldado = p.saldado == 1;
 
-            } catch (e) { console.error('Error cargando saldo:', e); }
-        }
-
-        function onTipoChange() {
-            const tipo = document.querySelector('input[name="tipoPago"]:checked')?.value;
-            const grupM = document.getElementById('grupMonto');
-            const saldoEl = document.getElementById('saldoInfo');
-            const hint = document.getElementById('montoHint');
-            const label = document.getElementById('labelMonto');
-            const fMonto = document.getElementById('fMonto');
-            limpiarError('fMonto');
-
-            if (!tipo || !proyectoActual) return;
-
-            const saldo = proyectoActual.saldo_pendiente;
-
-            if (tipo === 'Saldo Final') {
-                // Monto fijo = todo lo que falta, no editable
-                fMonto.value = saldo.toFixed(2);
-                fMonto.readOnly = true;
-                fMonto.style.cssText = 'background:#f1f5f9;color:#1e293b;font-weight:700;cursor:not-allowed;';
-                label.innerHTML = 'Monto <span class="req">*</span>';
-                hint.textContent = `Saldo total pendiente del proyecto.`;
-                hint.style.display = 'block';
-
-                saldoEl.style.display = 'flex';
-                document.getElementById('saldoInfoTxt').textContent =
-                    `Saldo pendiente: ${fmt(saldo)} de ${fmt(proyectoActual.monto_proyecto)}`;
-
+            if (saldado) {
+                opt.value    = '';
+                opt.disabled = true;
+                opt.text     = '✓ Saldado · ' + p.nombre + ' — ' + p.nombre_empresa;
+                opt.style.color = '#94a3b8';
             } else {
-                // Parcial: editable, no puede superar el saldo
-                fMonto.value = '';
-                fMonto.readOnly = false;
-                fMonto.style.cssText = '';
-                label.innerHTML = 'Monto <span class="req">*</span>';
-                hint.textContent = `Máximo: ${fmt(saldo)} (saldo pendiente)`;
-                hint.style.display = 'block';
-
-                saldoEl.style.display = 'flex';
-                document.getElementById('saldoInfoTxt').textContent =
-                    `Saldo pendiente: ${fmt(saldo)} de ${fmt(proyectoActual.monto_proyecto)}`;
+                opt.value                  = p.id_proyecto;
+                opt.dataset.empresa        = p.nombre_empresa;
+                opt.dataset.estado         = p.estado;
+                opt.dataset.entrega        = p.fecha_entrega || '';
+                opt.text                   = p.nombre + ' · ' + p.nombre_empresa;
             }
 
-            grupM.style.display = 'block';
+            sel.appendChild(opt);
+        });
+
+    } catch(e) {
+        document.getElementById('fProyecto').innerHTML = '<option value="">Error al cargar</option>';
+    }
+}
+let proyectoActual = null; // { monto, total_pagado, saldo_pendiente }
+
+function onProyectoChange() {
+    const sel  = document.getElementById('fProyecto');
+    const info = document.getElementById('proyectoInfo');
+    const txt  = document.getElementById('proyectoInfoTxt');
+    ocultarAlerta();
+
+    // Reset
+    document.querySelectorAll('input[name="tipoPago"]').forEach(r => r.checked = false);
+    document.getElementById('grupTipo').style.display  = 'none';
+    document.getElementById('grupMonto').style.display = 'none';
+    document.getElementById('saldoInfo').style.display = 'none';
+    document.getElementById('fMonto').value    = '';
+    document.getElementById('fMonto').readOnly = false;
+    document.getElementById('fMonto').style.cssText = '';
+    document.getElementById('montoHint').style.display = 'none';
+    proyectoActual = null;
+
+    if (!sel.value) { info.classList.remove('visible'); return; }
+
+    const opt     = sel.options[sel.selectedIndex];
+    const entrega = opt.dataset.entrega
+        ? 'Entrega: ' + new Date(opt.dataset.entrega + 'T00:00:00').toLocaleDateString('es-SV', { day:'2-digit', month:'short', year:'numeric' })
+        : 'Sin fecha de entrega';
+    txt.textContent = `${opt.dataset.estado} · ${entrega}`;
+    info.classList.add('visible');
+
+    document.getElementById('grupTipo').style.display = 'block';
+
+    cargarSaldoProyecto(sel.value);
+}
+
+async function cargarSaldoProyecto(idProyecto) {
+    try {
+        const res  = await fetch(`php/get_saldo_proyecto.php?id=${idProyecto}`);
+        const data = await res.json();
+        if (data.error) return;
+        proyectoActual = data;
+
+        const tipoActivo = document.querySelector('input[name="tipoPago"]:checked')?.value;
+        if (tipoActivo) onTipoChange();
+
+    } catch(e) { console.error('Error cargando saldo:', e); }
+}
+
+function onTipoChange() {
+    const tipo    = document.querySelector('input[name="tipoPago"]:checked')?.value;
+    const grupM   = document.getElementById('grupMonto');
+    const saldoEl = document.getElementById('saldoInfo');
+    const hint    = document.getElementById('montoHint');
+    const label   = document.getElementById('labelMonto');
+    const fMonto  = document.getElementById('fMonto');
+    limpiarError('fMonto');
+
+    if (!tipo || !proyectoActual) return;
+
+    const saldo = proyectoActual.saldo_pendiente;
+
+    if (tipo === 'Saldo Final') {
+        // Monto fijo = todo lo que falta, no editable
+        fMonto.value    = saldo.toFixed(2);
+        fMonto.readOnly = true;
+        fMonto.style.cssText = 'background:#f1f5f9;color:#1e293b;font-weight:700;cursor:not-allowed;';
+        label.innerHTML = 'Monto <span class="req">*</span>';
+        hint.textContent = `Saldo total pendiente del proyecto.`;
+        hint.style.display = 'block';
+
+        saldoEl.style.display = 'flex';
+        document.getElementById('saldoInfoTxt').textContent =
+            `Saldo pendiente: ${fmt(saldo)} de ${fmt(proyectoActual.monto_proyecto)}`;
+
+    } else {
+        // Parcial: editable, no puede superar el saldo
+        fMonto.value    = '';
+        fMonto.readOnly = false;
+        fMonto.style.cssText = '';
+        label.innerHTML = 'Monto <span class="req">*</span>';
+        hint.textContent = `Máximo: ${fmt(saldo)} (saldo pendiente)`;
+        hint.style.display = 'block';
+
+        saldoEl.style.display = 'flex';
+        document.getElementById('saldoInfoTxt').textContent =
+            `Saldo pendiente: ${fmt(saldo)} de ${fmt(proyectoActual.monto_proyecto)}`;
+    }
+
+    grupM.style.display = 'block';
+}
+
+async function guardarPago() {
+    ocultarAlerta();
+
+    const id_proyecto = document.getElementById('fProyecto').value;
+    const tipo        = document.querySelector('input[name="tipoPago"]:checked')?.value || '';
+    const monto       = parseFloat(document.getElementById('fMonto').value);
+    const fecha_pago  = document.getElementById('fFecha').value;
+    const metodo      = document.querySelector('input[name="metodo"]:checked')?.value || '';
+    const comprobante = document.getElementById('fComprobante').value.trim();
+
+    if (!id_proyecto) { document.getElementById('fProyecto').classList.add('error'); mostrarAlerta('Selecciona un proyecto.'); return; }
+    if (!tipo)        { mostrarAlerta('Selecciona el tipo de pago.'); return; }
+    if (!monto || monto <= 0) { document.getElementById('fMonto').classList.add('error'); mostrarAlerta('Ingresa un monto válido.'); return; }
+    if (proyectoActual && monto > proyectoActual.saldo_pendiente + 0.01) {
+        document.getElementById('fMonto').classList.add('error');
+        mostrarAlerta(`El monto no puede superar el saldo pendiente (${fmt(proyectoActual.saldo_pendiente)}).`);
+        return;
+    }
+    if (!fecha_pago) { document.getElementById('fFecha').classList.add('error'); mostrarAlerta('Ingresa la fecha de pago.'); return; }
+    if (!metodo)     { mostrarAlerta('Selecciona un método de pago.'); return; }
+
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
+    document.getElementById('txtGuardar').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Guardando...';
+
+    const fd = new FormData();
+    fd.append('id_proyecto', id_proyecto);
+    fd.append('tipo_pago',   tipo);
+    fd.append('monto',       monto);
+    fd.append('fecha_pago',  fecha_pago);
+    fd.append('metodo_pago', metodo);
+    fd.append('comprobante', comprobante);
+
+    try {
+        const res  = await fetch('php/registrar_pago.php', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.error) {
+            mostrarAlerta(data.mensaje, 'error');
+        } else {
+            mostrarAlerta(data.mensaje, 'ok');
+            limpiarFormulario();
+            await Promise.all([cargarProyectos(), cargarHistorial()]);
         }
+    } catch(e) { mostrarAlerta('Error de conexión con el servidor.'); }
 
-        async function guardarPago() {
-            ocultarAlerta();
+    btn.disabled = false;
+    document.getElementById('txtGuardar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Pago';
+}
 
-            const id_proyecto = document.getElementById('fProyecto').value;
-            const tipo = document.querySelector('input[name="tipoPago"]:checked')?.value || '';
-            const monto = parseFloat(document.getElementById('fMonto').value);
-            const fecha_pago = document.getElementById('fFecha').value;
-            const metodo = document.querySelector('input[name="metodo"]:checked')?.value || '';
-            const comprobante = document.getElementById('fComprobante').value.trim();
+function limpiarFormulario() {
+    document.getElementById('fProyecto').value = '';
+    document.getElementById('fMonto').value    = '';
+    document.getElementById('fFecha').value    = '';
+    document.getElementById('fComprobante').value = '';
+    document.querySelectorAll('input[name="metodo"]').forEach(r => r.checked = false);
+    document.querySelectorAll('input[name="tipoPago"]').forEach(r => r.checked = false);
+    document.getElementById('proyectoInfo').classList.remove('visible');
+    document.getElementById('grupTipo').style.display  = 'none';
+    document.getElementById('grupMonto').style.display = 'none';
+    document.getElementById('saldoInfo').style.display = 'none';
+    document.getElementById('fMonto').readOnly = false;
+    document.getElementById('fMonto').style.cssText = '';
+    document.getElementById('montoHint').style.display = 'none';
+    proyectoActual = null;
+    ['fProyecto','fMonto','fFecha'].forEach(id =>
+        document.getElementById(id)?.classList.remove('error')
+    );
+    ocultarAlerta();
+}
 
-            if (!id_proyecto) { document.getElementById('fProyecto').classList.add('error'); mostrarAlerta('Selecciona un proyecto.'); return; }
-            if (!tipo) { mostrarAlerta('Selecciona el tipo de pago.'); return; }
-            if (!monto || monto <= 0) { document.getElementById('fMonto').classList.add('error'); mostrarAlerta('Ingresa un monto válido.'); return; }
-            if (proyectoActual && monto > proyectoActual.saldo_pendiente + 0.01) {
-                document.getElementById('fMonto').classList.add('error');
-                mostrarAlerta(`El monto no puede superar el saldo pendiente (${fmt(proyectoActual.saldo_pendiente)}).`);
-                return;
-            }
-            if (!fecha_pago) { document.getElementById('fFecha').classList.add('error'); mostrarAlerta('Ingresa la fecha de pago.'); return; }
-            if (!metodo) { mostrarAlerta('Selecciona un método de pago.'); return; }
+async function cargarHistorial() {
+    try {
+        const res  = await fetch('php/get_historial_pagos.php');
+        const data = await res.json();
 
-            const btn = document.getElementById('btnGuardar');
-            btn.disabled = true;
-            document.getElementById('txtGuardar').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Guardando...';
+        if (data.error) return;
 
-            const fd = new FormData();
-            fd.append('id_proyecto', id_proyecto);
-            fd.append('tipo_pago', tipo);
-            fd.append('monto', monto);
-            fd.append('fecha_pago', fecha_pago);
-            fd.append('metodo_pago', metodo);
-            fd.append('comprobante', comprobante);
+        todosLosPagos = data.pagos;
+        filtrarHistorial();
 
-            try {
-                const res = await fetch('php/registrar_pago.php', { method: 'POST', body: fd });
-                const data = await res.json();
-                if (data.error) {
-                    mostrarAlerta(data.mensaje, 'error');
-                } else {
-                    mostrarAlerta(data.mensaje, 'ok');
-                    limpiarFormulario();
-                    await Promise.all([cargarProyectos(), cargarHistorial()]);
-                }
-            } catch (e) { mostrarAlerta('Error de conexión con el servidor.'); }
+    } catch(e) {
+        document.getElementById('tablaPagos').innerHTML =
+            `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Error al cargar el historial.</p></div></td></tr>`;
+    }
+}
 
-            btn.disabled = false;
-            document.getElementById('txtGuardar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Pago';
-        }
+function filtrarHistorial() {
+    const tipo   = document.getElementById('filtroTipo').value;
+    const metodo = document.getElementById('filtroMetodo').value;
 
-        function limpiarFormulario() {
-            document.getElementById('fProyecto').value = '';
-            document.getElementById('fMonto').value = '';
-            document.getElementById('fFecha').value = '';
-            document.getElementById('fComprobante').value = '';
-            document.querySelectorAll('input[name="metodo"]').forEach(r => r.checked = false);
-            document.querySelectorAll('input[name="tipoPago"]').forEach(r => r.checked = false);
-            document.getElementById('proyectoInfo').classList.remove('visible');
-            document.getElementById('grupTipo').style.display = 'none';
-            document.getElementById('grupMonto').style.display = 'none';
-            document.getElementById('saldoInfo').style.display = 'none';
-            document.getElementById('fMonto').readOnly = false;
-            document.getElementById('fMonto').style.cssText = '';
-            document.getElementById('montoHint').style.display = 'none';
-            proyectoActual = null;
-            ['fProyecto', 'fMonto', 'fFecha'].forEach(id =>
-                document.getElementById(id)?.classList.remove('error')
-            );
-            ocultarAlerta();
-        }
+    let lista = todosLosPagos;
+    if (tipo)   lista = lista.filter(p => p.tipo_pago   === tipo);
+    if (metodo) lista = lista.filter(p => p.metodo_pago === metodo);
 
-        async function cargarHistorial() {
-            try {
-                const res = await fetch('php/get_historial_pagos.php');
-                const data = await res.json();
+    const tbody = document.getElementById('tablaPagos');
 
-                if (data.error) return;
-
-                todosLosPagos = data.pagos;
-                filtrarHistorial();
-
-            } catch (e) {
-                document.getElementById('tablaPagos').innerHTML =
-                    `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Error al cargar el historial.</p></div></td></tr>`;
-            }
-        }
-
-        function filtrarHistorial() {
-            const tipo = document.getElementById('filtroTipo').value;
-            const metodo = document.getElementById('filtroMetodo').value;
-
-            let lista = todosLosPagos;
-            if (tipo) lista = lista.filter(p => p.tipo_pago === tipo);
-            if (metodo) lista = lista.filter(p => p.metodo_pago === metodo);
-
-            const tbody = document.getElementById('tablaPagos');
-
-            if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
             <i class="fa-solid fa-inbox"></i>
             <p>No se encontraron pagos con los filtros seleccionados.</p>
         </div></td></tr>`;
-                return;
-            }
+        return;
+    }
 
-            const tipoBadge = {
-                'Anticipo': 'badge-anticipo',
-                'Parcial': 'badge-parcial',
-                'Saldo Final': 'badge-saldo'
-            };
-            const metodoBadge = {
-                'Efectivo': 'badge-efectivo',
-                'Transferencia': 'badge-transfer',
-                'Cheque': 'badge-cheque'
-            };
+    const tipoBadge = {
+        'Anticipo':    'badge-anticipo',
+        'Parcial':     'badge-parcial',
+        'Saldo Final': 'badge-saldo'
+    };
+    const metodoBadge = {
+        'Efectivo':     'badge-efectivo',
+        'Transferencia':'badge-transfer',
+        'Cheque':       'badge-cheque'
+    };
 
-            tbody.innerHTML = lista.map(p => {
-                const fecha = new Date(p.fecha_pago + 'T00:00:00').toLocaleDateString('es-SV', {
-                    day: '2-digit', month: 'short', year: 'numeric'
-                });
-                const comp = p.comprobante
-                    ? `<span style="font-family:monospace;font-size:0.78rem;color:#6d28d9;">${p.comprobante}</span>`
-                    : `<span style="color:#cbd5e1;">—</span>`;
+    tbody.innerHTML = lista.map(p => {
+        const fecha = new Date(p.fecha_pago + 'T00:00:00').toLocaleDateString('es-SV', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+        const comp = p.comprobante
+            ? `<span style="font-family:monospace;font-size:0.78rem;color:#6d28d9;">${p.comprobante}</span>`
+            : `<span style="color:#cbd5e1;">—</span>`;
 
-                return `<tr>
+        return `<tr>
             <td style="font-weight:600;color:#1e293b;">${p.proyecto}</td>
             <td style="color:#64748b;">${p.nombre_empresa}</td>
             <td><span class="badge ${tipoBadge[p.tipo_pago] || ''}">${p.tipo_pago}</span></td>
@@ -527,52 +537,51 @@
             <td><span class="badge ${metodoBadge[p.metodo_pago] || ''}">${p.metodo_pago}</span></td>
             <td>${comp}</td>
         </tr>`;
-            }).join('');
+    }).join('');
+}
+
+async function init() {
+    try {
+        const res  = await fetch('php/get_historial_pagos.php');
+        const data = await res.json();
+
+        if (data.error) { window.location.href = 'login.html'; return; }
+
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent        = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        rolActual = data.rol;
+
+        if (data.rol === 'Administrador') {
+            document.getElementById('adminSection').style.display = 'block';
+            document.getElementById('btnAbrirModal').style.display = 'flex';
         }
 
-        async function init() {
-            try {
-                const res = await fetch('php/get_historial_pagos.php');
-                const data = await res.json();
-
-                if (data.error) { window.location.href = 'login.html'; return; }
-
-                document.getElementById('sidebarNombre').textContent = data.usuario;
-                document.getElementById('sidebarRol').textContent = data.rol;
-                document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
-                rolActual = data.rol;
-
-                if (data.rol === 'Administrador') {
-                    document.getElementById('adminSection').style.display = 'block';
-                    document.getElementById('btnAbrirModal').style.display = 'flex';
-                }
-
-                if (data.rol === 'Cliente') {
-                    document.getElementById('formPanel').style.display = 'none';
-                }
-
-                todosLosPagos = data.pagos;
-                filtrarHistorial();
-
-                document.getElementById('fFecha').value = new Date().toISOString().split('T')[0];
-
-                await cargarProyectos();
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('contenido').style.display = 'block';
-
-            } catch (e) {
-                window.location.href = 'login.html';
-            }
+        if (data.rol === 'Cliente') {
+            document.getElementById('formPanel').style.display = 'none';
         }
 
-        async function cerrarSesion() {
-            await fetch('php/logout.php');
-            window.location.href = 'login.html';
-        }
+        todosLosPagos = data.pagos;
+        filtrarHistorial();
 
-        init();
-    </script>
+        document.getElementById('fFecha').value = new Date().toISOString().split('T')[0];
+
+        await cargarProyectos();
+
+        document.getElementById('loading').style.display  = 'none';
+        document.getElementById('contenido').style.display = 'block';
+
+    } catch(e) {
+        window.location.href = 'login.html';
+    }
+}
+
+async function cerrarSesion() {
+    await fetch('php/logout.php');
+    window.location.href = 'login.html';
+}
+
+init();
+</script>
 </body>
-
 </html>
