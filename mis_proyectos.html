@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,165 +117,145 @@
         .btn-save-inc:disabled { opacity:.6; cursor:not-allowed; }
     </style>
 </head>
+
 <body class="dash-body">
 
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- TOPBAR MÓVIL -->
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="dash-layout">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Mi Portal</div>
-            <a href="mis_proyectos.html"><i class=" activefa-regular fa-rectangle-list"></i> Mis Proyectos</a>
-            <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
-            <a href="mis_incidencias.html" ><i class="fa-solid fa-clipboard-check"></i>Mis incidencias</a>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
+    <div class="dash-layout">
 
-    <main class="dash-main">
-        <div class="dash-header">
-            <div>
-                <h1><i class="fa-regular fa-rectangle-list" style="color:#6d28d9;margin-right:10px;"></i>Mis Proyectos</h1>
-                <p id="saludo">Visualiza el estado de tus proyectos asignados</p>
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()">
-                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-            </button>
-        </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
 
-        <div id="loadingBox" style="text-align:center;padding:60px 20px;">
-            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
-            <p style="margin-top:12px;color:#94a3b8;">Cargando tus proyectos...</p>
-        </div>
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>
 
-        <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
-
-        <div id="emptyBox" style="display:none;text-align:center;padding:60px 20px;">
-            <i class="fa-solid fa-folder-open" style="font-size:3rem;color:#cbd5e1;margin-bottom:16px;display:block;"></i>
-            <h3 style="color:#334155;margin-bottom:8px;">No tienes proyectos asignados</h3>
-            <p style="color:#94a3b8;">Cuando se te asigne un proyecto aparecerá aquí.</p>
-        </div>
-
-        <div id="errorBox" style="display:none;text-align:center;padding:60px 20px;">
-            <i class="fa-solid fa-circle-exclamation" style="font-size:3rem;color:#f87171;margin-bottom:16px;display:block;"></i>
-            <p id="errorMsg" style="color:#64748b;">Ocurrió un error al cargar tus proyectos.</p>
-        </div>
-    </main>
-</div>
-
-<!-- ══════════ MODAL REPORTAR INCIDENCIA ══════════ -->
-<div class="inc-overlay" id="incOverlay">
-    <div class="inc-modal">
-        <div class="inc-head">
-            <div>
-                <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;margin-right:6px;"></i>Reportar incidencia</h3>
-                <p id="incSubtitulo">Proyecto: —</p>
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
             </div>
-            <button class="btn-close-inc" onclick="cerrarModalInc()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="inc-body">
-            <input type="hidden" id="incIdProyecto" />
+        </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
 
-            <div id="incAlerta" class="inc-alert"></div>
+        <!-- MAIN -->
+        <main class="dash-main">
 
-            <div class="inc-field">
-                <label>Título <span style="color:#ef4444;">*</span></label>
-                <input type="text" id="incTitulo" placeholder="Describe brevemente el problema" />
-            </div>
-            <div class="inc-field">
-                <label>Descripción <span style="color:#ef4444;">*</span></label>
-                <textarea id="incDescripcion" placeholder="Explica el problema con detalle..."></textarea>
-            </div>
-            <div class="inc-field">
-                <label>Prioridad <span style="color:#ef4444;">*</span></label>
-                <select id="incPrioridad">
-                    <option value="Baja">Baja</option>
-                    <option value="Media" selected>Media</option>
-                    <option value="Alta">Alta</option>
-                    <option value="Crítica">Crítica</option>
-                </select>
-            </div>
-
-            <div class="inc-foot">
-                <button class="btn-cancel-inc" onclick="cerrarModalInc()">Cancelar</button>
-                <button class="btn-save-inc" id="btnEnviarInc" onclick="enviarIncidencia()">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar reporte
+            <!-- Encabezado -->
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-regular fa-rectangle-list" style="color:#6d28d9;margin-right:10px;"></i>Mis
+                        Proyectos</h1>
+                    <p id="saludo">Visualiza el estado de tus proyectos asignados</p>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
                 </button>
             </div>
-        </div>
+
+            <!-- Contenido -->
+            <div id="loadingBox" style="text-align:center;padding:60px 20px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
+                <p style="margin-top:12px;color:#94a3b8;">Cargando tus proyectos...</p>
+            </div>
+
+            <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
+
+            <div id="emptyBox" style="display:none;text-align:center;padding:60px 20px;">
+                <i class="fa-solid fa-folder-open"
+                    style="font-size:3rem;color:#cbd5e1;margin-bottom:16px;display:block;"></i>
+                <h3 style="color:#334155;margin-bottom:8px;">No tienes proyectos asignados</h3>
+                <p style="color:#94a3b8;">Cuando se te asigne un proyecto aparecerá aquí.</p>
+            </div>
+
+            <div id="errorBox" style="display:none;text-align:center;padding:60px 20px;">
+                <i class="fa-solid fa-circle-exclamation"
+                    style="font-size:3rem;color:#f87171;margin-bottom:16px;display:block;"></i>
+                <p id="errorMsg" style="color:#64748b;">Ocurrió un error al cargar tus proyectos.</p>
+            </div>
+
+        </main>
     </div>
-</div>
 
-<script>
-const sidebar    = document.getElementById('sidebar');
-const sidebarOvl = document.getElementById('sidebarOverlay');
-document.getElementById('btnMenuToggle').addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    sidebarOvl.classList.toggle('visible');
-});
-sidebarOvl.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    sidebarOvl.classList.remove('visible');
-});
-document.getElementById('incOverlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModalInc();
-});
+    <script>
+        // Sidebar móvil
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOvl = document.getElementById('sidebarOverlay');
+        document.getElementById('btnMenuToggle').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOvl.classList.toggle('visible');
+        });
+        sidebarOvl.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOvl.classList.remove('visible');
+        });
 
-// ─── Utilidades ───────────────────────────────────────────────
-function fmt(f) {
-    if (!f || f === '0000-00-00') return '-';
-    const [y, m, d] = f.split('-');
-    return `${d}/${m}/${y}`;
-}
-function escH(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
-function badgeClass(estado) {
-    return { 'Activo':'badge-en-proceso','Pausado':'badge-pausado','Cerrado':'badge-cerrado' }[estado] || 'badge-pendiente';
-}
+        // ─── Utilidades ───────────────────────────────────────────────
+        function fmt(f) {
+            if (!f || f === '0000-00-00') return '-';
+            const [y, m, d] = f.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function escH(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+        function badgeClass(estado) {
+            return { 'Activo': 'badge-en-proceso', 'Pausado': 'badge-pausado', 'Cerrado': 'badge-cerrado' }[estado] || 'badge-pendiente';
+        }
 
-// Estados que permiten reportar incidencia (proyectos terminados)
-const ESTADOS_FINALIZADOS = ['Completado', 'Finalizado', 'Cerrado'];
+        // ─── Render de cards ──────────────────────────────────────────
+        function renderCards(proyectos) {
+            document.getElementById('loadingBox').style.display = 'none';
 
-// ─── Render de cards ──────────────────────────────────────────
-function renderCards(proyectos) {
-    document.getElementById('loadingBox').style.display = 'none';
+            if (!proyectos || proyectos.length === 0) {
+                document.getElementById('emptyBox').style.display = 'block';
+                return;
+            }
 
-    if (!proyectos || proyectos.length === 0) {
-        document.getElementById('emptyBox').style.display = 'block';
-        return;
-    }
+            const grid = document.getElementById('cardsGrid');
+            grid.style.display = 'grid';
 
-    const grid = document.getElementById('cardsGrid');
-    grid.style.display = 'grid';
-
-    grid.innerHTML = proyectos.map(p => {
-        const puedeReportar = ESTADOS_FINALIZADOS.includes(p.estado);
-        const btnIncidencia = puedeReportar
-            ? `<button class="btn-incidencia"
-                onclick="abrirModalInc(${p.id}, '${escH(p.nombre)}')">
-                <i class="fa-solid fa-triangle-exclamation"></i> Reportar incidencia
-               </button>`
-            : '';
-
-        return `
+            grid.innerHTML = proyectos.map(p => `
         <div class="project-card">
             <div class="card-nombre">${escH(p.nombre)}</div>
             <span class="badge-sv ${badgeClass(p.estado)}">${escH(p.estado)}</span>
@@ -287,124 +268,53 @@ function renderCards(proyectos) {
                 <i class="fa-regular fa-calendar"></i>
                 <span>${fmt(p.fechaInicio)} → ${fmt(p.fechaEntrega)}</span>
             </div>
-            ${p.id ? `<p class="card-id">Proyecto #${p.id}</p>` : ''}
-            ${btnIncidencia}
-        </div>`;
-    }).join('');
-}
-
-// ─── Modal incidencia ─────────────────────────────────────────
-function abrirModalInc(idProyecto, nombreProyecto) {
-    document.getElementById('incIdProyecto').value   = idProyecto;
-    document.getElementById('incSubtitulo').textContent = 'Proyecto: ' + nombreProyecto;
-    document.getElementById('incTitulo').value       = '';
-    document.getElementById('incDescripcion').value  = '';
-    document.getElementById('incPrioridad').value    = 'Media';
-    ocultarAlertaInc();
-    document.getElementById('incOverlay').classList.add('open');
-}
-
-function cerrarModalInc() {
-    document.getElementById('incOverlay').classList.remove('open');
-}
-
-function mostrarAlertaInc(msg, tipo = 'error') {
-    const el = document.getElementById('incAlerta');
-    const [bg,col,bdr] = tipo === 'error'
-        ? ['#fee2e2','#dc2626','#fca5a5']
-        : ['#d1fae5','#065f46','#6ee7b7'];
-    el.style.cssText = `display:block;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
-    el.textContent = msg;
-}
-
-function ocultarAlertaInc() {
-    const el = document.getElementById('incAlerta');
-    el.style.display = 'none';
-    el.textContent = '';
-}
-
-async function enviarIncidencia() {
-    const idProyecto  = document.getElementById('incIdProyecto').value;
-    const titulo      = document.getElementById('incTitulo').value.trim();
-    const descripcion = document.getElementById('incDescripcion').value.trim();
-    const prioridad   = document.getElementById('incPrioridad').value;
-
-    if (!titulo || !descripcion) {
-        mostrarAlertaInc('Completa todos los campos obligatorios.'); return;
-    }
-
-    const btn = document.getElementById('btnEnviarInc');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-
-    try {
-        const form = new FormData();
-        form.append('id_proyecto', idProyecto);
-        form.append('titulo',      titulo);
-        form.append('descripcion', descripcion);
-        form.append('prioridad',   prioridad);
-
-        const res  = await fetch('php/registrar_incidencia.php', {
-            method : 'POST',
-            body   : form
-        });
-        const data = await res.json();
-
-        if (data.error) {
-            mostrarAlertaInc(data.mensaje || 'Error al enviar.');
-        } else {
-            cerrarModalInc();
-            alert('Incidencia reportada correctamente.');
+            ${p.id_proyecto ? `<p class="card-id">Proyecto #${p.id_proyecto}</p>` : ''}
+        </div>
+    `).join('');
         }
-    } catch {
-        mostrarAlertaInc('Error de conexión. Intenta de nuevo.');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar reporte';
-    }
-}
 
-// ─── Mostrar error ────────────────────────────────────────────
-function mostrarError(msg) {
-    document.getElementById('loadingBox').style.display = 'none';
-    document.getElementById('errorBox').style.display   = 'block';
-    document.getElementById('errorMsg').textContent     = msg;
-}
-
-// ─── Init ─────────────────────────────────────────────────────
-async function init() {
-    try {
-        const resSesion = await fetch('php/dashboard_data.php');
-        const sesion    = await resSesion.json();
-
-        if (sesion.error) { window.location.href = 'login.html'; return; }
-        if (sesion.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
-
-        document.getElementById('sidebarNombre').textContent = sesion.usuario;
-        document.getElementById('sidebarRol').textContent    = sesion.rol;
-        document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario;
-
-        const resProy   = await fetch('php/mis_proyectos.php');
-        const proyectos = await resProy.json();
-
-        if (proyectos.error) {
-            mostrarError(proyectos.mensaje || 'Error al cargar proyectos.');
-            return;
+        // ─── Mostrar error ────────────────────────────────────────────
+        function mostrarError(msg) {
+            document.getElementById('loadingBox').style.display = 'none';
+            document.getElementById('errorBox').style.display = 'block';
+            document.getElementById('errorMsg').textContent = msg;
         }
-        renderCards(proyectos);
 
-    } catch(e) {
-        console.error('Error init:', e);
-        mostrarError('No se pudo conectar con el servidor.');
-    }
-}
+        // ─── Init ─────────────────────────────────────────────────────
+        async function init() {
+            try {
+                const resSesion = await fetch('php/dashboard_data.php');
+                const sesion = await resSesion.json();
 
-async function cerrarSesion() {
-    try { await fetch('php/logout.php'); } catch(e) {}
-    window.location.href = 'login.html';
-}
+                if (sesion.error) { window.location.href = 'login.html'; return; }
+                if (sesion.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
 
-init();
-</script>
+                document.getElementById('sidebarNombre').textContent = sesion.usuario;
+                document.getElementById('sidebarRol').textContent = sesion.rol;
+                document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario;
+
+                const resProy = await fetch('php/mis_proyectos.php');
+                const proyectos = await resProy.json();
+
+                if (proyectos.error) {
+                    mostrarError(proyectos.mensaje || 'Error al cargar proyectos.');
+                    return;
+                }
+                renderCards(proyectos);
+
+            } catch (e) {
+                console.error('Error init:', e);
+                mostrarError('No se pudo conectar con el servidor.');
+            }
+        }
+
+        async function cerrarSesion() {
+            try { await fetch('php/logout.php'); } catch (e) { }
+            window.location.href = 'login.html';
+        }
+
+        init();
+    </script>
 </body>
+
 </html>
