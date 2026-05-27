@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -20,27 +20,51 @@
 <div class="dash-layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Mi Portal</div>
-            <a href="mis_proyectos.html">
-                <i class="fa-regular fa-rectangle-list"></i> Mis Proyectos
-            </a>
-            <a href="mis_incidencias.html" class="active">
-                <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
-            </a>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol" class="user-role">Cliente</span>
-        </div>
-    </aside>
+                            <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>
+
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
 
     <!-- MAIN -->
     <main class="dash-main">
@@ -191,7 +215,7 @@ function badgeEstado(e) {
     return `<span class="badge badge-${map[e] || 'abierta'}">${e}</span>`;
 }
 function fmtFecha(f) {
-    if (!f) return '—';
+    if (!f) return 'â€”';
     return new Date(f).toLocaleDateString('es-SV', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
@@ -324,3 +348,9 @@ init();
 </script>
 </body>
 </html>
+
+
+
+
+
+

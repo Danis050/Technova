@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,223 +9,255 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="dash-body">
 
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="dash-layout">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Principal</div>
-            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-            <a href="asignar_miembros.html" class="active"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-            <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
-            <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-            <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-            <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Administrador</strong>
-            <span id="sidebarRol">Administrador</span>
-        </div>
-    </aside>
-
-    <main class="dash-main">
-        <div class="dash-header">
-            <div>
-                <h1><i class="fa-solid fa-user-group" style="color:#6d28d9;margin-right:10px;"></i>Asignar Miembros</h1>
-                <p>Gestiona el equipo de cada proyecto</p>
+    <div class="dash-layout">
+                        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
             </div>
-            <button class="btn-logout" onclick="location.href='login.html'">
-                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-            </button>
-        </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
 
-        <div class="table-card">
-            <div class="proyecto-selector">
-                <label style="font-weight:700;font-size:.88rem;color:#0f172a;"><i class="fa-solid fa-folder-open" style="color:#6d28d9;margin-right:6px;"></i>Proyecto:</label>
-                <select id="selProyecto" onchange="cargarMiembros()">
-                    <option value="">Selecciona un proyecto...</option>
-                    <option value="1">Sitio Web Corporativo</option>
-                    <option value="2">App Móvil Delivery</option>
-                    <option value="3">Sistema ERP Finanzas</option>
-                </select>
-                <button class="btn-save" onclick="abrirModalAsignar()" id="btnAgregar" style="display:none;">
-                    <i class="fa-solid fa-user-plus"></i> Agregar Miembro
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
                 </button>
-                <div class="contador-miembros" id="contadorMiembros" style="display:none;">
-                    <span class="num" id="numMiembros">0</span> miembros asignados
+
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
+
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-user-group" style="color:#6d28d9;margin-right:10px;"></i>Asignar Miembros
+                    </h1>
+                    <p>Gestiona el equipo de cada proyecto</p>
                 </div>
+                <button class="btn-logout" onclick="location.href='login.html'">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
             </div>
 
-            <div id="emptyState">
-                <div class="empty-miembros">
-                    <i class="fa-solid fa-users-rectangle"></i>
-                    <h3 style="color:#334155;margin-bottom:6px;">Selecciona un proyecto</h3>
-                    <p>Elige un proyecto del menú para ver y gestionar sus miembros.</p>
+            <div class="table-card">
+                <div class="proyecto-selector">
+                    <label style="font-weight:700;font-size:.88rem;color:#0f172a;"><i class="fa-solid fa-folder-open"
+                            style="color:#6d28d9;margin-right:6px;"></i>Proyecto:</label>
+                    <select id="selProyecto" onchange="cargarMiembros()">
+                        <option value="">Selecciona un proyecto...</option>
+                        <option value="1">Sitio Web Corporativo</option>
+                        <option value="2">App Móvil Delivery</option>
+                        <option value="3">Sistema ERP Finanzas</option>
+                    </select>
+                    <button class="btn-save" onclick="abrirModalAsignar()" id="btnAgregar" style="display:none;">
+                        <i class="fa-solid fa-user-plus"></i> Agregar Miembro
+                    </button>
+                    <div class="contador-miembros" id="contadorMiembros" style="display:none;">
+                        <span class="num" id="numMiembros">0</span> miembros asignados
+                    </div>
                 </div>
-            </div>
 
-            <div class="miembros-grid" id="miembrosGrid" style="display:none;"></div>
-        </div>
-    </main>
-</div>
-
-<!-- MODAL ASIGNAR -->
-<div class="modal-overlay" id="modalAsignar">
-    <div class="modal" role="dialog" aria-modal="true">
-        <div class="modal-header">
-            <div>
-                <h2><span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span> Agregar Miembro</h2>
-                <p class="modal-subtitle">Busca un empleado y asígnale un rol en el proyecto</p>
-            </div>
-            <button class="btn-close-modal" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="modal-body">
-            <div class="rol-select-modal">
-                <label>Rol en el proyecto <span style="color:#ef4444;">*</span></label>
-                <div class="roles-grid">
-                    <label class="rol-opt"><input type="radio" name="rolProy" value="Desarrollador" checked>
-                        <span class="rol-card-m"><i class="fa-solid fa-code"></i> Desarrollador</span></label>
-                    <label class="rol-opt"><input type="radio" name="rolProy" value="Diseñador">
-                        <span class="rol-card-m"><i class="fa-solid fa-pen-nib"></i> Diseñador</span></label>
-                    <label class="rol-opt"><input type="radio" name="rolProy" value="QA Tester">
-                        <span class="rol-card-m"><i class="fa-solid fa-bug"></i> QA Tester</span></label>
-                    <label class="rol-opt"><input type="radio" name="rolProy" value="Project Manager">
-                        <span class="rol-card-m"><i class="fa-solid fa-diagram-project"></i> Project Manager</span></label>
+                <div id="emptyState">
+                    <div class="empty-miembros">
+                        <i class="fa-solid fa-users-rectangle"></i>
+                        <h3 style="color:#334155;margin-bottom:6px;">Selecciona un proyecto</h3>
+                        <p>Elige un proyecto del menú para ver y gestionar sus miembros.</p>
+                    </div>
                 </div>
+
+                <div class="miembros-grid" id="miembrosGrid" style="display:none;"></div>
             </div>
-            <hr class="divider" style="margin:16px 0;">
-            <div class="modal-buscar">
-                <input type="text" id="buscarEmpleado" placeholder="Buscar empleado por nombre..." oninput="filtrarEmpleados()">
+        </main>
+    </div>
+
+    <!-- MODAL ASIGNAR -->
+    <div class="modal-overlay" id="modalAsignar">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <div>
+                    <h2><span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span> Agregar Miembro</h2>
+                    <p class="modal-subtitle">Busca un empleado y asígnale un rol en el proyecto</p>
+                </div>
+                <button class="btn-close-modal" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="empleado-list" id="listaEmpleados"></div>
-            <div id="modalAlerta" style="margin-top:12px;"></div>
+            <div class="modal-body">
+                <div class="rol-select-modal">
+                    <label>Rol en el proyecto <span style="color:#ef4444;">*</span></label>
+                    <div class="roles-grid">
+                        <label class="rol-opt"><input type="radio" name="rolProy" value="Desarrollador" checked>
+                            <span class="rol-card-m"><i class="fa-solid fa-code"></i> Desarrollador</span></label>
+                        <label class="rol-opt"><input type="radio" name="rolProy" value="Diseñador">
+                            <span class="rol-card-m"><i class="fa-solid fa-pen-nib"></i> Diseñador</span></label>
+                        <label class="rol-opt"><input type="radio" name="rolProy" value="QA Tester">
+                            <span class="rol-card-m"><i class="fa-solid fa-bug"></i> QA Tester</span></label>
+                        <label class="rol-opt"><input type="radio" name="rolProy" value="Project Manager">
+                            <span class="rol-card-m"><i class="fa-solid fa-diagram-project"></i> Project
+                                Manager</span></label>
+                    </div>
+                </div>
+                <hr class="divider" style="margin:16px 0;">
+                <div class="modal-buscar">
+                    <input type="text" id="buscarEmpleado" placeholder="Buscar empleado por nombre..."
+                        oninput="filtrarEmpleados()">
+                </div>
+                <div class="empleado-list" id="listaEmpleados"></div>
+                <div id="modalAlerta" style="margin-top:12px;"></div>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-// Sidebar móvil
-document.getElementById('btnMenuToggle').addEventListener('click',()=>{
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('sidebarOverlay').classList.toggle('visible');
-});
-document.getElementById('sidebarOverlay').addEventListener('click',()=>{
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('sidebarOverlay').classList.remove('visible');
-});
+    <script>
+        // Sidebar móvil
+        document.getElementById('btnMenuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('visible');
+        });
+        document.getElementById('sidebarOverlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('visible');
+        });
 
-const empleadosDB=[
-    {id:1,nombre:'Carlos López',puesto:'Desarrollador',email:'carlos@technova.com'},
-    {id:2,nombre:'Ana Martínez',puesto:'Diseñadora',email:'ana@technova.com'},
-    {id:3,nombre:'Roberto García',puesto:'QA Tester',email:'roberto@technova.com'},
-    {id:4,nombre:'María Fernández',puesto:'Project Manager',email:'maria@technova.com'},
-    {id:5,nombre:'Diego Torres',puesto:'Desarrollador',email:'diego@technova.com'},
-    {id:6,nombre:'Laura Sánchez',puesto:'Diseñadora',email:'laura@technova.com'},
-    {id:7,nombre:'Pedro Ramírez',puesto:'Soporte Técnico',email:'pedro@technova.com'},
-    {id:8,nombre:'Sofía Herrera',puesto:'Desarrolladora',email:'sofia@technova.com'}
-];
+        const empleadosDB = [
+            { id: 1, nombre: 'Carlos López', puesto: 'Desarrollador', email: 'carlos@technova.com' },
+            { id: 2, nombre: 'Ana Martínez', puesto: 'Diseñadora', email: 'ana@technova.com' },
+            { id: 3, nombre: 'Roberto García', puesto: 'QA Tester', email: 'roberto@technova.com' },
+            { id: 4, nombre: 'María Fernández', puesto: 'Project Manager', email: 'maria@technova.com' },
+            { id: 5, nombre: 'Diego Torres', puesto: 'Desarrollador', email: 'diego@technova.com' },
+            { id: 6, nombre: 'Laura Sánchez', puesto: 'Diseñadora', email: 'laura@technova.com' },
+            { id: 7, nombre: 'Pedro Ramírez', puesto: 'Soporte Técnico', email: 'pedro@technova.com' },
+            { id: 8, nombre: 'Sofía Herrera', puesto: 'Desarrolladora', email: 'sofia@technova.com' }
+        ];
 
-const miembrosPorProyecto={
-    '1':[{id:1,nombre:'Carlos López',rol:'Desarrollador'},{id:2,nombre:'Ana Martínez',rol:'Diseñador'}],
-    '2':[{id:4,nombre:'María Fernández',rol:'Project Manager'},{id:5,nombre:'Diego Torres',rol:'Desarrollador'},{id:3,nombre:'Roberto García',rol:'QA Tester'}],
-    '3':[]
-};
+        const miembrosPorProyecto = {
+            '1': [{ id: 1, nombre: 'Carlos López', rol: 'Desarrollador' }, { id: 2, nombre: 'Ana Martínez', rol: 'Diseñador' }],
+            '2': [{ id: 4, nombre: 'María Fernández', rol: 'Project Manager' }, { id: 5, nombre: 'Diego Torres', rol: 'Desarrollador' }, { id: 3, nombre: 'Roberto García', rol: 'QA Tester' }],
+            '3': []
+        };
 
-const avatarColors=['avatar-purple','avatar-blue','avatar-green','avatar-orange'];
-const rolClasses={'Desarrollador':'rol-dev','Diseñador':'rol-design','QA Tester':'rol-qa','Project Manager':'rol-pm'};
+        const avatarColors = ['avatar-purple', 'avatar-blue', 'avatar-green', 'avatar-orange'];
+        const rolClasses = { 'Desarrollador': 'rol-dev', 'Diseñador': 'rol-design', 'QA Tester': 'rol-qa', 'Project Manager': 'rol-pm' };
 
-function getInitials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+        function getInitials(n) { return n.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase(); }
 
-function cargarMiembros(){
-    const pid=document.getElementById('selProyecto').value;
-    const grid=document.getElementById('miembrosGrid');
-    const empty=document.getElementById('emptyState');
-    const btn=document.getElementById('btnAgregar');
-    const cont=document.getElementById('contadorMiembros');
-    if(!pid){grid.style.display='none';empty.style.display='block';btn.style.display='none';cont.style.display='none';return;}
-    btn.style.display='flex';cont.style.display='flex';
-    const miembros=miembrosPorProyecto[pid]||[];
-    document.getElementById('numMiembros').textContent=miembros.length;
-    if(miembros.length===0){
-        grid.style.display='none';empty.style.display='block';
-        empty.innerHTML='<div class="empty-miembros"><i class="fa-solid fa-user-slash"></i><h3 style="color:#334155;margin-bottom:6px;">Sin miembros asignados</h3><p>Agrega miembros al equipo del proyecto.</p></div>';
-        return;
-    }
-    empty.style.display='none';grid.style.display='grid';
-    grid.innerHTML=miembros.map((m,i)=>`
+        function cargarMiembros() {
+            const pid = document.getElementById('selProyecto').value;
+            const grid = document.getElementById('miembrosGrid');
+            const empty = document.getElementById('emptyState');
+            const btn = document.getElementById('btnAgregar');
+            const cont = document.getElementById('contadorMiembros');
+            if (!pid) { grid.style.display = 'none'; empty.style.display = 'block'; btn.style.display = 'none'; cont.style.display = 'none'; return; }
+            btn.style.display = 'flex'; cont.style.display = 'flex';
+            const miembros = miembrosPorProyecto[pid] || [];
+            document.getElementById('numMiembros').textContent = miembros.length;
+            if (miembros.length === 0) {
+                grid.style.display = 'none'; empty.style.display = 'block';
+                empty.innerHTML = '<div class="empty-miembros"><i class="fa-solid fa-user-slash"></i><h3 style="color:#334155;margin-bottom:6px;">Sin miembros asignados</h3><p>Agrega miembros al equipo del proyecto.</p></div>';
+                return;
+            }
+            empty.style.display = 'none'; grid.style.display = 'grid';
+            grid.innerHTML = miembros.map((m, i) => `
         <div class="miembro-card">
-            <div class="miembro-avatar ${avatarColors[i%4]}">${getInitials(m.nombre)}</div>
+            <div class="miembro-avatar ${avatarColors[i % 4]}">${getInitials(m.nombre)}</div>
             <div class="miembro-info">
                 <h4>${m.nombre}</h4>
-                <p>${empleadosDB.find(e=>e.id===m.id)?.puesto||'Empleado'}</p>
-                <span class="miembro-rol ${rolClasses[m.rol]||'rol-dev'}">${m.rol}</span>
+                <p>${empleadosDB.find(e => e.id === m.id)?.puesto || 'Empleado'}</p>
+                <span class="miembro-rol ${rolClasses[m.rol] || 'rol-dev'}">${m.rol}</span>
             </div>
             <button class="btn-remove" onclick="removerMiembro(${m.id})" title="Remover"><i class="fa-solid fa-xmark"></i></button>
         </div>
     `).join('');
-}
+        }
 
-function removerMiembro(empId){
-    const pid=document.getElementById('selProyecto').value;
-    if(!pid)return;
-    miembrosPorProyecto[pid]=miembrosPorProyecto[pid].filter(m=>m.id!==empId);
-    cargarMiembros();
-}
+        function removerMiembro(empId) {
+            const pid = document.getElementById('selProyecto').value;
+            if (!pid) return;
+            miembrosPorProyecto[pid] = miembrosPorProyecto[pid].filter(m => m.id !== empId);
+            cargarMiembros();
+        }
 
-function abrirModalAsignar(){
-    document.getElementById('modalAsignar').classList.add('open');
-    document.body.style.overflow='hidden';
-    renderEmpleados();
-}
-function cerrarModal(){
-    document.getElementById('modalAsignar').classList.remove('open');
-    document.body.style.overflow='';
-}
-document.getElementById('modalAsignar').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarModal();});
+        function abrirModalAsignar() {
+            document.getElementById('modalAsignar').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            renderEmpleados();
+        }
+        function cerrarModal() {
+            document.getElementById('modalAsignar').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('modalAsignar').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
-function renderEmpleados(filtro=''){
-    const pid=document.getElementById('selProyecto').value;
-    const asignados=(miembrosPorProyecto[pid]||[]).map(m=>m.id);
-    let lista=empleadosDB.filter(e=>!asignados.includes(e.id));
-    if(filtro)lista=lista.filter(e=>e.nombre.toLowerCase().includes(filtro.toLowerCase()));
-    const el=document.getElementById('listaEmpleados');
-    if(lista.length===0){el.innerHTML='<div style="padding:24px;text-align:center;color:#94a3b8;font-size:.85rem;">No hay empleados disponibles</div>';return;}
-    el.innerHTML=lista.map(e=>`
+        function renderEmpleados(filtro = '') {
+            const pid = document.getElementById('selProyecto').value;
+            const asignados = (miembrosPorProyecto[pid] || []).map(m => m.id);
+            let lista = empleadosDB.filter(e => !asignados.includes(e.id));
+            if (filtro) lista = lista.filter(e => e.nombre.toLowerCase().includes(filtro.toLowerCase()));
+            const el = document.getElementById('listaEmpleados');
+            if (lista.length === 0) { el.innerHTML = '<div style="padding:24px;text-align:center;color:#94a3b8;font-size:.85rem;">No hay empleados disponibles</div>'; return; }
+            el.innerHTML = lista.map(e => `
         <div class="empleado-item">
             <div class="emp-avatar">${getInitials(e.nombre)}</div>
-            <div class="emp-info"><h4>${e.nombre}</h4><p>${e.puesto} · ${e.email}</p></div>
+            <div class="emp-info"><h4>${e.nombre}</h4><p>${e.puesto} Â· ${e.email}</p></div>
             <button class="btn-asignar-emp" onclick="asignarEmpleado(${e.id},'${e.nombre}')"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Asignar</button>
         </div>
     `).join('');
-}
-function filtrarEmpleados(){renderEmpleados(document.getElementById('buscarEmpleado').value);}
+        }
+        function filtrarEmpleados() { renderEmpleados(document.getElementById('buscarEmpleado').value); }
 
-function asignarEmpleado(id,nombre){
-    const pid=document.getElementById('selProyecto').value;
-    const rol=document.querySelector('input[name="rolProy"]:checked')?.value||'Desarrollador';
-    if(!miembrosPorProyecto[pid])miembrosPorProyecto[pid]=[];
-    miembrosPorProyecto[pid].push({id,nombre,rol});
-    cargarMiembros();renderEmpleados(document.getElementById('buscarEmpleado').value);
-    const al=document.getElementById('modalAlerta');
-    al.style.cssText='display:block;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
-    al.innerHTML='<i class="fa-solid fa-circle-check"></i> '+nombre+' asignado como '+rol;
-    setTimeout(()=>{al.style.display='none';},2000);
-}
-</script>
+        function asignarEmpleado(id, nombre) {
+            const pid = document.getElementById('selProyecto').value;
+            const rol = document.querySelector('input[name="rolProy"]:checked')?.value || 'Desarrollador';
+            if (!miembrosPorProyecto[pid]) miembrosPorProyecto[pid] = [];
+            miembrosPorProyecto[pid].push({ id, nombre, rol });
+            cargarMiembros(); renderEmpleados(document.getElementById('buscarEmpleado').value);
+            const al = document.getElementById('modalAlerta');
+            al.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
+            al.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + nombre + ' asignado como ' + rol;
+            setTimeout(() => { al.style.display = 'none'; }, 2000);
+        }
+    </script>
 </body>
+
 </html>
+
+
+
+

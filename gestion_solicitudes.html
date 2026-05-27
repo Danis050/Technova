@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -15,24 +15,51 @@
             id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button></div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="dash-layout">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-logo"><img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova</div>
+                        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Principal</div>
                 <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
                 <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
                 <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
                 <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
-                <a href="gestion_solicitudes.html" class="active"><i class="fa-solid fa-ticket"></i> Solicitudes <span
-                        class="counter-badge">3</span></a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
                 <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
                 <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
                 <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>
+
                 <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
-            <div class="sidebar-user"><strong>Administrador</strong><span>Administrador</span></div>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
         </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
 
         <main class="dash-main">
             <div class="dash-header">
@@ -186,8 +213,8 @@
 
         function verDetalle(id) {
             const s = sols.find(x => x.id === id); if (!s) return;
-            document.getElementById('mdTitle').textContent = s.id + ' — ' + s.asunto;
-            document.getElementById('mdSub').textContent = s.cliente + ' · ' + s.proyecto;
+            document.getElementById('mdTitle').textContent = s.id + ' â€” ' + s.asunto;
+            document.getElementById('mdSub').textContent = s.cliente + ' Â· ' + s.proyecto;
             document.getElementById('mdBody').innerHTML = `
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
             <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Prioridad</label><span class="badge-g ${pCls[s.prioridad]}">${s.prioridad}</span></div>
@@ -219,3 +246,7 @@
 </body>
 
 </html>
+
+
+
+

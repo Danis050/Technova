@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,342 +10,365 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pages/proyectos.css">
 </head>
+
 <body class="dash-body">
- 
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
- 
-<div class="dash-layout">
- 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Principal</div>
-            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="proyectos.html" class="active"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-            <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-            <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
-            <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-            <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-            <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
- 
-            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
- 
-    <main class="dash-main">
- 
-        <div class="dash-header">
-            <div>
-                <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos</h1>
-                <p id="saludo">Gestión de proyectos</p>
+
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dash-layout">
+
+                        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()">
-                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-            </button>
-        </div>
- 
-        <div class="table-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>
+
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
+
+        <main class="dash-main">
+
+            <div class="dash-header">
                 <div>
-                    <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
-                        <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
-                        Lista de Proyectos
-                    </h3>
-                    <p id="proyectosCount" style="font-size:.8rem;color:#64748b;margin:0;">0 proyectos en total</p>
+                    <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos
+                    </h1>
+                    <p id="saludo">Gestión de proyectos</p>
                 </div>
-                <button class="btn-save" onclick="abrirModalProyecto()">
-                    <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
                 </button>
             </div>
- 
-            <div id="loadingBox" style="text-align:center;padding:40px;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
-                <p style="margin-top:8px;color:#94a3b8;">Cargando proyectos...</p>
-            </div>
- 
-            <div class="table-wrap" id="tableWrap" style="display:none;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Cliente</th>
-                            <th>Estado</th>
-                            <th>Fechas</th>
-                            <th>Monto</th>
-                            <th style="text-align:right;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaProyectosBody"></tbody>
-                </table>
-            </div>
-        </div>
- 
-    </main>
-</div>
- 
-<div class="modal-overlay" id="modalProyectoOverlay">
-    <div class="modal" role="dialog" aria-modal="true">
-        <div class="modal-header">
-            <div>
-                <h2>
-                    <span class="modal-icon"><i class="fa-solid fa-diagram-project"></i></span>
-                    <span id="modalProyectoTitle">Nuevo Proyecto</span>
-                </h2>
-                <p class="modal-subtitle" id="modalProyectoSubtitle">Completa los campos para el proyecto.</p>
-            </div>
-            <button class="btn-close-modal" onclick="cerrarModalProyecto()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="proyectoId">
 
-            <div class="wizard-steps" id="wizardSteps">
-                <div class="wstep">
-                    <div class="wstep-circle active" id="sc1">1</div>
-                    <span class="wstep-label active" id="sl1">Datos del proyecto</span>
-                </div>
-                <div class="wstep-conn" id="wconn"></div>
-                <div class="wstep">
-                    <div class="wstep-circle" id="sc2">2</div>
-                    <span class="wstep-label" id="sl2">Anticipo obligatorio</span>
-                </div>
-            </div>
-
-            <!-- ── PASO 1 ── -->
-            <div class="wpanel active" id="paso1">
-                <div class="mfield">
-                    <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
-                    <input type="text" id="proyectoNombre" placeholder="Ej. Sitio Web Corporativo">
-                </div>
-                <div class="mfield">
-                    <label>Cliente <span style="color:#ef4444;">*</span></label>
-                    <select id="sel-cliente"><option value="">Selecciona un cliente</option></select>
-                </div>
-                <div class="mfield">
-                    <label>Estado</label>
-                    <select id="proyectoEstado">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En Proceso">En Proceso</option>
-                        <option value="Completado">Completado</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
-                </div>
-                <div class="form-row-2">
-                    <div class="mfield">
-                        <label>Fecha de inicio <span style="color:#ef4444;">*</span></label>
-                        <input type="date" id="proyectoFechaInicio">
+            <div class="table-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <div>
+                        <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                            <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
+                            Lista de Proyectos
+                        </h3>
+                        <p id="proyectosCount" style="font-size:.8rem;color:#64748b;margin:0;">0 proyectos en total</p>
                     </div>
-                    <div class="mfield">
-                        <label>Fecha de fin <span style="color:#ef4444;">*</span></label>
-                        <input type="date" id="proyectoFechaFin">
-                    </div>
-                </div>
-                <div class="mfield">
-                    <label>Monto del proyecto <span style="color:#ef4444;">*</span></label>
-                    <input type="number" id="proyectoMonto" placeholder="0.00" min="0" step="0.01"
-                           oninput="recalcularAnticipo()">
-                </div>
-                <div id="modalProyectoAlerta" style="display:none;"></div>
-
-                <div class="wfooter" id="footerPaso1">
-                    <button class="btn-wnext" style="flex:1;" onclick="irPaso2()">
-                        Siguiente: Anticipo <i class="fa-solid fa-arrow-right"></i>
+                    <button class="btn-save" onclick="abrirModalProyecto()">
+                        <i class="fa-solid fa-plus"></i> Nuevo Proyecto
                     </button>
                 </div>
-                <button class="btn-modal-submit" id="btnGuardarEdicion" style="display:none;" onclick="guardarEdicion()">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span id="btnGuardarTexto">Guardar cambios</span>
-                </button>
+
+                <div id="loadingBox" style="text-align:center;padding:40px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+                    <p style="margin-top:8px;color:#94a3b8;">Cargando proyectos...</p>
+                </div>
+
+                <div class="table-wrap" id="tableWrap" style="display:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cliente</th>
+                                <th>Estado</th>
+                                <th>Fechas</th>
+                                <th>Monto</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProyectosBody"></tbody>
+                    </table>
+                </div>
             </div>
 
-            <!-- ── PASO 2: Anticipo ── -->
-            <div class="wpanel" id="paso2">
-                <div class="anticipo-hdr">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                    <div>
-                        <h4>Anticipo del proyecto</h4>
-                        <p>Obligatorio. El monto es el 50% del total del proyecto.</p>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalProyectoOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <div>
+                    <h2>
+                        <span class="modal-icon"><i class="fa-solid fa-diagram-project"></i></span>
+                        <span id="modalProyectoTitle">Nuevo Proyecto</span>
+                    </h2>
+                    <p class="modal-subtitle" id="modalProyectoSubtitle">Completa los campos para el proyecto.</p>
+                </div>
+                <button class="btn-close-modal" onclick="cerrarModalProyecto()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="proyectoId">
+
+                <div class="wizard-steps" id="wizardSteps">
+                    <div class="wstep">
+                        <div class="wstep-circle active" id="sc1">1</div>
+                        <span class="wstep-label active" id="sl1">Datos del proyecto</span>
+                    </div>
+                    <div class="wstep-conn" id="wconn"></div>
+                    <div class="wstep">
+                        <div class="wstep-circle" id="sc2">2</div>
+                        <span class="wstep-label" id="sl2">Anticipo obligatorio</span>
                     </div>
                 </div>
-                <div class="mfield">
-                    <label>Monto del anticipo (50% obligatorio)</label>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <input type="text" id="aMontoWiz" readonly
-                               style="background:#f1f5f9;color:#ff0404;
+
+                <!-- ── PASO 1 ── -->
+                <div class="wpanel active" id="paso1">
+                    <div class="mfield">
+                        <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
+                        <input type="text" id="proyectoNombre" placeholder="Ej. Sitio Web Corporativo">
+                    </div>
+                    <div class="mfield">
+                        <label>Cliente <span style="color:#ef4444;">*</span></label>
+                        <select id="sel-cliente">
+                            <option value="">Selecciona un cliente</option>
+                        </select>
+                    </div>
+                    <div class="mfield">
+                        <label>Estado</label>
+                        <select id="proyectoEstado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Proceso">En Proceso</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="mfield">
+                            <label>Fecha de inicio <span style="color:#ef4444;">*</span></label>
+                            <input type="date" id="proyectoFechaInicio">
+                        </div>
+                        <div class="mfield">
+                            <label>Fecha de fin <span style="color:#ef4444;">*</span></label>
+                            <input type="date" id="proyectoFechaFin">
+                        </div>
+                    </div>
+                    <div class="mfield">
+                        <label>Monto del proyecto <span style="color:#ef4444;">*</span></label>
+                        <input type="number" id="proyectoMonto" placeholder="0.00" min="0" step="0.01"
+                            oninput="recalcularAnticipo()">
+                    </div>
+                    <div id="modalProyectoAlerta" style="display:none;"></div>
+
+                    <div class="wfooter" id="footerPaso1">
+                        <button class="btn-wnext" style="flex:1;" onclick="irPaso2()">
+                            Siguiente: Anticipo <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <button class="btn-modal-submit" id="btnGuardarEdicion" style="display:none;"
+                        onclick="guardarEdicion()">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span id="btnGuardarTexto">Guardar cambios</span>
+                    </button>
+                </div>
+
+                <!-- ── PASO 2: Anticipo ── -->
+                <div class="wpanel" id="paso2">
+                    <div class="anticipo-hdr">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                        <div>
+                            <h4>Anticipo del proyecto</h4>
+                            <p>Obligatorio. El monto es el 50% del total del proyecto.</p>
+                        </div>
+                    </div>
+                    <div class="mfield">
+                        <label>Monto del anticipo (50% obligatorio)</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="text" id="aMontoWiz" readonly style="background:#f1f5f9;color:#ff0404;
                                       cursor:not-allowed;border:1.5px solid #e2e8f0;border-radius:10px;
                                       padding:10px 14px;width:100%;box-sizing:border-box;">
+                        </div>
+                        <p style="margin:5px 0 0;font-size:.74rem;color:#64748b;">
+                            <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
+                            Calculado automáticamente. No editable.
+                        </p>
                     </div>
-                    <p style="margin:5px 0 0;font-size:.74rem;color:#64748b;">
-                        <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
-                        Calculado automáticamente. No editable.
-                    </p>
-                </div>
-                <div class="mfield">
-                    <label>Fecha de pago <span style="color:#ef4444;">*</span></label>
-                    <input type="date" id="aFechaWiz">
-                </div>
-                <div class="mfield">
-                    <label>Método de pago <span style="color:#ef4444;">*</span></label>
-                    <div class="metodo-grid">
-                        <div class="metodo-opt">
-                            <input type="radio" name="aMetodoWiz" id="mwEfectivo" value="Efectivo">
-                            <label class="metodo-card" for="mwEfectivo">
-                                <i class="fa-solid fa-money-bill-wave"></i> Efectivo
-                            </label>
-                        </div>
-                        <div class="metodo-opt">
-                            <input type="radio" name="aMetodoWiz" id="mwTransferencia" value="Transferencia">
-                            <label class="metodo-card" for="mwTransferencia">
-                                <i class="fa-solid fa-building-columns"></i> Transferencia
-                            </label>
-                        </div>
-                        <div class="metodo-opt">
-                            <input type="radio" name="aMetodoWiz" id="mwCheque" value="Cheque">
-                            <label class="metodo-card" for="mwCheque">
-                                <i class="fa-solid fa-money-check"></i> Cheque
-                            </label>
+                    <div class="mfield">
+                        <label>Fecha de pago <span style="color:#ef4444;">*</span></label>
+                        <input type="date" id="aFechaWiz">
+                    </div>
+                    <div class="mfield">
+                        <label>Método de pago <span style="color:#ef4444;">*</span></label>
+                        <div class="metodo-grid">
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwEfectivo" value="Efectivo">
+                                <label class="metodo-card" for="mwEfectivo">
+                                    <i class="fa-solid fa-money-bill-wave"></i> Efectivo
+                                </label>
+                            </div>
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwTransferencia" value="Transferencia">
+                                <label class="metodo-card" for="mwTransferencia">
+                                    <i class="fa-solid fa-building-columns"></i> Transferencia
+                                </label>
+                            </div>
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwCheque" value="Cheque">
+                                <label class="metodo-card" for="mwCheque">
+                                    <i class="fa-solid fa-money-check"></i> Cheque
+                                </label>
+                            </div>
                         </div>
                     </div>
+                    <div class="mfield">
+                        <label>NÂ° Comprobante <span style="color:#94a3b8;font-weight:400;">(opcional)</span></label>
+                        <input type="text" id="aComprobanteWiz" placeholder="TRF-2026-XXXX">
+                    </div>
+                    <div id="alertaPaso2" style="display:none;"></div>
+                    <div class="wfooter">
+                        <button class="btn-wback" onclick="irPaso1()">
+                            <i class="fa-solid fa-arrow-left"></i> Atrás
+                        </button>
+                        <button class="btn-wnext" id="btnCrearFinal" onclick="crearProyectoCompleto()">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span id="txtCrearFinal">Crear Proyecto</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="mfield">
-                    <label>N° Comprobante <span style="color:#94a3b8;font-weight:400;">(opcional)</span></label>
-                    <input type="text" id="aComprobanteWiz" placeholder="TRF-2026-XXXX">
-                </div>
-                <div id="alertaPaso2" style="display:none;"></div>
-                <div class="wfooter">
-                    <button class="btn-wback" onclick="irPaso1()">
-                        <i class="fa-solid fa-arrow-left"></i> Atrás
-                    </button>
-                    <button class="btn-wnext" id="btnCrearFinal" onclick="crearProyectoCompleto()">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span id="txtCrearFinal">Crear Proyecto</span>
-                    </button>
-                </div>
+
             </div>
-
         </div>
     </div>
-</div>
- 
-<div class="modal-overlay" id="modalEliminarOverlay">
-    <div class="modal modal-confirm" role="dialog" aria-modal="true">
-        <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
-        <h3>¿Eliminar proyecto?</h3>
-        <p>Esta acción es permanente. El proyecto <strong id="eliminarNombreProyecto"></strong> será borrado.</p>
-        <div class="confirm-btns">
-            <button class="btn-cancel-m" onclick="cerrarModalEliminar()">Cancelar</button>
-            <button class="btn-del-confirm" id="btnConfirmarEliminar">
-                <i class="fa-solid fa-trash"></i> Eliminar
-            </button>
+
+    <div class="modal-overlay" id="modalEliminarOverlay">
+        <div class="modal modal-confirm" role="dialog" aria-modal="true">
+            <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
+            <h3>Â¿Eliminar proyecto?</h3>
+            <p>Esta acción es permanente. El proyecto <strong id="eliminarNombreProyecto"></strong> será borrado.</p>
+            <div class="confirm-btns">
+                <button class="btn-cancel-m" onclick="cerrarModalEliminar()">Cancelar</button>
+                <button class="btn-del-confirm" id="btnConfirmarEliminar">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                </button>
+            </div>
         </div>
     </div>
-</div>
- 
-<script>
-const sidebar       = document.getElementById('sidebar');
-const sidebarOvl    = document.getElementById('sidebarOverlay');
-document.getElementById('btnMenuToggle').addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    sidebarOvl.classList.toggle('visible');
-});
-sidebarOvl.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    sidebarOvl.classList.remove('visible');
-});
- 
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
-});
-document.getElementById('modalProyectoOverlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModalProyecto();
-});
-document.getElementById('modalEliminarOverlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModalEliminar();
-});
- 
-let proyectos = [];
-let modoEdicion = false;
-let proyectoEditId = null;
-let proyectoEliminarId = null;
- 
-function formatFecha(f) {
-    if (!f || f === '0000-00-00') return '-';
-    const [y,m,d] = f.split('-');
-    return `${d}/${m}/${y}`;
-}
-function getBadgeClass(e) {
-    return { 'En Proceso':'badge-en-progreso','Completado':'badge-completado',
-             'Pendiente':'badge-pendiente','Cancelado':'badge-cancelado' }[e] || 'badge-pendiente';
-}
-function escapeHtml(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
- 
-async function cargarProyectos() {
-    try {
-        const res  = await fetch('php/proyectos_lista.php');
-        const data = await res.json();
-        proyectos  = Array.isArray(data) ? data : (data.proyectos || []);
-        renderTabla();
-    } catch (e) { console.error('Error:', e); }
-}
- 
-function renderTabla() {
-    const tbody = document.getElementById('tablaProyectosBody');
-    document.getElementById('proyectosCount').textContent =
-        `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
- 
-    if (proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
-            No hay proyectos registrados</td></tr>`;
-        return;
-    }
-    // ORDENAR: De más nuevo a más viejo (usando el ID de forma descendente)
-    proyectos.sort((a, b) => {
-        const idA = a.id || a.id_proyecto;
-        const idB = b.id || b.id_proyecto;
-        return idB - idA; 
-    });
 
-    document.getElementById('proyectosCount').textContent =
-        `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
- 
-    if (proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOvl = document.getElementById('sidebarOverlay');
+        document.getElementById('btnMenuToggle').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOvl.classList.toggle('visible');
+        });
+        sidebarOvl.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOvl.classList.remove('visible');
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
+        });
+        document.getElementById('modalProyectoOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) cerrarModalProyecto();
+        });
+        document.getElementById('modalEliminarOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) cerrarModalEliminar();
+        });
+
+        let proyectos = [];
+        let modoEdicion = false;
+        let proyectoEditId = null;
+        let proyectoEliminarId = null;
+
+        function formatFecha(f) {
+            if (!f || f === '0000-00-00') return '-';
+            const [y, m, d] = f.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function getBadgeClass(e) {
+            return {
+                'En Proceso': 'badge-en-progreso', 'Completado': 'badge-completado',
+                'Pendiente': 'badge-pendiente', 'Cancelado': 'badge-cancelado'
+            }[e] || 'badge-pendiente';
+        }
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        async function cargarProyectos() {
+            try {
+                const res = await fetch('php/proyectos_lista.php');
+                const data = await res.json();
+                proyectos = Array.isArray(data) ? data : (data.proyectos || []);
+                renderTabla();
+            } catch (e) { console.error('Error:', e); }
+        }
+
+        function renderTabla() {
+            const tbody = document.getElementById('tablaProyectosBody');
+            document.getElementById('proyectosCount').textContent =
+                `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
+
+            if (proyectos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
             No hay proyectos registrados</td></tr>`;
-        return;
-    }
-    tbody.innerHTML = proyectos.map(p => {
-        const anticipoBadge = p.anticipo_pagado == 1
-            ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
-            : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
-        return `
+                return;
+            }
+            // ORDENAR: De más nuevo a más viejo (usando el ID de forma descendente)
+            proyectos.sort((a, b) => {
+                const idA = a.id || a.id_proyecto;
+                const idB = b.id || b.id_proyecto;
+                return idB - idA;
+            });
+
+            document.getElementById('proyectosCount').textContent =
+                `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
+
+            if (proyectos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
+            No hay proyectos registrados</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = proyectos.map(p => {
+                const anticipoBadge = p.anticipo_pagado == 1
+                    ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
+                    : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
+                return `
         <tr>
             <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
             <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
             <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
             <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
-            <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', {minimumFractionDigits:2, maximumFractionDigits:2}) : '-'}</td>
+            <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
             <td style="text-align:right;">
                 <button class="btn-icon btn-edit" onclick="abrirModalEditar(${p.id || p.id_proyecto})">
                     <i class="fa-regular fa-pen-to-square"></i>
@@ -354,255 +378,260 @@ function renderTabla() {
                 </button>
             </td>
         </tr>`;
-    }).join('');
-    console.log(proyectos);
-}
- 
-async function poblarSelectClientes(idSeleccionado = '') {
-    const sel = document.getElementById('sel-cliente');
-    sel.innerHTML = '<option value="">Cargando...</option>';
-    try {
-        const res  = await fetch('php/clientes_lista.php');
-        const data = await res.json();
-        sel.innerHTML = '<option value="">Selecciona un cliente</option>';
-        data.forEach(c => {
-            const o = document.createElement('option');
-            o.value = c.id;
-            o.textContent = c.nombre_empresa;
-            if (String(c.id) === String(idSeleccionado)) o.selected = true;
-            sel.appendChild(o);
+            }).join('');
+            console.log(proyectos);
+        }
+
+        async function poblarSelectClientes(idSeleccionado = '') {
+            const sel = document.getElementById('sel-cliente');
+            sel.innerHTML = '<option value="">Cargando...</option>';
+            try {
+                const res = await fetch('php/clientes_lista.php');
+                const data = await res.json();
+                sel.innerHTML = '<option value="">Selecciona un cliente</option>';
+                data.forEach(c => {
+                    const o = document.createElement('option');
+                    o.value = c.id;
+                    o.textContent = c.nombre_empresa;
+                    if (String(c.id) === String(idSeleccionado)) o.selected = true;
+                    sel.appendChild(o);
+                });
+            } catch (e) { sel.innerHTML = '<option>Error cargando clientes</option>'; }
+        }
+
+        function setAlerta(elId, msg, tipo = 'error') {
+            const el = document.getElementById(elId);
+            if (!msg) { el.style.display = 'none'; el.innerHTML = ''; return; }
+            const [bg, col, bdr, ico] = tipo === 'error'
+                ? ['#fee2e2', '#dc2626', '#fca5a5', 'fa-circle-exclamation']
+                : ['#d1fae5', '#065f46', '#6ee7b7', 'fa-circle-check'];
+            el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+            el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
+        }
+
+        function recalcularAnticipo() {
+            const monto = parseFloat(document.getElementById('proyectoMonto').value);
+            const campo = document.getElementById('aMontoWiz');
+            if (!isNaN(monto) && monto > 0) {
+                campo.value = '$' + (monto / 2).toFixed(2);
+            } else {
+                campo.value = '';
+            }
+        }
+
+        function irPaso2() {
+            const nombre = document.getElementById('proyectoNombre').value.trim();
+            const idCliente = document.getElementById('sel-cliente').value;
+            const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+            const fechaFin = document.getElementById('proyectoFechaFin').value;
+            const monto = parseFloat(document.getElementById('proyectoMonto').value);
+            if (!nombre || !idCliente || !fechaInicio || !fechaFin || !document.getElementById('proyectoMonto').value) {
+                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.');
+                return;
+            }
+            if (isNaN(monto) || monto <= 0) {
+                setAlerta('modalProyectoAlerta', 'El monto del proyecto debe ser mayor a 0.');
+                return;
+            }
+            setAlerta('modalProyectoAlerta', '');
+
+            document.getElementById('aMontoWiz').value = '$' + (monto / 2).toFixed(2);
+
+            // Avanzar stepper
+            document.getElementById('paso1').classList.remove('active');
+            document.getElementById('paso2').classList.add('active');
+            document.getElementById('sc1').className = 'wstep-circle done';
+            document.getElementById('sc1').innerHTML = '<i class="fa-solid fa-check" style="font-size:.65rem;"></i>';
+            document.getElementById('sl1').className = 'wstep-label done';
+            document.getElementById('wconn').classList.add('done');
+            document.getElementById('sc2').classList.add('active');
+            document.getElementById('sl2').classList.add('active');
+            if (!document.getElementById('aFechaWiz').value)
+                document.getElementById('aFechaWiz').value = new Date().toISOString().split('T')[0];
+        }
+
+        function irPaso1() {
+            document.getElementById('paso2').classList.remove('active');
+            document.getElementById('paso1').classList.add('active');
+            document.getElementById('sc1').className = 'wstep-circle active';
+            document.getElementById('sc1').innerHTML = '1';
+            document.getElementById('sl1').className = 'wstep-label active';
+            document.getElementById('wconn').classList.remove('done');
+            document.getElementById('sc2').className = 'wstep-circle';
+            document.getElementById('sl2').className = 'wstep-label';
+            setAlerta('alertaPaso2', '');
+        }
+
+        async function crearProyectoCompleto() {
+            const montoProyecto = parseFloat(document.getElementById('proyectoMonto').value);
+            const monto = (montoProyecto / 2).toFixed(2);  // Siempre 50%, calculado aquí también
+            const fecha = document.getElementById('aFechaWiz').value;
+            const metodo = document.querySelector('input[name="aMetodoWiz"]:checked')?.value || '';
+            const comp = document.getElementById('aComprobanteWiz').value.trim();
+
+            if (!fecha) { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
+            if (!metodo) { setAlerta('alertaPaso2', 'Selecciona un método de pago.'); return; }
+            setAlerta('alertaPaso2', '');
+
+            const btn = document.getElementById('btnCrearFinal');
+            btn.disabled = true;
+            document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Creando...';
+
+            const payload = {
+                nombre: document.getElementById('proyectoNombre').value.trim(),
+                idCliente: document.getElementById('sel-cliente').value,
+                estado: document.getElementById('proyectoEstado').value,
+                fechaInicio: document.getElementById('proyectoFechaInicio').value,
+                fechaFin: document.getElementById('proyectoFechaFin').value,
+                monto: montoProyecto,
+                anticipo_monto: parseFloat(monto),
+                anticipo_fecha: fecha,
+                anticipo_metodo: metodo,
+                anticipo_comprobante: comp
+            };
+
+            try {
+                const res = await fetch('php/proyectos_crear.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) { cerrarModalProyecto(); await cargarProyectos(); }
+                else setAlerta('alertaPaso2', data.error || 'Error en el servidor.');
+            } catch (e) { setAlerta('alertaPaso2', 'Error de conexión.'); }
+
+            btn.disabled = false;
+            document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear Proyecto';
+        }
+
+        async function guardarEdicion() {
+            const nombre = document.getElementById('proyectoNombre').value.trim();
+            const idCliente = document.getElementById('sel-cliente').value;
+            const estado = document.getElementById('proyectoEstado').value;
+            const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+            const fechaFin = document.getElementById('proyectoFechaFin').value;
+            const monto = document.getElementById('proyectoMonto').value;
+            if (!nombre || !idCliente || !fechaInicio || !fechaFin || !monto) {
+                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
+            }
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == proyectoEditId);
+            if (estado === 'En Proceso' && p && p.anticipo_pagado == 0) {
+                setAlerta('modalProyectoAlerta', 'No se puede activar el proyecto sin anticipo registrado.'); return;
+            }
+            const btn = document.getElementById('btnGuardarEdicion');
+            btn.disabled = true;
+            document.getElementById('btnGuardarTexto').textContent = 'Guardando...';
+            try {
+                const res = await fetch('php/proyectos_actualizar.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto: parseFloat(monto) })
+                });
+                const resp = await res.json();
+                if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
+                else setAlerta('modalProyectoAlerta', 'Error en el servidor.');
+            } catch (e) { setAlerta('modalProyectoAlerta', 'Error de conexión.'); }
+            btn.disabled = false;
+            document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
+        }
+
+        async function abrirModalProyecto() {
+            modoEdicion = false;
+            document.getElementById('modalProyectoTitle').textContent = 'Nuevo Proyecto';
+            document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos del proyecto.';
+            ['proyectoNombre', 'proyectoFechaInicio', 'proyectoFechaFin', 'proyectoMonto', 'aMontoWiz', 'aFechaWiz', 'aComprobanteWiz']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('proyectoEstado').value = 'Pendiente';
+            document.querySelectorAll('input[name="aMetodoWiz"]').forEach(r => r.checked = false);
+            // Modo creación: mostrar stepper + siguiente, ocultar edición
+            document.getElementById('wizardSteps').style.display = 'flex';
+            document.getElementById('footerPaso1').style.display = 'flex';
+            document.getElementById('btnGuardarEdicion').style.display = 'none';
+            irPaso1();
+            setAlerta('modalProyectoAlerta', '');
+            document.getElementById('modalProyectoOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            await poblarSelectClientes();
+        }
+
+        async function abrirModalEditar(id) {
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+            if (!p) return;
+            modoEdicion = true;
+            proyectoEditId = id;
+            document.getElementById('modalProyectoTitle').textContent = 'Editar Proyecto';
+            document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los datos del proyecto.';
+            document.getElementById('proyectoNombre').value = p.nombre || p.nombre_proyecto;
+            document.getElementById('proyectoEstado').value = p.estado;
+            document.getElementById('proyectoFechaInicio').value = p.fechaInicio || p.fecha_inicio;
+            document.getElementById('proyectoFechaFin').value = p.fechaFin || p.fecha_fin;
+            document.getElementById('proyectoMonto').value = p.monto != null ? p.monto : '';
+            document.getElementById('wizardSteps').style.display = 'none';
+            document.getElementById('footerPaso1').style.display = 'none';
+            document.getElementById('btnGuardarEdicion').style.display = 'block';
+            document.getElementById('paso1').classList.add('active');
+            document.getElementById('paso2').classList.remove('active');
+            setAlerta('modalProyectoAlerta', '');
+            document.getElementById('modalProyectoOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            await poblarSelectClientes(p.idCliente || p.id_cliente);
+        }
+
+        function cerrarModalProyecto() {
+            document.getElementById('modalProyectoOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function abrirModalEliminar(id) {
+            proyectoEliminarId = id;
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+            document.getElementById('eliminarNombreProyecto').textContent = p ? (p.nombre || p.nombre_proyecto) : '';
+            document.getElementById('modalEliminarOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalEliminar() {
+            document.getElementById('modalEliminarOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
+            try {
+                const res = await fetch('php/proyectos_eliminar.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: proyectoEliminarId })
+                });
+                if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
+            } catch (e) { alert('Error al eliminar'); }
         });
-    } catch(e) { sel.innerHTML = '<option>Error cargando clientes</option>'; }
-}
- 
-function setAlerta(elId, msg, tipo = 'error') {
-    const el = document.getElementById(elId);
-    if (!msg) { el.style.display = 'none'; el.innerHTML = ''; return; }
-    const [bg, col, bdr, ico] = tipo === 'error'
-        ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
-        : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
-    el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
-    el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
-}
 
-function recalcularAnticipo() {
-    const monto = parseFloat(document.getElementById('proyectoMonto').value);
-    const campo = document.getElementById('aMontoWiz');
-    if (!isNaN(monto) && monto > 0) {
-        campo.value = '$' + (monto / 2).toFixed(2);
-    } else {
-        campo.value = '';
-    }
-}
+        function cerrarSesion() {
+            fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
+        }
 
-function irPaso2() {
-    const nombre     = document.getElementById('proyectoNombre').value.trim();
-    const idCliente  = document.getElementById('sel-cliente').value;
-    const fechaInicio= document.getElementById('proyectoFechaInicio').value;
-    const fechaFin   = document.getElementById('proyectoFechaFin').value;
-    const monto      = parseFloat(document.getElementById('proyectoMonto').value);
-    if (!nombre || !idCliente || !fechaInicio || !fechaFin || !document.getElementById('proyectoMonto').value) {
-        setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.');
-        return;
-    }
-    if (isNaN(monto) || monto <= 0) {
-        setAlerta('modalProyectoAlerta', 'El monto del proyecto debe ser mayor a 0.');
-        return;
-    }
-    setAlerta('modalProyectoAlerta', '');
+        async function inicializar() {
+            try {
+                const res = await fetch('php/dashboard_data.php');
+                const data = await res.json();
+                if (data.error) { window.location.href = 'login.html'; return; }
 
-    document.getElementById('aMontoWiz').value = '$' + (monto / 2).toFixed(2);
+                document.getElementById('sidebarNombre').textContent = data.usuario;
+                document.getElementById('sidebarRol').textContent = data.rol;
+                document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' Â· ' + data.rol;
+                if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
 
-    // Avanzar stepper
-    document.getElementById('paso1').classList.remove('active');
-    document.getElementById('paso2').classList.add('active');
-    document.getElementById('sc1').className = 'wstep-circle done';
-    document.getElementById('sc1').innerHTML = '<i class="fa-solid fa-check" style="font-size:.65rem;"></i>';
-    document.getElementById('sl1').className = 'wstep-label done';
-    document.getElementById('wconn').classList.add('done');
-    document.getElementById('sc2').classList.add('active');
-    document.getElementById('sl2').classList.add('active');
-    if (!document.getElementById('aFechaWiz').value)
-        document.getElementById('aFechaWiz').value = new Date().toISOString().split('T')[0];
-}
+                await cargarProyectos();
+                document.getElementById('loadingBox').style.display = 'none';
+                document.getElementById('tableWrap').style.display = 'block';
+            } catch (e) { console.error(e); }
+        }
 
-function irPaso1() {
-    document.getElementById('paso2').classList.remove('active');
-    document.getElementById('paso1').classList.add('active');
-    document.getElementById('sc1').className = 'wstep-circle active';
-    document.getElementById('sc1').innerHTML = '1';
-    document.getElementById('sl1').className = 'wstep-label active';
-    document.getElementById('wconn').classList.remove('done');
-    document.getElementById('sc2').className = 'wstep-circle';
-    document.getElementById('sl2').className = 'wstep-label';
-    setAlerta('alertaPaso2', '');
-}
-
-async function crearProyectoCompleto() {
-    const montoProyecto = parseFloat(document.getElementById('proyectoMonto').value);
-    const monto  = (montoProyecto / 2).toFixed(2);  // Siempre 50%, calculado aquí también
-    const fecha  = document.getElementById('aFechaWiz').value;
-    const metodo = document.querySelector('input[name="aMetodoWiz"]:checked')?.value || '';
-    const comp   = document.getElementById('aComprobanteWiz').value.trim();
-
-    if (!fecha)  { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
-    if (!metodo) { setAlerta('alertaPaso2', 'Selecciona un método de pago.'); return; }
-    setAlerta('alertaPaso2', '');
-
-    const btn = document.getElementById('btnCrearFinal');
-    btn.disabled = true;
-    document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Creando...';
-
-    const payload = {
-        nombre:      document.getElementById('proyectoNombre').value.trim(),
-        idCliente:   document.getElementById('sel-cliente').value,
-        estado:      document.getElementById('proyectoEstado').value,
-        fechaInicio: document.getElementById('proyectoFechaInicio').value,
-        fechaFin:    document.getElementById('proyectoFechaFin').value,
-        monto:       montoProyecto,
-        anticipo_monto:       parseFloat(monto),
-        anticipo_fecha:       fecha,
-        anticipo_metodo:      metodo,
-        anticipo_comprobante: comp
-    };
-
-    try {
-        const res  = await fetch('php/proyectos_crear.php', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.success) { cerrarModalProyecto(); await cargarProyectos(); }
-        else setAlerta('alertaPaso2', data.error || 'Error en el servidor.');
-    } catch(e) { setAlerta('alertaPaso2', 'Error de conexión.'); }
-
-    btn.disabled = false;
-    document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear Proyecto';
-}
-
-async function guardarEdicion() {
-    const nombre     = document.getElementById('proyectoNombre').value.trim();
-    const idCliente  = document.getElementById('sel-cliente').value;
-    const estado     = document.getElementById('proyectoEstado').value;
-    const fechaInicio= document.getElementById('proyectoFechaInicio').value;
-    const fechaFin   = document.getElementById('proyectoFechaFin').value;
-    const monto      = document.getElementById('proyectoMonto').value;
-    if (!nombre || !idCliente || !fechaInicio || !fechaFin || !monto) {
-        setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
-    }
-    const p = proyectos.find(x => (x.id || x.id_proyecto) == proyectoEditId);
-    if (estado === 'En Proceso' && p && p.anticipo_pagado == 0) {
-        setAlerta('modalProyectoAlerta', 'No se puede activar el proyecto sin anticipo registrado.'); return;
-    }
-    const btn = document.getElementById('btnGuardarEdicion');
-    btn.disabled = true;
-    document.getElementById('btnGuardarTexto').textContent = 'Guardando...';
-    try {
-        const res = await fetch('php/proyectos_actualizar.php', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto: parseFloat(monto) })
-        });
-        const resp = await res.json();
-        if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
-        else setAlerta('modalProyectoAlerta', 'Error en el servidor.');
-    } catch(e) { setAlerta('modalProyectoAlerta', 'Error de conexión.'); }
-    btn.disabled = false;
-    document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
-}
-
-async function abrirModalProyecto() {
-    modoEdicion = false;
-    document.getElementById('modalProyectoTitle').textContent    = 'Nuevo Proyecto';
-    document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos del proyecto.';
-    ['proyectoNombre','proyectoFechaInicio','proyectoFechaFin','proyectoMonto','aMontoWiz','aFechaWiz','aComprobanteWiz']
-        .forEach(id => document.getElementById(id).value = '');
-    document.getElementById('proyectoEstado').value = 'Pendiente';
-    document.querySelectorAll('input[name="aMetodoWiz"]').forEach(r => r.checked = false);
-    // Modo creación: mostrar stepper + siguiente, ocultar edición
-    document.getElementById('wizardSteps').style.display     = 'flex';
-    document.getElementById('footerPaso1').style.display     = 'flex';
-    document.getElementById('btnGuardarEdicion').style.display = 'none';
-    irPaso1();
-    setAlerta('modalProyectoAlerta', '');
-    document.getElementById('modalProyectoOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    await poblarSelectClientes();
-}
-
-async function abrirModalEditar(id) {
-    const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
-    if (!p) return;
-    modoEdicion    = true;
-    proyectoEditId = id;
-    document.getElementById('modalProyectoTitle').textContent    = 'Editar Proyecto';
-    document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los datos del proyecto.';
-    document.getElementById('proyectoNombre').value      = p.nombre || p.nombre_proyecto;
-    document.getElementById('proyectoEstado').value      = p.estado;
-    document.getElementById('proyectoFechaInicio').value = p.fechaInicio || p.fecha_inicio;
-    document.getElementById('proyectoFechaFin').value    = p.fechaFin   || p.fecha_fin;
-    document.getElementById('proyectoMonto').value       = p.monto != null ? p.monto : '';
-    document.getElementById('wizardSteps').style.display     = 'none';
-    document.getElementById('footerPaso1').style.display     = 'none';
-    document.getElementById('btnGuardarEdicion').style.display = 'block';
-    document.getElementById('paso1').classList.add('active');
-    document.getElementById('paso2').classList.remove('active');
-    setAlerta('modalProyectoAlerta', '');
-    document.getElementById('modalProyectoOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    await poblarSelectClientes(p.idCliente || p.id_cliente);
-}
- 
-function cerrarModalProyecto() {
-    document.getElementById('modalProyectoOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-}
- 
-function abrirModalEliminar(id) {
-    proyectoEliminarId = id;
-    const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
-    document.getElementById('eliminarNombreProyecto').textContent = p ? (p.nombre || p.nombre_proyecto) : '';
-    document.getElementById('modalEliminarOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
- 
-function cerrarModalEliminar() {
-    document.getElementById('modalEliminarOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-}
- 
-document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
-    try {
-        const res = await fetch('php/proyectos_eliminar.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: proyectoEliminarId })
-        });
-        if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
-    } catch (e) { alert('Error al eliminar'); }
-});
- 
-function cerrarSesion() {
-    fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
-}
- 
-async function inicializar() {
-    try {
-        const res  = await fetch('php/dashboard_data.php');
-        const data = await res.json();
-        if (data.error) { window.location.href = 'login.html'; return; }
- 
-        document.getElementById('sidebarNombre').textContent = data.usuario;
-        document.getElementById('sidebarRol').textContent    = data.rol;
-        document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
-        if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
- 
-        await cargarProyectos();
-        document.getElementById('loadingBox').style.display = 'none';
-        document.getElementById('tableWrap').style.display  = 'block';
-    } catch(e) { console.error(e); }
-}
- 
-inicializar();
-</script>
+        inicializar();
+    </script>
 </body>
+
 </html>
+
+
+
+
