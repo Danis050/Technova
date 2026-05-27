@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -22,34 +22,51 @@
 <div class="dash-layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Principal</div>
-            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
-            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-            <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-            <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
-            <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-            <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-            <a href="facturas.html" class="active"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-            <a href="#"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                    <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
 
-            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
+                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>
+
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        </script>
 
     <!-- MAIN -->
     <main class="dash-main">
@@ -111,7 +128,7 @@
                         <i class="fa-solid fa-ban"></i> Anulada
                     </button>
                     <input type="text" class="input-busqueda" id="inputBusqueda"
-                        placeholder="🔍 Buscar por número o cliente..."
+                        placeholder="ðŸ” Buscar por número o cliente..."
                         oninput="buscarFactura()">
                 </div>
 
@@ -120,7 +137,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>N° Factura</th>
+                                <th>NÂ° Factura</th>
                                 <th>Cliente</th>
                                 <th>Proyecto</th>
                                 <th>Fecha Emisión</th>
@@ -154,7 +171,7 @@
             <div>
                 <h2><span class="modal-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
                     Detalle de Factura</h2>
-                <p class="modal-subtitle" id="modalSubtitulo">—</p>
+                <p class="modal-subtitle" id="modalSubtitulo">â€”</p>
             </div>
             <button class="btn-close-modal" onclick="cerrarModal()">
                 <i class="fa-solid fa-xmark"></i>
@@ -164,44 +181,44 @@
         <div class="modal-body">
             <div class="detalle-grid">
                 <div class="detalle-item">
-                    <label>N° Factura</label>
-                    <span id="dNumero">—</span>
+                    <label>NÂ° Factura</label>
+                    <span id="dNumero">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Estado Actual</label>
-                    <span id="dEstado">—</span>
+                    <span id="dEstado">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Cliente</label>
-                    <span id="dCliente">—</span>
+                    <span id="dCliente">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Proyecto</label>
-                    <span id="dProyecto">—</span>
+                    <span id="dProyecto">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Fecha Emisión</label>
-                    <span id="dFecha">—</span>
+                    <span id="dFecha">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Generado Por</label>
-                    <span id="dGenerado">—</span>
+                    <span id="dGenerado">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Subtotal</label>
-                    <span id="dSubtotal">—</span>
+                    <span id="dSubtotal">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>IVA (13%)</label>
-                    <span id="dIva">—</span>
+                    <span id="dIva">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Total</label>
-                    <span id="dTotal" style="color:#4f46e5;font-size:1.1rem;">—</span>
+                    <span id="dTotal" style="color:#4f46e5;font-size:1.1rem;">â€”</span>
                 </div>
                 <div class="detalle-item">
                     <label>Total Pagado</label>
-                    <span id="dPagado">—</span>
+                    <span id="dPagado">â€”</span>
                 </div>
             </div>
 
@@ -233,21 +250,21 @@
             <span>Servicios de Tecnología</span>
         </div>
         <div class="fi-numero">
-            <h2 id="fiNumero">—</h2>
-            <p id="fiFecha">—</p>
-            <span class="fi-badge" id="fiEstadoBadge">—</span>
+            <h2 id="fiNumero">â€”</h2>
+            <p id="fiFecha">â€”</p>
+            <span class="fi-badge" id="fiEstadoBadge">â€”</span>
         </div>
     </div>
 
     <div class="fi-info-grid">
         <div class="fi-info-box">
             <h4>Facturado a</h4>
-            <p id="fiCliente">—</p>
-            <p class="sub" id="fiProyecto">—</p>
+            <p id="fiCliente">â€”</p>
+            <p class="sub" id="fiProyecto">â€”</p>
         </div>
         <div class="fi-info-box">
             <h4>Generado por</h4>
-            <p id="fiGenerado">—</p>
+            <p id="fiGenerado">â€”</p>
             <p class="sub">TechNova</p>
         </div>
     </div>
@@ -263,10 +280,10 @@
         </thead>
         <tbody>
             <tr>
-                <td id="fiDescripcion">—</td>
-                <td id="fiSubtotal">—</td>
-                <td id="fiIva">—</td>
-                <td id="fiTotal">—</td>
+                <td id="fiDescripcion">â€”</td>
+                <td id="fiSubtotal">â€”</td>
+                <td id="fiIva">â€”</td>
+                <td id="fiTotal">â€”</td>
             </tr>
         </tbody>
     </table>
@@ -275,25 +292,25 @@
         <table>
             <tr>
                 <td>Subtotal</td>
-                <td id="fiTotSubtotal">—</td>
+                <td id="fiTotSubtotal">â€”</td>
             </tr>
             <tr>
                 <td>IVA (13%)</td>
-                <td id="fiTotIva">—</td>
+                <td id="fiTotIva">â€”</td>
             </tr>
             <tr>
                 <td>Total Pagado</td>
-                <td id="fiTotPagado">—</td>
+                <td id="fiTotPagado">â€”</td>
             </tr>
             <tr class="total-final">
                 <td>TOTAL</td>
-                <td id="fiTotTotal">—</td>
+                <td id="fiTotTotal">â€”</td>
             </tr>
         </table>
     </div>
 
     <div class="fi-footer">
-        <p>TechNova — Documento generado el <span id="fiGeneradoEn">—</span></p>
+        <p>TechNova â€” Documento generado el <span id="fiGeneradoEn">â€”</span></p>
         <p>Este documento es una representación válida de la factura emitida.</p>
     </div>
 </div>
@@ -341,7 +358,7 @@ async function cargarFacturas(estado = '') {
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
         document.getElementById('saludo').textContent =
-            `Bienvenido, ${data.usuario} · ${data.rol}`;
+            `Bienvenido, ${data.usuario} Â· ${data.rol}`;
 
         if (data.rol === 'Administrador') {
             document.getElementById('adminSection').style.display = 'block';
@@ -431,14 +448,14 @@ function abrirDetalle(idx) {
         day:'2-digit', month:'long', year:'numeric'
     });
 
-    document.getElementById('modalSubtitulo').textContent = f.nombre_empresa + ' — ' + f.nombre_proyecto;
+    document.getElementById('modalSubtitulo').textContent = f.nombre_empresa + ' â€” ' + f.nombre_proyecto;
     document.getElementById('dNumero').textContent    = f.numero_factura;
     document.getElementById('dEstado').innerHTML      =
         `<span class="badge-estado ${BADGES[f.estado] || ''}">${f.estado}</span>`;
     document.getElementById('dCliente').textContent   = f.nombre_empresa;
     document.getElementById('dProyecto').textContent  = f.nombre_proyecto;
     document.getElementById('dFecha').textContent     = fecha;
-    document.getElementById('dGenerado').textContent  = f.generado_por || '—';
+    document.getElementById('dGenerado').textContent  = f.generado_por || 'â€”';
     document.getElementById('dSubtotal').textContent  = '$' + parseFloat(f.subtotal).toFixed(2);
     document.getElementById('dIva').textContent       = '$' + parseFloat(f.iva).toFixed(2);
     document.getElementById('dTotal').textContent     = '$' + total.toFixed(2);
@@ -470,8 +487,8 @@ function descargarPDF() {
     document.getElementById('fiFecha').textContent        = 'Fecha de emisión: ' + fecha;
     document.getElementById('fiCliente').textContent      = f.nombre_empresa;
     document.getElementById('fiProyecto').textContent     = 'Proyecto: ' + f.nombre_proyecto;
-    document.getElementById('fiGenerado').textContent     = f.generado_por || '—';
-    document.getElementById('fiDescripcion').textContent  = 'Servicios de desarrollo — ' + f.nombre_proyecto;
+    document.getElementById('fiGenerado').textContent     = f.generado_por || 'â€”';
+    document.getElementById('fiDescripcion').textContent  = 'Servicios de desarrollo â€” ' + f.nombre_proyecto;
     document.getElementById('fiSubtotal').textContent     = '$' + parseFloat(f.subtotal).toFixed(2);
     document.getElementById('fiIva').textContent          = '$' + parseFloat(f.iva).toFixed(2);
     document.getElementById('fiTotal').textContent        = '$' + total.toFixed(2);
@@ -525,3 +542,7 @@ cargarFacturas();
 </script>
 </body>
 </html>
+
+
+
+
