@@ -243,7 +243,7 @@
             <div class="form-panel">
                 <div class="form-panel-header">
                     <h2><i class="fa-solid fa-circle-exclamation"></i> Nueva Incidencia</h2>
-                    <p>Solo proyectos con estado Finalizado</p>
+                    <p>Solo proyectos terminados</p>
                 </div>
                 <div class="form-panel-body">
 
@@ -347,7 +347,17 @@ function badgePrioridad(p) {
     return `<span class="badge badge-${map[p] || 'baja'}">${p}</span>`;
 }
 function badgeEstado(e) {
-    const map = { 'Abierta': 'abierta', 'En Proceso': 'en-proceso', 'Resuelta': 'resuelta', 'Cerrada': 'cerrada' };
+    const map = {
+        'Pendiente': 'abierta',
+        'En atención': 'en-proceso',
+        'En atencion': 'en-proceso',
+        'Resuelto': 'resuelta',
+        'Cerrado': 'cerrada',
+        'Abierta': 'abierta',
+        'En Proceso': 'en-proceso',
+        'Resuelta': 'resuelta',
+        'Cerrada': 'cerrada'
+    };
     return `<span class="badge badge-${map[e] || 'abierta'}">${e}</span>`;
 }
 function fmtFecha(f) {
@@ -382,7 +392,7 @@ async function cargarProyectos() {
         const sel  = document.getElementById('selProyecto');
 
         const finalizados = Array.isArray(data)
-            ? data.filter(p => p.estado === 'Finalizado')
+            ? data.filter(p => ['Finalizado', 'Completado', 'Cerrado'].includes(p.estado))
             : [];
 
         if (finalizados.length === 0) {

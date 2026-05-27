@@ -30,12 +30,19 @@ $res = $stmt->get_result();
 
 $incidencias = [];
 while ($row = $res->fetch_assoc()) {
+    $estado = [
+        'Abierta' => 'Pendiente',
+        'En Proceso' => 'En atención',
+        'Resuelta' => 'Resuelto',
+        'Cerrada' => 'Cerrado'
+    ][$row['estado']] ?? $row['estado'];
+
     $incidencias[] = [
         'id'              => (int)$row['id_incidencia'],
         'titulo'          => $row['titulo'],
         'descripcion'     => $row['descripcion'],
         'prioridad'       => $row['prioridad'],
-        'estado'          => $row['estado'],
+        'estado'          => $estado,
         'creadoEn'        => $row['creado_en'],
         'nombreProyecto'  => $row['nombre_proyecto']
     ];
