@@ -35,7 +35,7 @@ $conn = getConexion();
 $stmt_v = $conn->prepare(
     "SELECT p.id_proyecto FROM proyecto p
      INNER JOIN cliente c ON p.id_cliente = c.id_cliente
-     WHERE p.id_proyecto = ? AND c.id_usuario = ? AND p.estado = 'Finalizado'"
+     WHERE p.id_proyecto = ? AND c.id_usuario = ? AND p.estado IN ('Cerrado', 'Finalizado')"
 );
 $stmt_v->bind_param("ii", $id_proyecto, $_SESSION['id_usuario']);
 $stmt_v->execute();

@@ -663,6 +663,90 @@ CREATE TABLE IF NOT EXISTS `incidencia` (
   COMMENT='HU-16 – Incidencias post-entrega reportadas por clientes';
 
 -- --------------------------------------------------------
+-- Sprint 4 | HU-18, HU-23, HU-28
+-- Dev: Danis I. Vides Aparicio
+-- --------------------------------------------------------
+
+ALTER TABLE `proyecto`
+  ADD COLUMN IF NOT EXISTS `monto` decimal(10,2) NOT NULL DEFAULT 0.00,
+  ADD COLUMN IF NOT EXISTS `anticipo_pagado` tinyint(1) NOT NULL DEFAULT 0;
+
+CREATE TABLE IF NOT EXISTS `tarea` (
+  `id_tarea` int(11) NOT NULL AUTO_INCREMENT,
+  `id_proyecto` int(11) NOT NULL,
+  `titulo` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `id_asignado` int(11) DEFAULT NULL,
+  `fecha_creacion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_tarea`),
+  KEY `idx_tarea_proyecto` (`id_proyecto`),
+  KEY `fk_tarea_asignado` (`id_asignado`),
+  CONSTRAINT `fk_tarea_proyecto` FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tarea_asignado` FOREIGN KEY (`id_asignado`) REFERENCES `usuario` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Soporte de tareas por proyecto usado por asignaciones';
+
+CREATE TABLE IF NOT EXISTS `asignacion` (
+  `id_asignacion` int(11) NOT NULL AUTO_INCREMENT,
+  `id_tarea` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `fecha_asignacion` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_asignacion`),
+  UNIQUE KEY `uk_asignacion_tarea_usuario` (`id_tarea`, `id_usuario`),
+  KEY `fk_asignacion_usuario` (`id_usuario`),
+  CONSTRAINT `fk_asignacion_tarea` FOREIGN KEY (`id_tarea`) REFERENCES `tarea` (`id_tarea`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_asignacion_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Asignaciones de usuarios a tareas de proyecto';
+
+CREATE TABLE IF NOT EXISTS `asignacion_notificacion` (
+  `id_notificacion` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `id_proyecto` int(11) NOT NULL,
+  `id_asignacion` int(11) DEFAULT NULL,
+  `mensaje` varchar(255) NOT NULL,
+  `leida` tinyint(1) NOT NULL DEFAULT 0,
+  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `leida_en` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_notificacion`),
+  KEY `idx_notif_usuario_leida` (`id_usuario`, `leida`),
+  KEY `fk_notif_proyecto` (`id_proyecto`),
+  CONSTRAINT `fk_notif_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_notif_proyecto` FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='HU-18 - Notificaciones visuales por nuevas asignaciones';
+
+CREATE TABLE IF NOT EXISTS `password_reset_token` (
+  `id_token` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `expira_en` datetime NOT NULL,
+  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usado_en` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_token`),
+  UNIQUE KEY `uk_password_reset_token_hash` (`token_hash`),
+  KEY `idx_password_reset_usuario` (`id_usuario`, `usado_en`, `expira_en`),
+  CONSTRAINT `fk_password_reset_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='HU-23 - Tokens de recuperacion de contrasena con expiracion de 30 minutos';
+
+CREATE TABLE IF NOT EXISTS `incidencia_estado_log` (
+  `id_log` int(11) NOT NULL AUTO_INCREMENT,
+  `id_incidencia` int(11) NOT NULL,
+  `estado_anterior` enum('Abierta','En Proceso','Resuelta','Cerrada') DEFAULT NULL,
+  `estado_nuevo` enum('Abierta','En Proceso','Resuelta','Cerrada') NOT NULL,
+  `comentario` text DEFAULT NULL,
+  `cambiado_por` int(11) NOT NULL,
+  `cambiado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_log`),
+  KEY `idx_inc_log_incidencia` (`id_incidencia`, `cambiado_en`),
+  KEY `fk_inc_log_usuario` (`cambiado_por`),
+  CONSTRAINT `fk_inc_log_incidencia` FOREIGN KEY (`id_incidencia`) REFERENCES `incidencia` (`id_incidencia`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_inc_log_usuario` FOREIGN KEY (`cambiado_por`) REFERENCES `usuario` (`id_usuario`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='HU-28 - Historial automatico de cambios de estado de soporte';
+
+-- --------------------------------------------------------
 
 COMMIT;
 

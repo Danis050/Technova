@@ -45,12 +45,24 @@ $conn = getConexion();
 $conn->begin_transaction();
 
 try {
+    $mapEstados = [
+        'Pendiente' => 'Activo',
+        'En Proceso' => 'Activo',
+        'Completado' => 'Cerrado',
+        'Cancelado' => 'Cerrado',
+        'Finalizado' => 'Cerrado'
+    ];
+    $estadoDb = $mapEstados[$estado] ?? $estado;
+    if (!in_array($estadoDb, ['Activo', 'Pausado', 'Cerrado'], true)) {
+        $estadoDb = 'Activo';
+    }
+
     // 1. Insertar proyecto con anticipo_pagado = 1 desde el inicio
     $stmt1 = $conn->prepare(
-        "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_entrega, id_cliente, monto, anticipo_pagado)
+        "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_fin, id_cliente, monto, anticipo_pagado)
          VALUES (?, ?, ?, ?, ?, ?, 1)"
     );
-    $stmt1->bind_param("ssssid", $nombre, $estado, $fechaInicio, $fechaFin, $idCliente, $monto);
+    $stmt1->bind_param("ssssid", $nombre, $estadoDb, $fechaInicio, $fechaFin, $idCliente, $monto);
     $stmt1->execute();
     $id_proyecto = $conn->insert_id;
     $stmt1->close();
@@ -69,8 +81,6 @@ try {
     );
     $stmt2->execute();
     $stmt2->close();
-
-    $conn->commit();
 
     $IVA_PCT          = 0.13;
     $monto_factura    = $anticipo_monto;
@@ -99,6 +109,8 @@ try {
     );
     $stmt_f->execute();
     $stmt_f->close();
+
+    $conn->commit();
 
     echo json_encode(['success' => true, 'id_proyecto' => $id_proyecto]);
 

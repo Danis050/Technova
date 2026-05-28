@@ -13,8 +13,9 @@ $sql = "SELECT
     p.nombre,
     p.estado,
     p.fecha_inicio,
-    p.fecha_entrega,
+    p.fecha_fin,
     p.monto,
+    p.anticipo_pagado,
     c.id_cliente AS id_cliente,
     c.nombre_empresa
 FROM proyecto p
@@ -30,10 +31,11 @@ while ($row = $result->fetch_assoc()) {
         "nombre" => $row["nombre"],
         "estado" => $row["estado"],
         "fechaInicio" => $row["fecha_inicio"],
-        "fechaFin" => $row["fecha_entrega"],
+        "fechaFin" => $row["fecha_fin"],
         "idCliente" => $row["id_cliente"],
         "nombreCliente" => $row["nombre_empresa"],
-        "monto" => $row["monto"]
+        "monto" => $row["monto"],
+        "anticipo_pagado" => $row["anticipo_pagado"]
     ];
 }
 
