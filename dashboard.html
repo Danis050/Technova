@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dash-body">
+
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+           <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
+            <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+            <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+            <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+
+            <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+            <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
+                <i class="fa-solid fa-user-plus"></i>
+                Crear Usuario
+                <span class="badge-new">ADMIN</span>
+            </button>
+
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
+
+    <main class="dash-main">
+        <div id="loading">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
+            <p style="margin-top:12px;">Cargando datos...</p>
+        </div>
+
+        <div id="contenido" style="display:none;">
+            <div class="dash-header">
+                <div>
+                    <h1>Panel de Control</h1>
+                    <p id="saludo">Bienvenido al sistema de gestión TechNova</p>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card-dash">
+                    <div class="stat-icon" style="background:#ede9fe;"><i class="fa-solid fa-users" style="color:#6d28d9;"></i></div>
+                    <div><h3 id="totalClientes">0</h3><p>Clientes</p></div>
+                </div>
+                <div class="stat-card-dash">
+                    <div class="stat-icon" style="background:#dbeafe;"><i class="fa-solid fa-diagram-project" style="color:#2563eb;"></i></div>
+                    <div><h3 id="totalProyectos">0</h3><p>Proyectos</p></div>
+                </div>
+                <div class="stat-card-dash">
+                    <div class="stat-icon" style="background:#d1fae5;"><i class="fa-solid fa-file-invoice-dollar" style="color:#059669;"></i></div>
+                    <div><h3 id="totalFacturado">$0</h3><p>Total Facturado</p></div>
+                </div>
+                <div class="stat-card-dash">
+                    <div class="stat-icon" style="background:#fef3c7;"><i class="fa-solid fa-hand-holding-dollar" style="color:#d97706;"></i></div>
+                    <div><h3 id="totalPagos">$0</h3><p>Pagos Recibidos</p></div>
+                </div>
+                <!-- ── Stat card incidencias ── -->
+                <div class="stat-card-dash" style="cursor:pointer;" onclick="window.location.href='soporte.html'">
+                    <div class="stat-icon" style="background:#fee2e2;"><i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;"></i></div>
+                    <div>
+                        <h3 id="totalIncidencias">0</h3>
+                        <p>Incidencias</p>
+                        <span id="incidenciasAlta" style="display:none;font-size:.7rem;font-weight:700;color:#dc2626;">
+                            <i class="fa-solid fa-bell"></i> <span id="cntAlta">0</span> alta prioridad
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tables-grid">
+                <div class="table-card">
+                    <h3><i class="fa-solid fa-diagram-project" style="color:#6d28d9;"></i> Proyectos Recientes</h3>
+                    <select id="filtroEstado" onchange="filtrarProyectos()" style="margin-bottom:12px;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.82rem;font-family:inherit;color:#334155;background:#f8fafc;cursor:pointer;outline:none;">
+                        <option value="">Todos los estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En Proceso">En Proceso</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                    <table>
+                        <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th><th id="thAccion" style="display:none;">Acción</th></tr></thead>
+                        <tbody id="tablaProyectos">
+                            <tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-card">
+                    <h3><i class="fa-solid fa-file-invoice-dollar" style="color:#059669;"></i> Facturas Recientes</h3>
+                    <table>
+                        <thead><tr><th>Número</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead>
+                        <tbody id="tablaFacturas">
+                            <tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ===== MODAL CREAR USUARIO ===== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">
+                    <span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span>
+                    Crear Nuevo Usuario
+                </h2>
+                <p class="modal-subtitle">Completa los datos y asigna el rol correspondiente</p>
+            </div>
+            <button class="btn-close-modal" onclick="cerrarModal()" aria-label="Cerrar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:10px;">Selecciona el rol del usuario</p>
+            <div class="role-selector">
+                <div class="role-option rc-admin">
+                    <input type="radio" name="rolNuevo" id="rolAdmin" value="Administrador">
+                    <label class="role-card" for="rolAdmin">
+                        <div class="role-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <span class="role-card-name">Admin</span>
+                    </label>
+                </div>
+                <div class="role-option rc-emp">
+                    <input type="radio" name="rolNuevo" id="rolEmpleado" value="Empleado" checked>
+                    <label class="role-card" for="rolEmpleado">
+                        <div class="role-card-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        <span class="role-card-name">Empleado</span>
+                    </label>
+                </div>
+                <div class="role-option rc-client">
+                    <input type="radio" name="rolNuevo" id="rolCliente" value="Cliente">
+                    <label class="role-card" for="rolCliente">
+                        <div class="role-card-icon"><i class="fa-solid fa-user"></i></div>
+                        <span class="role-card-name">Cliente</span>
+                    </label>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="puesto-section visible" id="puestoSection">
+                <div class="puesto-section-title">
+                    <i class="fa-solid fa-id-badge"></i> ¿Qué puesto desempeñará?
+                </div>
+                <div class="puestos-grid">
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pDesarrollador" value="Desarrollador" checked>
+                        <label class="puesto-label" for="pDesarrollador"><i class="fa-solid fa-code"></i> Desarrollador</label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pDiseñador" value="Diseñador">
+                        <label class="puesto-label" for="pDiseñador"><i class="fa-solid fa-pen-nib"></i> Diseñador</label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pGerente" value="Gerente de Proyectos">
+                        <label class="puesto-label" for="pGerente"><i class="fa-solid fa-diagram-project"></i> Ger. Proyectos</label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pSoporte" value="Soporte Técnico">
+                        <label class="puesto-label" for="pSoporte"><i class="fa-solid fa-headset"></i> Soporte Técnico</label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pVentas" value="Ventas">
+                        <label class="puesto-label" for="pVentas"><i class="fa-solid fa-handshake"></i> Ventas</label>
+                    </div>
+                    <div class="puesto-opt">
+                        <input type="radio" name="puesto" id="pContador" value="Contador">
+                        <label class="puesto-label" for="pContador"><i class="fa-solid fa-calculator"></i> Contador</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row-2">
+                <div class="mfield">
+                    <label for="mNombre">Nombre <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="mNombre" placeholder="Ej: Juan">
+                </div>
+                <div class="mfield">
+                    <label for="mApellido">Apellido <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="mApellido" placeholder="Ej: Pérez">
+                </div>
+            </div>
+            <div class="mfield">
+                <label for="mEmail">Correo electrónico <span style="color:#ef4444;">*</span></label>
+                <input type="email" id="mEmail" placeholder="usuario@technova.com">
+            </div>
+            <div class="form-row-2">
+                <div class="mfield">
+                    <label for="mPassword">Contraseña <span style="color:#ef4444;">*</span></label>
+                    <input type="password" id="mPassword" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="mfield">
+                    <label for="mConfirmar">Confirmar contraseña <span style="color:#ef4444;">*</span></label>
+                    <input type="password" id="mConfirmar" placeholder="Repite la contraseña">
+                </div>
+            </div>
+            <div id="modalAlerta"></div>
+            <button class="btn-modal-submit" id="btnCrearUsuario" onclick="crearUsuario()">
+                <i class="fa-solid fa-user-plus"></i>
+                <span id="btnCrearTexto">Crear Usuario</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+const btnMenuToggle = document.getElementById('btnMenuToggle');
+btnMenuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible');
+});
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+});
+
+function abrirModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    limpiarModal();
+}
+function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+function limpiarModal() {
+    ['mNombre','mApellido','mEmail','mPassword','mConfirmar'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('rolEmpleado').checked    = true;
+    document.getElementById('pDesarrollador').checked = true;
+    document.getElementById('puestoSection').classList.add('visible');
+    ocultarAlertaModal();
+}
+
+document.querySelectorAll('input[name="rolNuevo"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const esEmpleado = document.getElementById('rolEmpleado').checked;
+        document.getElementById('puestoSection').classList.toggle('visible', esEmpleado);
+    });
+});
+
+function mostrarAlertaModal(msg, tipo = 'error') {
+    const el = document.getElementById('modalAlerta');
+    if (tipo === 'error') {
+        el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+        el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
+    } else {
+        el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
+        el.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + msg;
+    }
+}
+function ocultarAlertaModal() {
+    const el = document.getElementById('modalAlerta');
+    el.style.display = 'none';
+    el.innerHTML = '';
+}
+
+async function crearUsuario() {
+    const btn  = document.getElementById('btnCrearUsuario');
+    const txt  = document.getElementById('btnCrearTexto');
+    ocultarAlertaModal();
+    const nombre    = document.getElementById('mNombre').value.trim();
+    const apellido  = document.getElementById('mApellido').value.trim();
+    const email     = document.getElementById('mEmail').value.trim();
+    const password  = document.getElementById('mPassword').value;
+    const confirmar = document.getElementById('mConfirmar').value;
+    const rol       = document.querySelector('input[name="rolNuevo"]:checked')?.value;
+    const puesto    = document.querySelector('input[name="puesto"]:checked')?.value || '';
+    if (!nombre || !apellido || !email || !password || !confirmar)
+        return mostrarAlertaModal('Todos los campos son requeridos.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return mostrarAlertaModal('El correo electrónico no es válido.');
+    if (password.length < 6)
+        return mostrarAlertaModal('La contraseña debe tener al menos 6 caracteres.');
+    if (password !== confirmar)
+        return mostrarAlertaModal('Las contraseñas no coinciden.');
+    if (rol === 'Empleado' && !puesto)
+        return mostrarAlertaModal('Selecciona el puesto del empleado.');
+    btn.disabled = true;
+    txt.textContent = 'Creando...';
+    const formData = new FormData();
+    formData.append('nombre',    nombre);
+    formData.append('apellido',  apellido);
+    formData.append('email',     email);
+    formData.append('password',  password);
+    formData.append('confirmar', confirmar);
+    formData.append('rol',       rol);
+    formData.append('puesto',    puesto);
+    try {
+        const res  = await fetch('php/crear_usuario.php', { method:'POST', body:formData });
+        const data = await res.json();
+        if (data.error) { mostrarAlertaModal(data.mensaje); }
+        else { mostrarAlertaModal('¡Usuario creado exitosamente!', 'ok'); setTimeout(() => cerrarModal(), 1800); }
+    } catch { mostrarAlertaModal('Error de conexión con el servidor.'); }
+    btn.disabled = false;
+    txt.textContent = 'Crear Usuario';
+}
+
+let todosLosProyectos = [];
+let esAdminGlobal = false;
+
+function filtrarProyectos() {
+    const filtro = document.getElementById('filtroEstado').value;
+    const lista  = filtro ? todosLosProyectos.filter(p => p.estado === filtro) : todosLosProyectos;
+    const badges = { 'Pendiente':'badge-pendiente','En Proceso':'badge-proceso','Completado':'badge-completado','Cancelado':'badge-anulada' };
+    if (lista.length === 0) {
+        document.getElementById('tablaProyectos').innerHTML =
+            `<tr><td colspan="4" style="color:#94a3b8;text-align:center;">Sin proyectos con ese estado</td></tr>`;
+        return;
+    }
+    document.getElementById('tablaProyectos').innerHTML = lista.map(p => {
+        const estaActivo = (p.estado === 'Pendiente' || p.estado === 'En Proceso');
+        const btnHtml = esAdminGlobal ? `
+            <button onclick="alert('Estado actual: ${p.estado}')"
+                style="padding:4px 10px;border-radius:999px;font-size:0.72rem;font-weight:600;
+                       border:none;cursor:pointer;
+                       background:${estaActivo ? '#d1fae5' : '#fee2e2'};
+                       color:${estaActivo ? '#065f46' : '#991b1b'};">
+                ${estaActivo ? '✔ Activo' : '✖ Cerrado'}
+            </button>` : '';
+        return `
+            <tr>
+                <td>${p.nombre}</td>
+                <td>${p.nombre_empresa}</td>
+                <td><span class="badge-estado ${badges[p.estado] || ''}">${p.estado}</span></td>
+                ${esAdminGlobal ? `<td>${btnHtml}</td>` : ''}
+            </tr>`;
+    }).join('');
+}
+
+async function cargarDashboard() {
+    try {
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent        = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        document.getElementById('totalClientes').textContent  = data.total_clientes;
+        document.getElementById('totalProyectos').textContent = data.total_proyectos;
+        document.getElementById('totalFacturado').textContent = '$' + parseFloat(data.total_facturado).toFixed(2);
+        document.getElementById('totalPagos').textContent     = '$' + parseFloat(data.total_pagos).toFixed(2);
+
+        if (data.rol === 'Administrador') {
+            document.getElementById('adminSection').style.display = 'block';
+            document.getElementById('btnAbrirModal').style.display = 'flex';
+        }
+
+        if (data.proyectos && data.proyectos.length > 0) {
+            esAdminGlobal = (data.rol === 'Administrador');
+            if (esAdminGlobal) document.getElementById('thAccion').style.display = '';
+            todosLosProyectos = data.proyectos;
+            filtrarProyectos();
+        }
+
+        if (data.facturas && data.facturas.length > 0) {
+            const badges = { 'Pendiente':'badge-pendiente','Pagada':'badge-pagada','Anulada':'badge-anulada' };
+            document.getElementById('tablaFacturas').innerHTML = data.facturas.map(f => `
+                <tr>
+                    <td>${f.numero_factura}</td>
+                    <td>${f.nombre_empresa}</td>
+                    <td>$${parseFloat(f.total).toFixed(2)}</td>
+                    <td><span class="badge-estado ${badges[f.estado] || ''}">${f.estado}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ── Cargar stat de incidencias ──
+        try {
+            const rInc  = await fetch('php/get_incidencias_admin.php');
+            const incs  = await rInc.json();
+            if (Array.isArray(incs)) {
+                document.getElementById('totalIncidencias').textContent = incs.length;
+                const alta = incs.filter(i => i.notificacion_alta).length;
+                if (alta > 0) {
+                    document.getElementById('cntAlta').textContent = alta;
+                    document.getElementById('incidenciasAlta').style.display = 'block';
+                }
+            }
+        } catch { /* silencioso */ }
+
+        document.getElementById('loading').style.display   = 'none';
+        document.getElementById('contenido').style.display = 'block';
+
+    } catch { window.location.href = 'login.html'; }
+}
+
+async function cerrarSesion() {
+    await fetch('php/logout.php');
+    window.location.href = 'login.html';
+}
+
+cargarDashboard();
+</script>
+</body>
+</html>

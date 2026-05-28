@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportar Incidencia | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .inc-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 1024px) { .inc-layout { grid-template-columns: 1fr; } }
+
+        .form-panel {
+            background: #fff;
+            border-radius: 16px;
+            border: 1.5px solid #e2e8f0;
+            overflow: hidden;
+            position: sticky;
+            top: 24px;
+        }
+        .form-panel-header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            padding: 22px 24px;
+            color: #fff;
+        }
+        .form-panel-header h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-panel-header p { font-size: 0.78rem; opacity: 0.82; margin: 0; }
+        .form-panel-body { padding: 24px; }
+
+        .field-group { margin-bottom: 16px; }
+        .field-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .field-group label .req { color: #ef4444; margin-left: 2px; }
+        .field-group input,
+        .field-group select,
+        .field-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            color: #1e293b;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+            box-sizing: border-box;
+        }
+        .field-group textarea { resize: vertical; min-height: 100px; }
+        .field-group input:focus,
+        .field-group select:focus,
+        .field-group textarea:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+            background: #fff;
+        }
+
+        .prioridad-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .prio-opt input { display: none; }
+        .prio-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #64748b;
+            background: #f8fafc;
+            transition: all .15s;
+        }
+        .prio-opt input:checked + .prio-card[data-p="Baja"]    { border-color:#22c55e; background:#f0fdf4; color:#15803d; }
+        .prio-opt input:checked + .prio-card[data-p="Media"]   { border-color:#f59e0b; background:#fffbeb; color:#b45309; }
+        .prio-opt input:checked + .prio-card[data-p="Alta"]    { border-color:#f97316; background:#fff7ed; color:#c2410c; }
+        .prio-opt input:checked + .prio-card[data-p="Crítica"] { border-color:#dc2626; background:#fef2f2; color:#b91c1c; }
+        .prio-card:hover { border-color: #cbd5e1; background: #f1f5f9; }
+
+        .alerta {
+            display: none;
+            padding: 11px 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            align-items: center;
+            gap: 8px;
+        }
+        .alerta.error { display: flex; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+        .alerta.ok    { display: flex; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+
+        .btn-enviar {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity .15s, transform .1s;
+        }
+        .btn-enviar:hover { opacity: .9; }
+        .btn-enviar:active { transform: scale(.98); }
+        .btn-enviar:disabled { opacity: .6; cursor: not-allowed; }
+
+        /* Tabla de incidencias */
+        .card { background: #fff; border-radius: 16px; border: 1.5px solid #e2e8f0; overflow: hidden; }
+        .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h2 { font-size: 0.95rem; font-weight: 700; margin: 0; }
+        .card-body { padding: 0; }
+
+        .inc-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        .inc-table th {
+            background: #f8fafc;
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .inc-table td {
+            padding: 13px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: top;
+        }
+        .inc-table tr:last-child td { border-bottom: none; }
+        .inc-table tr:hover td { background: #fafafa; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .badge-baja    { background: #dcfce7; color: #15803d; }
+        .badge-media   { background: #fef9c3; color: #854d0e; }
+        .badge-alta    { background: #ffedd5; color: #c2410c; }
+        .badge-critica { background: #fee2e2; color: #b91c1c; }
+        .badge-abierta   { background: #dbeafe; color: #1d4ed8; }
+        .badge-en-proceso { background: #fef9c3; color: #854d0e; }
+        .badge-resuelta  { background: #dcfce7; color: #15803d; }
+        .badge-cerrada   { background: #f1f5f9; color: #64748b; }
+
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
+            color: #94a3b8;
+        }
+        .empty-state i { font-size: 2rem; margin-bottom: 12px; display: block; }
+    </style>
+</head>
+<body class="dash-body">
+
+<!-- TOPBAR MÓVIL -->
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Mi Portal</div>
+            <a href="mis_proyectos.html">
+                <i class="fa-regular fa-rectangle-list"></i> Mis Proyectos
+            </a>
+            <a href="mis_incidencias.html" class="active">
+                <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
+            </a>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol" class="user-role">Cliente</span>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;margin-right:10px;"></i>Reportar Incidencia</h1>
+                <p>Reporta problemas en proyectos finalizados</p>
+            </div>
+            <button onclick="cerrarSesion()" class="btn-secondary" style="display:flex;align-items:center;gap:6px;">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+            </button>
+        </div>
+
+        <div class="inc-layout">
+
+            <!-- FORMULARIO -->
+            <div class="form-panel">
+                <div class="form-panel-header">
+                    <h2><i class="fa-solid fa-circle-exclamation"></i> Nueva Incidencia</h2>
+                    <p>Solo proyectos terminados</p>
+                </div>
+                <div class="form-panel-body">
+
+                    <div class="alerta" id="alerta"></div>
+
+                    <div class="field-group">
+                        <label>Proyecto <span class="req">*</span></label>
+                        <select id="selProyecto">
+                            <option value="">Selecciona un proyecto...</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Título <span class="req">*</span></label>
+                        <input type="text" id="titulo" placeholder="Ej. Error en módulo de facturación" maxlength="150">
+                    </div>
+
+                    <div class="field-group">
+                        <label>Descripción <span class="req">*</span></label>
+                        <textarea id="descripcion" placeholder="Describe el problema con el mayor detalle posible..."></textarea>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Prioridad <span class="req">*</span></label>
+                        <div class="prioridad-grid">
+                            <label class="prio-opt">
+                                <input type="radio" name="prioridad" value="Baja">
+                                <span class="prio-card" data-p="Baja"><i class="fa-solid fa-circle" style="color:#22c55e;font-size:.7rem;"></i> Baja</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="prioridad" value="Media">
+                                <span class="prio-card" data-p="Media"><i class="fa-solid fa-circle" style="color:#f59e0b;font-size:.7rem;"></i> Media</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="prioridad" value="Alta">
+                                <span class="prio-card" data-p="Alta"><i class="fa-solid fa-circle" style="color:#f97316;font-size:.7rem;"></i> Alta</span>
+                            </label>
+                            <label class="prio-opt">
+                                <input type="radio" name="prioridad" value="Crítica">
+                                <span class="prio-card" data-p="Crítica"><i class="fa-solid fa-circle" style="color:#dc2626;font-size:.7rem;"></i> Crítica</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn-enviar" id="btnEnviar" onclick="enviarIncidencia()">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Reporte
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- LISTADO -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-list-check" style="color:#6d28d9;margin-right:8px;"></i>Mis Incidencias</h2>
+                    <span id="incCount" style="font-size:0.78rem;color:#64748b;"></span>
+                </div>
+                <div class="card-body">
+                    <table class="inc-table">
+                        <thead>
+                            <tr>
+                                <th>Proyecto</th>
+                                <th>Título</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incTbody">
+                            <tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-hourglass-half"></i>Cargando...</div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+// ── Sidebar móvil ─────────────────────────────────────────────
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+});
+
+// ── Utilidades ────────────────────────────────────────────────
+function mostrarAlerta(msg, tipo = 'error') {
+    const el = document.getElementById('alerta');
+    el.className = 'alerta ' + tipo;
+    el.innerHTML = `<i class="fa-solid fa-${tipo === 'ok' ? 'circle-check' : 'circle-exclamation'}"></i> ${msg}`;
+    setTimeout(() => { el.className = 'alerta'; }, 5000);
+}
+
+function badgePrioridad(p) {
+    const map = { 'Baja': 'baja', 'Media': 'media', 'Alta': 'alta', 'Crítica': 'critica' };
+    return `<span class="badge badge-${map[p] || 'baja'}">${p}</span>`;
+}
+function badgeEstado(e) {
+    const map = {
+        'Pendiente': 'abierta',
+        'En atención': 'en-proceso',
+        'En atencion': 'en-proceso',
+        'Resuelto': 'resuelta',
+        'Cerrado': 'cerrada',
+        'Abierta': 'abierta',
+        'En Proceso': 'en-proceso',
+        'Resuelta': 'resuelta',
+        'Cerrada': 'cerrada'
+    };
+    return `<span class="badge badge-${map[e] || 'abierta'}">${e}</span>`;
+}
+function fmtFecha(f) {
+    if (!f) return '—';
+    return new Date(f).toLocaleDateString('es-SV', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+// ── Init ──────────────────────────────────────────────────────
+async function init() {
+    try {
+        // Verificar sesión
+        const resSesion = await fetch('php/dashboard_data.php');
+        const sesion    = await resSesion.json();
+        if (sesion.error) { window.location.href = 'login.html'; return; }
+        if (sesion.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
+
+        document.getElementById('sidebarNombre').textContent = sesion.nombre || 'Cliente';
+        document.getElementById('sidebarRol').textContent    = sesion.rol;
+
+        await cargarProyectos();
+        await cargarIncidencias();
+    } catch (e) {
+        console.error('Error init:', e);
+    }
+}
+
+// ── Cargar proyectos finalizados del cliente ──────────────────
+async function cargarProyectos() {
+    try {
+        const res  = await fetch('php/mis_proyectos.php');
+        const data = await res.json();
+        const sel  = document.getElementById('selProyecto');
+
+        const finalizados = Array.isArray(data)
+            ? data.filter(p => ['Finalizado', 'Completado', 'Cerrado'].includes(p.estado))
+            : [];
+
+        if (finalizados.length === 0) {
+            sel.innerHTML = '<option value="">No tienes proyectos finalizados</option>';
+            return;
+        }
+
+        sel.innerHTML = '<option value="">Selecciona un proyecto...</option>'
+            + finalizados.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+    } catch (e) {
+        console.error('Error cargando proyectos:', e);
+    }
+}
+
+// ── Cargar incidencias ────────────────────────────────────────
+async function cargarIncidencias() {
+    try {
+        const res  = await fetch('php/mis_incidencias.php');
+        const data = await res.json();
+        const tbody = document.getElementById('incTbody');
+
+        if (!Array.isArray(data) || data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+                <i class="fa-solid fa-circle-check"></i>
+                No has reportado incidencias aún.
+            </div></td></tr>`;
+            document.getElementById('incCount').textContent = '';
+            return;
+        }
+
+        document.getElementById('incCount').textContent = `${data.length} incidencia${data.length !== 1 ? 's' : ''}`;
+        tbody.innerHTML = data.map(i => `
+            <tr>
+                <td>${i.nombreProyecto}</td>
+                <td><strong>${i.titulo}</strong><br>
+                    <span style="font-size:0.75rem;color:#64748b;">${i.descripcion.substring(0, 80)}${i.descripcion.length > 80 ? '...' : ''}</span>
+                </td>
+                <td>${badgePrioridad(i.prioridad)}</td>
+                <td>${badgeEstado(i.estado)}</td>
+                <td style="white-space:nowrap;">${fmtFecha(i.creadoEn)}</td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        console.error('Error cargando incidencias:', e);
+    }
+}
+
+// ── Enviar incidencia ─────────────────────────────────────────
+async function enviarIncidencia() {
+    const idProyecto  = document.getElementById('selProyecto').value;
+    const titulo      = document.getElementById('titulo').value.trim();
+    const descripcion = document.getElementById('descripcion').value.trim();
+    const prioridad   = document.querySelector('input[name="prioridad"]:checked')?.value || '';
+
+    if (!idProyecto)  { mostrarAlerta('Selecciona un proyecto.'); return; }
+    if (!titulo)      { mostrarAlerta('Escribe un título.'); return; }
+    if (!descripcion) { mostrarAlerta('Escribe una descripción.'); return; }
+    if (!prioridad)   { mostrarAlerta('Selecciona una prioridad.'); return; }
+
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+        const fd = new FormData();
+        fd.append('id_proyecto', idProyecto);
+        fd.append('titulo',      titulo);
+        fd.append('descripcion', descripcion);
+        fd.append('prioridad',   prioridad);
+
+        const res  = await fetch('php/registrar_incidencia.php', { method: 'POST', body: fd });
+        const data = await res.json();
+
+        if (data.error) {
+            mostrarAlerta(data.mensaje);
+        } else {
+            mostrarAlerta(data.mensaje, 'ok');
+            // Limpiar formulario
+            document.getElementById('selProyecto').value = '';
+            document.getElementById('titulo').value      = '';
+            document.getElementById('descripcion').value = '';
+            document.querySelectorAll('input[name="prioridad"]').forEach(r => r.checked = false);
+            await cargarIncidencias();
+        }
+    } catch (e) {
+        mostrarAlerta('Error de conexión. Intenta nuevamente.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar Reporte';
+    }
+}
+
+async function cerrarSesion() {
+    try { await fetch('php/logout.php'); } catch (e) {}
+    window.location.href = 'login.html';
+}
+
+init();
+</script>
+</body>
+</html>
