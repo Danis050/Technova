@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Entregables | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        :root {
+            --primary: #6d28d9;
+            --primary-light: #eef2ff;
+            --success: #10b981;
+            --success-bg: #dcfce7;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --danger-bg: #fee2e2;
+            --info: #3b82f6;
+            --info-bg: #dbeafe;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body.dash-body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: var(--text-main); }
+        .table-card { background: #ffffff; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); padding: 24px; margin-top: 20px; }
+        .filtro-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: #f1f5f9; padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+        .filtro-bar select { padding: 10px 16px; border-radius: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--text-main); outline: none; min-width: 280px; transition: all 0.2s; }
+        .filtro-bar select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.15); }
+        
+        .progress-bar-wrap { background: #ffffff; border: 1px solid var(--border-color); padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; }
+        .progress-label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.88rem; margin-bottom: 8px; color: var(--text-main); }
+        .progress-bg { background: #e2e8f0; height: 10px; border-radius: 999px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #6d28d9 0%, #4f46e5 100%); height: 10px; border-radius: 999px; transition: width 0.4s ease-out; }
+
+        .entregables-list { display: flex; flex-direction: column; gap: 14px; }
+        .entregable-row { display: flex; align-items: center; background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 24px; transition: all 0.2s ease; position: relative; overflow: hidden; }
+        .entregable-row:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #cbd5e1; }
+        
+        .entregable-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: #cbd5e1; }
+        .entregable-row.est-pendiente::before { background-color: var(--warning); }
+        .entregable-row.est-progreso::before { background-color: var(--info); }
+        .entregable-row.est-entregado::before { background-color: var(--success); }
+        .entregable-row.est-retrasado::before { background-color: var(--danger); }
+
+        .ent-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-right: 18px; flex-shrink: 0; }
+        .ent-icon.pendiente { background: var(--warning-bg); color: var(--warning); }
+        .ent-icon.progreso { background: var(--info-bg); color: var(--info); }
+        .ent-icon.entregado { background: var(--success-bg); color: var(--success); }
+        .ent-icon.retrasado { background: var(--danger-bg); color: var(--danger); }
+
+        .ent-info { flex-grow: 1; }
+        .ent-info h4 { font-size: 1rem; font-weight: 600; color: var(--text-main); margin: 0 0 4px 0; }
+        .ent-info p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+        .ent-proyecto-tag { font-size: 0.72rem; font-weight: 700; background-color: var(--primary-light); color: var(--primary); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 6px; border: 1px solid #dbeafe; }
+        .ent-fecha { font-size: 0.85rem; font-weight: 500; color: var(--text-main); background: #f8fafc; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-right: 20px; display: flex; align-items: center; gap: 6px; }
+
+        /* Badges de Estado */
+        .ent-estado { font-size: 0.78rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; text-align: center; min-width: 90px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .ent-estado.est-pendiente { background: var(--warning-bg); color: #b45309; }
+        .ent-estado.est-progreso { background: var(--info-bg); color: #1d4ed8; }
+        .ent-estado.est-entregado { background: var(--success-bg); color: #047857; }
+        .ent-estado.est-retrasado { background: var(--danger-bg); color: #b91c1c; }
+    </style>
+</head>
+<body class="dash-body">
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="dash-layout">
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Mi Portal</div>
+            <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+            <a href="mis_entregables.html" class="active"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
+
+    <main class="dash-main">
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-clipboard-check" style="color:var(--primary);margin-right:10px;"></i>Mis Entregables</h1>
+                <p id="subtituloVista">Visualización de entregables asignados a mis proyectos</p>
+            </div>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </div>
+
+        <div class="table-card">
+            <div class="filtro-bar">
+                <div>
+                    <label style="font-weight:700;font-size:.88rem;color:var(--text-main);margin-right:10px;">
+                        <i class="fa-solid fa-folder-open" style="color:var(--primary);margin-right:6px;"></i>Proyecto Activo:
+                    </label>
+                    <select id="selProyecto" onchange="cargarEntregables()">
+                        <option value="0">Ver todos mis proyectos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="progress-bar-wrap" id="progressWrap">
+                <div class="progress-label">
+                    <span id="lblProgreso">Progreso de ejecución</span>
+                    <span id="progressPct">0%</span>
+                </div>
+                <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            </div>
+
+            <div class="entregables-list" id="listaEntregables"></div>
+            
+            <div id="emptyState" style="display:none;text-align:center;padding:60px;color:#94a3b8;">
+                <i class="fa-solid fa-clipboard" style="font-size:2.5rem;display:block;margin-bottom:12px;color:#cbd5e1;"></i>
+                <h3 style="color:#334155;margin-bottom:6px;">Sin entregables registrados</h3>
+                <p>No se encontraron registros de entregables asignados para este filtro.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+document.getElementById('btnMenuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');});
+document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');});
+
+const iconEstado={'Pendiente':'fa-clock','En Proceso':'fa-spinner','Entregado':'fa-paper-plane','Retrasado':'fa-triangle-exclamation'};
+const clsEstado={'Pendiente':'pendiente','En Proceso':'progreso','Entregado':'entregado','Retrasado':'retrasado'};
+const rowClsEstado={'Pendiente':'est-pendiente','En Proceso':'est-progreso','Entregado':'est-entregado','Retrasado':'est-retrasado'};
+
+function fmtFecha(f){
+    if(!f) return '-';
+    const partes = f.split(' ')[0].split('-');
+    if(partes.length < 3) return f;
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+        
+        document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+    } catch (e) {
+        window.location.href = 'login.html'; return;
+    }
+
+    await cargarProyectosList();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const idUrl = urlParams.get('id') || urlParams.get('id_proyecto');
+    if (idUrl) {
+        document.getElementById('selProyecto').value = idUrl;
+    }
+
+    await cargarEntregables();
+});
+
+async function cargarProyectosList() {
+    const res = await fetch('php/entregables_cliente_lista.php?action=proyectos'); // Llama al archivo que acabas de crear
+    const data = await res.json();
+    const selFiltro = document.getElementById('selProyecto');
+
+    data.proyectos.forEach(p => {
+        const optF = document.createElement('option');
+        optF.value = p.id_proyecto;
+        optF.textContent = p.nombre;
+        selFiltro.appendChild(optF);
+    });
+}
+
+async function cargarEntregables(){
+    const pid = parseInt(document.getElementById('selProyecto').value || '0');
+    const el = document.getElementById('listaEntregables');
+    const empty = document.getElementById('emptyState');
+    const pw = document.getElementById('progressWrap');
+
+    const url = pid > 0 ? `php/entregables_cliente_lista.php?id_proyecto=${pid}` : 'php/entregables_cliente_lista.php';
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const lista = data.entregables ? data.entregables : (Array.isArray(data) ? data : []);
+
+        if(lista.length === 0){
+            el.innerHTML = '';
+            empty.style.display = 'block';
+            pw.style.display = 'none';
+            document.getElementById('subtituloVista').textContent = pid === 0 ? 'Listado global de todos tus entregables' : 'Entregables del proyecto seleccionado';
+            return;
+        }
+
+        empty.style.display = 'none';
+        pw.style.display = 'block';
+
+        if(pid === 0) {
+            document.getElementById('subtituloVista').textContent = 'Visualizando todos tus entregables';
+            document.getElementById('lblProgreso').textContent = 'Progreso global de entregas';
+        } else {
+            document.getElementById('subtituloVista').textContent = 'Entregables específicos del proyecto';
+            document.getElementById('lblProgreso').textContent = 'Progreso de este proyecto';
+        }
+
+        const done = lista.filter(e => e.estado === 'Entregado').length;
+        const pct = Math.round((done / lista.length) * 100);
+        document.getElementById('progressPct').textContent = pct + '%';
+        document.getElementById('progressFill').style.width = pct + '%';
+
+        el.innerHTML = lista.map(e => {
+            const est = e.estado || 'Pendiente';
+            const clase = clsEstado[est] || 'pendiente';
+            const filaClase = rowClsEstado[est] || 'est-pendiente';
+            const icon = iconEstado[est] || 'fa-clock';
+
+            return `
+                <div class="entregable-row ${filaClase}">
+                    <div class="ent-icon ${clase}"><i class="fa-solid ${icon}"></i></div>
+                    <div class="ent-info">
+                        <h4>${e.nombre}</h4>
+                        <p>${e.descripcion || 'Sin descripción adicional'}</p>
+                        ${pid === 0 ? `<span class="ent-proyecto-tag"><i class="fa-solid fa-folder"></i> ${e.nombre_proyecto || 'General'}</span>` : ''}
+                    </div>
+                    <div class="ent-fecha">
+                        <i class="fa-regular fa-calendar"></i> Límite: ${fmtFecha(e.fecha_estimada || e.fecha_entrega || e.fecha)}
+                    </div>
+                    <span class="ent-estado est-${clase}">${est}</span>
+                </div>
+            `;
+        }).join('');
+
+    } catch (err) {
+        console.error(err);
+        el.innerHTML = '<p style="color:#ef4444;text-align:center;padding:20px;">Error al comunicar con la base de datos.</p>';
+    }
+}
+
+function cerrarSesion() { fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; }); }
+</script>
+</body>
+</html>
