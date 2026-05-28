@@ -63,7 +63,7 @@ $conn->begin_transaction();
 
 try {
     $stmtUpdate = $conn->prepare(
-        "UPDATE proyecto SET estado = ?, estado_cambiado_en = NOW() WHERE id_proyecto = ?"
+        "UPDATE proyecto SET estado = ? WHERE id_proyecto = ?"
     );
     $stmtUpdate->bind_param("si", $nuevo_estado, $id_proyecto);
     $stmtUpdate->execute();

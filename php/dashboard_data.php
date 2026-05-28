@@ -31,7 +31,7 @@ $total_pagos = $r4->fetch_assoc()['total'];
 
 // Proyectos recientes
 $proyectos = [];
-$r5 = $conn->query("SELECT p.nombre, p.estado, p.fecha_entrega, c.nombre_empresa 
+$r5 = $conn->query("SELECT p.nombre, p.estado, p.fecha_fin, c.nombre_empresa 
                     FROM proyecto p 
                     JOIN cliente c ON p.id_cliente = c.id_cliente 
                     ORDER BY p.creado_en DESC LIMIT 5");

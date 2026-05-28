@@ -51,10 +51,23 @@ $stmt = $conn->prepare(
 $stmt->bind_param("ii", $id_tarea, $id_usuario);
 
 if ($stmt->execute()) {
+    $id_asignacion = $conn->insert_id;
+
+    $stmtNotif = $conn->prepare(
+        "INSERT INTO asignacion_notificacion (id_usuario, id_proyecto, id_asignacion, mensaje, creado_en)
+         VALUES (?, ?, ?, ?, NOW())"
+    );
+    if ($stmtNotif) {
+        $mensaje = 'Has sido agregado a un nuevo proyecto.';
+        $stmtNotif->bind_param("iiis", $id_usuario, $id_proyecto, $id_asignacion, $mensaje);
+        $stmtNotif->execute();
+        $stmtNotif->close();
+    }
+
     echo json_encode([
         'error'         => false,
         'mensaje'       => 'Asignación creada exitosamente',
-        'id_asignacion' => $conn->insert_id
+        'id_asignacion' => $id_asignacion
     ]);
 } else {
     // Error 1062 = entrada duplicada (usuario ya asignado)

@@ -10,7 +10,7 @@
 
 function validar_proyecto_activo($conn, int $id_proyecto): void
 {
-    $stmt = $conn->prepare("SELECT estado_ciclo FROM proyecto WHERE id_proyecto = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT estado FROM proyecto WHERE id_proyecto = ? LIMIT 1");
     $stmt->bind_param("i", $id_proyecto);
     $stmt->execute();
     $resultado = $stmt->get_result();
@@ -26,7 +26,7 @@ function validar_proyecto_activo($conn, int $id_proyecto): void
 
     $proyecto = $resultado->fetch_assoc();
 
-    if ($proyecto['estado_ciclo'] === 'Cerrado') {
+    if ($proyecto['estado'] !== 'Activo') {
         http_response_code(409);
         echo json_encode([
             'error'   => true,

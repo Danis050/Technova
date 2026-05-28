@@ -7,9 +7,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .asignacion-toast {
+            position: fixed;
+            right: 24px;
+            top: 24px;
+            z-index: 9999;
+            width: min(360px, calc(100vw - 32px));
+            background: #fff;
+            border: 1px solid #c4b5fd;
+            border-left: 5px solid #6d28d9;
+            border-radius: 10px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, .18);
+            padding: 16px;
+            display: none;
+        }
+        .asignacion-toast.visible { display: block; }
+        .asignacion-toast h3 {
+            margin: 0 0 8px;
+            color: #312e81;
+            font-size: .95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .asignacion-toast p { margin: 0 0 12px; color: #475569; font-size: .85rem; line-height: 1.45; }
+        .asignacion-toast button {
+            border: none;
+            background: #6d28d9;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font: inherit;
+            font-size: .82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
     
 </head>
 <body class="dash-body">
+<div class="asignacion-toast" id="asignacionToast" role="status" aria-live="polite"></div>
 
 <!-- TOPBAR MÓVIL -->
 <div class="mobile-topbar">
@@ -471,12 +509,40 @@ async function cargarDashboard() {
     }
 }
 
+async function cargarNotificacionesAsignacion() {
+    try {
+        const res = await fetch('php/notificaciones_asignacion.php');
+        const data = await res.json();
+        if (data.error || !Array.isArray(data.notificaciones) || data.notificaciones.length === 0) return;
+
+        const toast = document.getElementById('asignacionToast');
+        const ids = data.notificaciones.map(n => n.id);
+        const proyectos = data.notificaciones.map(n => n.proyecto).join(', ');
+
+        toast.innerHTML = `
+            <h3><i class="fa-solid fa-bell"></i> Nuevo proyecto asignado</h3>
+            <p>Fuiste agregado a: <strong>${proyectos}</strong>.</p>
+            <button type="button" id="btnLeidaAsignacion">Entendido</button>
+        `;
+        toast.classList.add('visible');
+
+        document.getElementById('btnLeidaAsignacion').addEventListener('click', async () => {
+            const fd = new FormData();
+            ids.forEach(id => fd.append('ids[]', id));
+            await fetch('php/notificaciones_asignacion.php', { method: 'POST', body: fd });
+            toast.classList.remove('visible');
+        });
+    } catch (err) {
+        console.error('Error cargando notificaciones de asignacion:', err);
+    }
+}
+
 async function cerrarSesion() {
     await fetch('php/logout.php');
     window.location.href = 'login.html';
 }
 
-cargarDashboard();
+cargarDashboard().then(cargarNotificacionesAsignacion);
 </script>
 </body>
 </html>
