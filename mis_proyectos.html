@@ -27,21 +27,29 @@
             width: 100%;
             justify-content: center;
         }
-        .btn-incidencia:hover { background: #ffedd5; border-color: #fb923c; }
+
+        .btn-incidencia:hover {
+            background: #ffedd5;
+            border-color: #fb923c;
+        }
 
         /* Modal incidencia */
         .inc-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,.5);
+            background: rgba(0, 0, 0, .5);
             z-index: 500;
             align-items: center;
             justify-content: center;
             padding: 16px;
             backdrop-filter: blur(3px);
         }
-        .inc-overlay.open { display: flex; }
+
+        .inc-overlay.open {
+            display: flex;
+        }
+
         .inc-modal {
             background: white;
             border-radius: 16px;
@@ -49,13 +57,22 @@
             max-width: 480px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 50px rgba(0,0,0,.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .2);
             animation: mIn .22s ease;
         }
+
         @keyframes mIn {
-            from { opacity:0; transform:scale(.96) translateY(8px); }
-            to   { opacity:1; transform:scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(.96) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
+
         .inc-head {
             padding: 22px 22px 0;
             display: flex;
@@ -63,104 +80,178 @@
             align-items: flex-start;
             margin-bottom: 16px;
         }
-        .inc-head h3 { font-size:1.05rem; font-weight:700; color:#0f172a; margin-bottom:2px; }
-        .inc-head p  { font-size:.78rem; color:#64748b; }
+
+        .inc-head h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+
+        .inc-head p {
+            font-size: .78rem;
+            color: #64748b;
+        }
+
         .btn-close-inc {
-            background: none; border: none; cursor: pointer;
-            font-size: 1rem; color: #94a3b8;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #94a3b8;
         }
-        .btn-close-inc:hover { color: #0f172a; }
-        .inc-body { padding: 0 22px 22px; }
-        .inc-field { margin-bottom: 14px; }
+
+        .btn-close-inc:hover {
+            color: #0f172a;
+        }
+
+        .inc-body {
+            padding: 0 22px 22px;
+        }
+
+        .inc-field {
+            margin-bottom: 14px;
+        }
+
         .inc-field label {
-            display: block; font-size:.78rem; font-weight:600;
-            color:#374151; margin-bottom:5px;
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
         }
+
         .inc-field input,
         .inc-field select,
         .inc-field textarea {
-            width: 100%; padding: 10px 12px;
-            border: 1.5px solid #e2e8f0; border-radius: 8px;
-            font-size: .875rem; font-family: inherit;
-            color: #0f172a; background: #f8fafc; outline: none;
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: .875rem;
+            font-family: inherit;
+            color: #0f172a;
+            background: #f8fafc;
+            outline: none;
             transition: border-color .15s, box-shadow .15s;
         }
+
         .inc-field input:focus,
         .inc-field select:focus,
         .inc-field textarea:focus {
             border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249,115,22,.08);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, .08);
             background: white;
         }
-        .inc-field textarea { resize: vertical; min-height: 80px; }
+
+        .inc-field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
         .inc-alert {
-            display: none; padding: 9px 12px; border-radius: 7px;
-            margin-bottom: 12px; font-size:.8rem; font-weight:500;
+            display: none;
+            padding: 9px 12px;
+            border-radius: 7px;
+            margin-bottom: 12px;
+            font-size: .8rem;
+            font-weight: 500;
         }
+
         .inc-foot {
-            display: flex; gap: 8px;
-            justify-content: flex-end; margin-top: 4px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 4px;
         }
+
         .btn-cancel-inc {
-            padding: 10px 18px; background: white; color: #374151;
-            border: 1.5px solid #e2e8f0; border-radius: 8px;
-            font-size:.875rem; font-weight:600; font-family:inherit; cursor:pointer;
+            padding: 10px 18px;
+            background: white;
+            color: #374151;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: .875rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
         }
-        .btn-cancel-inc:hover { background: #f8fafc; }
+
+        .btn-cancel-inc:hover {
+            background: #f8fafc;
+        }
+
         .btn-save-inc {
-            padding: 10px 22px; background: #ea580c; color: white;
-            border: none; border-radius: 8px;
-            font-size:.875rem; font-weight:600; font-family:inherit;
-            cursor:pointer; display:flex; align-items:center; gap:6px;
+            padding: 10px 22px;
+            background: #ea580c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: .875rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn-save-inc:hover { background: #c2410c; }
-        .btn-save-inc:disabled { opacity:.6; cursor:not-allowed; }
+
+        .btn-save-inc:hover {
+            background: #c2410c;
+        }
+
+        .btn-save-inc:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
 <body class="dash-body">
 
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="dash-layout">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
-        <nav class="sidebar-menu">
-            <div class="menu-section-label">Mi Portal</div>
-            <a href="mis_proyectos.html"><i class=" activefa-regular fa-rectangle-list"></i> Mis Proyectos</a>
-            <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
-            <a href="mis_incidencias.html" ><i class="fa-solid fa-clipboard-check"></i>Mis incidencias</a>
-            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
-            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-        </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
-
-    <main class="dash-main">
-        <div class="dash-header">
-            <div>
-                <h1><i class="fa-regular fa-rectangle-list" style="color:#6d28d9;margin-right:10px;"></i>Mis Proyectos</h1>
-                <p id="saludo">Visualiza el estado de tus proyectos asignados</p>
+    <div class="dash-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()">
-                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-            </button>
-        </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Mi Portal</div>
+                <a href="mis_proyectos.html"><i class="active fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
+                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i>Mis incidencias</a>
+                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i>Mis solicitudes</a>
+                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
 
-        <div id="loadingBox" style="text-align:center;padding:60px 20px;">
-            <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
-            <p style="margin-top:12px;color:#94a3b8;">Cargando tus proyectos...</p>
-        </div>
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-regular fa-rectangle-list" style="color:#6d28d9;margin-right:10px;"></i>Mis
+                        Proyectos</h1>
+                    <p id="saludo">Visualiza el estado de tus proyectos asignados</p>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
+            </div>
+
+            <div id="loadingBox" style="text-align:center;padding:60px 20px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;color:#6d28d9;"></i>
+                <p style="margin-top:12px;color:#94a3b8;">Cargando tus proyectos...</p>
+            </div>
 
             <div class="cards-grid" id="cardsGrid" style="display:none;"></div>
 
@@ -171,90 +262,92 @@
                 <p style="color:#94a3b8;">Cuando se te asigne un proyecto aparecerá aquí.</p>
             </div>
 
-        <div id="errorBox" style="display:none;text-align:center;padding:60px 20px;">
-            <i class="fa-solid fa-circle-exclamation" style="font-size:3rem;color:#f87171;margin-bottom:16px;display:block;"></i>
-            <p id="errorMsg" style="color:#64748b;">Ocurrió un error al cargar tus proyectos.</p>
-        </div>
-    </main>
-</div>
-
-<!-- ══════════ MODAL REPORTAR INCIDENCIA ══════════ -->
-<div class="inc-overlay" id="incOverlay">
-    <div class="inc-modal">
-        <div class="inc-head">
-            <div>
-                <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;margin-right:6px;"></i>Reportar incidencia</h3>
-                <p id="incSubtitulo">Proyecto: —</p>
+            <div id="errorBox" style="display:none;text-align:center;padding:60px 20px;">
+                <i class="fa-solid fa-circle-exclamation"
+                    style="font-size:3rem;color:#f87171;margin-bottom:16px;display:block;"></i>
+                <p id="errorMsg" style="color:#64748b;">Ocurrió un error al cargar tus proyectos.</p>
             </div>
-            <button class="btn-close-inc" onclick="cerrarModalInc()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="inc-body">
-            <input type="hidden" id="incIdProyecto" />
+        </main>
+    </div>
 
-            <div id="incAlerta" class="inc-alert"></div>
-
-            <div class="inc-field">
-                <label>Título <span style="color:#ef4444;">*</span></label>
-                <input type="text" id="incTitulo" placeholder="Describe brevemente el problema" />
-            </div>
-            <div class="inc-field">
-                <label>Descripción <span style="color:#ef4444;">*</span></label>
-                <textarea id="incDescripcion" placeholder="Explica el problema con detalle..."></textarea>
-            </div>
-            <div class="inc-field">
-                <label>Prioridad <span style="color:#ef4444;">*</span></label>
-                <select id="incPrioridad">
-                    <option value="Baja">Baja</option>
-                    <option value="Media" selected>Media</option>
-                    <option value="Alta">Alta</option>
-                    <option value="Crítica">Crítica</option>
-                </select>
-            </div>
-
-            <div class="inc-foot">
-                <button class="btn-cancel-inc" onclick="cerrarModalInc()">Cancelar</button>
-                <button class="btn-save-inc" id="btnEnviarInc" onclick="enviarIncidencia()">
-                    <i class="fa-solid fa-paper-plane"></i> Enviar reporte
+    <!-- ══════════ MODAL REPORTAR INCIDENCIA ══════════ -->
+    <div class="inc-overlay" id="incOverlay">
+        <div class="inc-modal">
+            <div class="inc-head">
+                <div>
+                    <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ea580c;margin-right:6px;"></i>Reportar
+                        incidencia</h3>
+                    <p id="incSubtitulo">Proyecto: —</p>
+                </div>
+                <button class="btn-close-inc" onclick="cerrarModalInc()">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
+            </div>
+            <div class="inc-body">
+                <input type="hidden" id="incIdProyecto" />
+
+                <div id="incAlerta" class="inc-alert"></div>
+
+                <div class="inc-field">
+                    <label>Título <span style="color:#ef4444;">*</span></label>
+                    <input type="text" id="incTitulo" placeholder="Describe brevemente el problema" />
+                </div>
+                <div class="inc-field">
+                    <label>Descripción <span style="color:#ef4444;">*</span></label>
+                    <textarea id="incDescripcion" placeholder="Explica el problema con detalle..."></textarea>
+                </div>
+                <div class="inc-field">
+                    <label>Prioridad <span style="color:#ef4444;">*</span></label>
+                    <select id="incPrioridad">
+                        <option value="Baja">Baja</option>
+                        <option value="Media" selected>Media</option>
+                        <option value="Alta">Alta</option>
+                        <option value="Crítica">Crítica</option>
+                    </select>
+                </div>
+
+                <div class="inc-foot">
+                    <button class="btn-cancel-inc" onclick="cerrarModalInc()">Cancelar</button>
+                    <button class="btn-save-inc" id="btnEnviarInc" onclick="enviarIncidencia()">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar reporte
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-const sidebar    = document.getElementById('sidebar');
-const sidebarOvl = document.getElementById('sidebarOverlay');
-document.getElementById('btnMenuToggle').addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    sidebarOvl.classList.toggle('visible');
-});
-sidebarOvl.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    sidebarOvl.classList.remove('visible');
-});
-document.getElementById('incOverlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModalInc();
-});
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOvl = document.getElementById('sidebarOverlay');
+        document.getElementById('btnMenuToggle').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOvl.classList.toggle('visible');
+        });
+        sidebarOvl.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOvl.classList.remove('visible');
+        });
+        document.getElementById('incOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) cerrarModalInc();
+        });
 
-// ─── Utilidades ───────────────────────────────────────────────
-function fmt(f) {
-    if (!f || f === '0000-00-00') return '-';
-    const [y, m, d] = f.split('-');
-    return `${d}/${m}/${y}`;
-}
-function escH(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
-function badgeClass(estado) {
-    return { 'Activo':'badge-en-proceso','Pausado':'badge-pausado','Cerrado':'badge-cerrado' }[estado] || 'badge-pendiente';
-}
+        // ─── Utilidades ───────────────────────────────────────────────
+        function fmt(f) {
+            if (!f || f === '0000-00-00') return '-';
+            const [y, m, d] = f.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function escH(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+        function badgeClass(estado) {
+            return { 'Activo': 'badge-en-proceso', 'Pausado': 'badge-pausado', 'Cerrado': 'badge-cerrado' }[estado] || 'badge-pendiente';
+        }
 
-// Estados que permiten reportar incidencia (proyectos terminados)
-const ESTADOS_FINALIZADOS = ['Completado', 'Finalizado', 'Cerrado'];
+        // Estados que permiten reportar incidencia (proyectos terminados)
+        const ESTADOS_FINALIZADOS = ['Completado', 'Finalizado', 'Cerrado'];
 
         // ─── Render de cards ──────────────────────────────────────────
         function renderCards(proyectos) {
@@ -268,16 +361,16 @@ const ESTADOS_FINALIZADOS = ['Completado', 'Finalizado', 'Cerrado'];
             const grid = document.getElementById('cardsGrid');
             grid.style.display = 'grid';
 
-    grid.innerHTML = proyectos.map(p => {
-        const puedeReportar = ESTADOS_FINALIZADOS.includes(p.estado);
-        const btnIncidencia = puedeReportar
-            ? `<button class="btn-incidencia"
+            grid.innerHTML = proyectos.map(p => {
+                const puedeReportar = ESTADOS_FINALIZADOS.includes(p.estado);
+                const btnIncidencia = puedeReportar
+                    ? `<button class="btn-incidencia"
                 onclick="abrirModalInc(${p.id}, '${escH(p.nombre)}')">
                 <i class="fa-solid fa-triangle-exclamation"></i> Reportar incidencia
                </button>`
-            : '';
+                    : '';
 
-        return `
+                return `
         <div class="project-card">
             <div class="card-nombre">${escH(p.nombre)}</div>
             <span class="badge-sv ${badgeClass(p.estado)}">${escH(p.estado)}</span>
@@ -293,79 +386,79 @@ const ESTADOS_FINALIZADOS = ['Completado', 'Finalizado', 'Cerrado'];
             ${p.id ? `<p class="card-id">Proyecto #${p.id}</p>` : ''}
             ${btnIncidencia}
         </div>`;
-    }).join('');
-}
-
-// ─── Modal incidencia ─────────────────────────────────────────
-function abrirModalInc(idProyecto, nombreProyecto) {
-    document.getElementById('incIdProyecto').value   = idProyecto;
-    document.getElementById('incSubtitulo').textContent = 'Proyecto: ' + nombreProyecto;
-    document.getElementById('incTitulo').value       = '';
-    document.getElementById('incDescripcion').value  = '';
-    document.getElementById('incPrioridad').value    = 'Media';
-    ocultarAlertaInc();
-    document.getElementById('incOverlay').classList.add('open');
-}
-
-function cerrarModalInc() {
-    document.getElementById('incOverlay').classList.remove('open');
-}
-
-function mostrarAlertaInc(msg, tipo = 'error') {
-    const el = document.getElementById('incAlerta');
-    const [bg,col,bdr] = tipo === 'error'
-        ? ['#fee2e2','#dc2626','#fca5a5']
-        : ['#d1fae5','#065f46','#6ee7b7'];
-    el.style.cssText = `display:block;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
-    el.textContent = msg;
-}
-
-function ocultarAlertaInc() {
-    const el = document.getElementById('incAlerta');
-    el.style.display = 'none';
-    el.textContent = '';
-}
-
-async function enviarIncidencia() {
-    const idProyecto  = document.getElementById('incIdProyecto').value;
-    const titulo      = document.getElementById('incTitulo').value.trim();
-    const descripcion = document.getElementById('incDescripcion').value.trim();
-    const prioridad   = document.getElementById('incPrioridad').value;
-
-    if (!titulo || !descripcion) {
-        mostrarAlertaInc('Completa todos los campos obligatorios.'); return;
-    }
-
-    const btn = document.getElementById('btnEnviarInc');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-
-    try {
-        const form = new FormData();
-        form.append('id_proyecto', idProyecto);
-        form.append('titulo',      titulo);
-        form.append('descripcion', descripcion);
-        form.append('prioridad',   prioridad);
-
-        const res  = await fetch('php/registrar_incidencia.php', {
-            method : 'POST',
-            body   : form
-        });
-        const data = await res.json();
-
-        if (data.error) {
-            mostrarAlertaInc(data.mensaje || 'Error al enviar.');
-        } else {
-            cerrarModalInc();
-            alert('Incidencia reportada correctamente.');
+            }).join('');
         }
-    } catch {
-        mostrarAlertaInc('Error de conexión. Intenta de nuevo.');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar reporte';
-    }
-}
+
+        // ─── Modal incidencia ─────────────────────────────────────────
+        function abrirModalInc(idProyecto, nombreProyecto) {
+            document.getElementById('incIdProyecto').value = idProyecto;
+            document.getElementById('incSubtitulo').textContent = 'Proyecto: ' + nombreProyecto;
+            document.getElementById('incTitulo').value = '';
+            document.getElementById('incDescripcion').value = '';
+            document.getElementById('incPrioridad').value = 'Media';
+            ocultarAlertaInc();
+            document.getElementById('incOverlay').classList.add('open');
+        }
+
+        function cerrarModalInc() {
+            document.getElementById('incOverlay').classList.remove('open');
+        }
+
+        function mostrarAlertaInc(msg, tipo = 'error') {
+            const el = document.getElementById('incAlerta');
+            const [bg, col, bdr] = tipo === 'error'
+                ? ['#fee2e2', '#dc2626', '#fca5a5']
+                : ['#d1fae5', '#065f46', '#6ee7b7'];
+            el.style.cssText = `display:block;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+            el.textContent = msg;
+        }
+
+        function ocultarAlertaInc() {
+            const el = document.getElementById('incAlerta');
+            el.style.display = 'none';
+            el.textContent = '';
+        }
+
+        async function enviarIncidencia() {
+            const idProyecto = document.getElementById('incIdProyecto').value;
+            const titulo = document.getElementById('incTitulo').value.trim();
+            const descripcion = document.getElementById('incDescripcion').value.trim();
+            const prioridad = document.getElementById('incPrioridad').value;
+
+            if (!titulo || !descripcion) {
+                mostrarAlertaInc('Completa todos los campos obligatorios.'); return;
+            }
+
+            const btn = document.getElementById('btnEnviarInc');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+            try {
+                const form = new FormData();
+                form.append('id_proyecto', idProyecto);
+                form.append('titulo', titulo);
+                form.append('descripcion', descripcion);
+                form.append('prioridad', prioridad);
+
+                const res = await fetch('php/registrar_incidencia.php', {
+                    method: 'POST',
+                    body: form
+                });
+                const data = await res.json();
+
+                if (data.error) {
+                    mostrarAlertaInc(data.mensaje || 'Error al enviar.');
+                } else {
+                    cerrarModalInc();
+                    alert('Incidencia reportada correctamente.');
+                }
+            } catch {
+                mostrarAlertaInc('Error de conexión. Intenta de nuevo.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar reporte';
+            }
+        }
 
         // ─── Mostrar error ────────────────────────────────────────────
         function mostrarError(msg) {
@@ -396,16 +489,24 @@ async function enviarIncidencia() {
                 }
                 renderCards(proyectos);
 
-    } catch(e) {
-        console.error('Error init:', e);
-        mostrarError('No se pudo conectar con el servidor.');
-    }
-}
-
-async function cerrarSesion() {
-    try { await fetch('php/logout.php'); } catch(e) {}
-    window.location.href = 'login.html';
-}
+            } catch (e) {
+                console.error('Error init:', e);
+                mostrarError('No se pudo conectar con el servidor.');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === currentPage) {
+                    a.classList.add('active');
+                }
+            });
+        });
+        async function cerrarSesion() {
+            try { await fetch('php/logout.php'); } catch (e) { }
+            window.location.href = 'login.html';
+        }
 
         init();
     </script>
