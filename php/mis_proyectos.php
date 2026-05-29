@@ -68,7 +68,7 @@ SELECT
     nombre,
     descripcion,
     fecha_inicio,
-    fecha_fin,
+    fecha_entrega,
     estado,
     creado_en
 FROM proyecto
@@ -95,8 +95,7 @@ while ($row = $res->fetch_assoc()) {
         'id'            => $row['id_proyecto'],
         'nombre'        => $row['nombre'],
         'fechaInicio'   => $row['fecha_inicio'],
-        'fechaEntrega'  => $row['fecha_fin'],
-        'fechaFin'      => $row['fecha_fin'],
+        'fechaEntrega'  => $row['fecha_entrega'],
         'estado'        => $row['estado']
     ];
 }

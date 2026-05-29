@@ -33,7 +33,6 @@ if (!$nombre || !$idCliente || !$fechaInicio || !$fechaFin) {
 if ($monto <= 0) {
     echo json_encode(['success' => false, 'error' => 'El monto del proyecto debe ser mayor a 0']); exit;
 }
-
 if (!$anticipo_fecha) {
     echo json_encode(['success' => false, 'error' => 'La fecha del anticipo es requerida']); exit;
 }
@@ -45,28 +44,17 @@ $conn = getConexion();
 $conn->begin_transaction();
 
 try {
-    $mapEstados = [
-        'Pendiente' => 'Activo',
-        'En Proceso' => 'Activo',
-        'Completado' => 'Cerrado',
-        'Cancelado' => 'Cerrado',
-        'Finalizado' => 'Cerrado'
-    ];
-    $estadoDb = $mapEstados[$estado] ?? $estado;
-    if (!in_array($estadoDb, ['Activo', 'Pausado', 'Cerrado'], true)) {
-        $estadoDb = 'Activo';
-    }
-
-    // 1. Insertar proyecto con anticipo_pagado = 1 desde el inicio
+    // 1. Insertar proyecto con monto
     $stmt1 = $conn->prepare(
-        "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_fin, id_cliente, monto, anticipo_pagado)
+        "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_entrega, id_cliente, monto, anticipo_pagado)
          VALUES (?, ?, ?, ?, ?, ?, 1)"
     );
-    $stmt1->bind_param("ssssid", $nombre, $estadoDb, $fechaInicio, $fechaFin, $idCliente, $monto);
+    $stmt1->bind_param("ssssid", $nombre, $estado, $fechaInicio, $fechaFin, $idCliente, $monto);
     $stmt1->execute();
     $id_proyecto = $conn->insert_id;
     $stmt1->close();
 
+    // 2. Insertar anticipo en tabla pago
     $stmt2 = $conn->prepare(
         "INSERT INTO pago (id_proyecto, tipo_pago, monto, fecha_pago, metodo_pago, comprobante, registrado_por)
          VALUES (?, 'Anticipo', ?, ?, ?, ?, ?)"
@@ -82,6 +70,9 @@ try {
     $stmt2->execute();
     $stmt2->close();
 
+    $conn->commit();
+
+    // 3. Generar factura del anticipo
     $IVA_PCT          = 0.13;
     $monto_factura    = $anticipo_monto;
     $subtotal_factura = round($monto_factura / (1 + $IVA_PCT), 2);
@@ -109,8 +100,6 @@ try {
     );
     $stmt_f->execute();
     $stmt_f->close();
-
-    $conn->commit();
 
     echo json_encode(['success' => true, 'id_proyecto' => $id_proyecto]);
 

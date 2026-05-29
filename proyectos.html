@@ -74,18 +74,24 @@
         .btn-wnext:disabled { opacity:.6;cursor:not-allowed; }
         .spin { animation:spin .8s linear infinite;display:inline-block; }
         @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* ── Botón entregables ── */
+        .btn-entregables {
+            background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;
+        }
+        .btn-entregables:hover { background:#ede9fe;border-color:#c4b5fd; }
     </style>
 </head>
 <body class="dash-body">
- 
+
 <div class="mobile-topbar">
     <span class="brand">🔷 TechNova</span>
     <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
 </div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
- 
+
 <div class="dash-layout">
- 
+
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
@@ -100,7 +106,7 @@
             <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
             <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
             <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
- 
+
             <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
             <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
             <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
@@ -110,9 +116,9 @@
             <span id="sidebarRol"></span>
         </div>
     </aside>
- 
+
     <main class="dash-main">
- 
+
         <div class="dash-header">
             <div>
                 <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos</h1>
@@ -122,7 +128,7 @@
                 <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
             </button>
         </div>
- 
+
         <div class="table-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
                 <div>
@@ -136,12 +142,12 @@
                     <i class="fa-solid fa-plus"></i> Nuevo Proyecto
                 </button>
             </div>
- 
+
             <div id="loadingBox" style="text-align:center;padding:40px;">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
                 <p style="margin-top:8px;color:#94a3b8;">Cargando proyectos...</p>
             </div>
- 
+
             <div class="table-wrap" id="tableWrap" style="display:none;">
                 <table>
                     <thead>
@@ -158,10 +164,11 @@
                 </table>
             </div>
         </div>
- 
+
     </main>
 </div>
- 
+
+<!-- ══════════ MODAL PROYECTO ══════════ -->
 <div class="modal-overlay" id="modalProyectoOverlay">
     <div class="modal" role="dialog" aria-modal="true">
         <div class="modal-header">
@@ -191,7 +198,7 @@
                 </div>
             </div>
 
-            <!-- ── PASO 1 ── -->
+            <!-- PASO 1 -->
             <div class="wpanel active" id="paso1">
                 <div class="mfield">
                     <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
@@ -238,7 +245,7 @@
                 </button>
             </div>
 
-            <!-- ── PASO 2: Anticipo ── -->
+            <!-- PASO 2: Anticipo -->
             <div class="wpanel" id="paso2">
                 <div class="anticipo-hdr">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
@@ -249,12 +256,10 @@
                 </div>
                 <div class="mfield">
                     <label>Monto del anticipo (50% obligatorio)</label>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <input type="text" id="aMontoWiz" readonly
-                               style="background:#f1f5f9;color:#ff0404;
-                                      cursor:not-allowed;border:1.5px solid #e2e8f0;border-radius:10px;
-                                      padding:10px 14px;width:100%;box-sizing:border-box;">
-                    </div>
+                    <input type="text" id="aMontoWiz" readonly
+                           style="background:#f1f5f9;color:#ff0404;cursor:not-allowed;
+                                  border:1.5px solid #e2e8f0;border-radius:10px;
+                                  padding:10px 14px;width:100%;box-sizing:border-box;">
                     <p style="margin:5px 0 0;font-size:.74rem;color:#64748b;">
                         <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
                         Calculado automáticamente. No editable.
@@ -306,7 +311,8 @@
         </div>
     </div>
 </div>
- 
+
+<!-- ══════════ MODAL ELIMINAR ══════════ -->
 <div class="modal-overlay" id="modalEliminarOverlay">
     <div class="modal modal-confirm" role="dialog" aria-modal="true">
         <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
@@ -320,10 +326,10 @@
         </div>
     </div>
 </div>
- 
+
 <script>
-const sidebar       = document.getElementById('sidebar');
-const sidebarOvl    = document.getElementById('sidebarOverlay');
+const sidebar    = document.getElementById('sidebar');
+const sidebarOvl = document.getElementById('sidebarOverlay');
 document.getElementById('btnMenuToggle').addEventListener('click', () => {
     sidebar.classList.toggle('open');
     sidebarOvl.classList.toggle('visible');
@@ -332,7 +338,7 @@ sidebarOvl.addEventListener('click', () => {
     sidebar.classList.remove('open');
     sidebarOvl.classList.remove('visible');
 });
- 
+
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
 });
@@ -342,12 +348,12 @@ document.getElementById('modalProyectoOverlay').addEventListener('click', e => {
 document.getElementById('modalEliminarOverlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) cerrarModalEliminar();
 });
- 
+
 let proyectos = [];
 let modoEdicion = false;
 let proyectoEditId = null;
 let proyectoEliminarId = null;
- 
+
 function formatFecha(f) {
     if (!f || f === '0000-00-00') return '-';
     const [y,m,d] = f.split('-');
@@ -362,42 +368,36 @@ function escapeHtml(s) {
     d.textContent = s;
     return d.innerHTML;
 }
- 
+
 async function cargarProyectos() {
     try {
         const res  = await fetch('php/proyectos_lista.php');
         const data = await res.json();
         proyectos  = Array.isArray(data) ? data : (data.proyectos || []);
         renderTabla();
-    } catch (e) { console.error('Error:', e); }
+    } catch(e) { console.error('Error:', e); }
 }
- 
+
 function renderTabla() {
     const tbody = document.getElementById('tablaProyectosBody');
-    document.getElementById('proyectosCount').textContent =
-        `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
- 
-    if (proyectos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
-            No hay proyectos registrados</td></tr>`;
-        return;
-    }
-    // ORDENAR: De más nuevo a más viejo (usando el ID de forma descendente)
+
     proyectos.sort((a, b) => {
         const idA = a.id || a.id_proyecto;
         const idB = b.id || b.id_proyecto;
-        return idB - idA; 
+        return idB - idA;
     });
 
     document.getElementById('proyectosCount').textContent =
         `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
- 
+
     if (proyectos.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
             No hay proyectos registrados</td></tr>`;
         return;
     }
+
     tbody.innerHTML = proyectos.map(p => {
+        const id = p.id || p.id_proyecto;
         const anticipoBadge = p.anticipo_pagado == 1
             ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
             : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
@@ -407,20 +407,25 @@ function renderTabla() {
             <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
             <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
             <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
-            <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', {minimumFractionDigits:2, maximumFractionDigits:2}) : '-'}</td>
+            <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV',{minimumFractionDigits:2,maximumFractionDigits:2}) : '-'}</td>
             <td style="text-align:right;">
-                <button class="btn-icon btn-edit" onclick="abrirModalEditar(${p.id || p.id_proyecto})">
+                <button class="btn-icon btn-entregables" title="Ver entregables"
+                    onclick="window.location.href='entregables.html?id=${id}'">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </button>
+                <button class="btn-icon btn-edit" title="Editar proyecto"
+                    onclick="abrirModalEditar(${id})">
                     <i class="fa-regular fa-pen-to-square"></i>
                 </button>
-                <button class="btn-icon btn-del" onclick="abrirModalEliminar(${p.id || p.id_proyecto})">
+                <button class="btn-icon btn-del" title="Eliminar proyecto"
+                    onclick="abrirModalEliminar(${id})">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
             </td>
         </tr>`;
     }).join('');
-    console.log(proyectos);
 }
- 
+
 async function poblarSelectClientes(idSeleccionado = '') {
     const sel = document.getElementById('sel-cliente');
     sel.innerHTML = '<option value="">Cargando...</option>';
@@ -437,11 +442,11 @@ async function poblarSelectClientes(idSeleccionado = '') {
         });
     } catch(e) { sel.innerHTML = '<option>Error cargando clientes</option>'; }
 }
- 
+
 function setAlerta(elId, msg, tipo = 'error') {
     const el = document.getElementById(elId);
     if (!msg) { el.style.display = 'none'; el.innerHTML = ''; return; }
-    const [bg, col, bdr, ico] = tipo === 'error'
+    const [bg,col,bdr,ico] = tipo === 'error'
         ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
         : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
     el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
@@ -459,11 +464,11 @@ function recalcularAnticipo() {
 }
 
 function irPaso2() {
-    const nombre     = document.getElementById('proyectoNombre').value.trim();
-    const idCliente  = document.getElementById('sel-cliente').value;
-    const fechaInicio= document.getElementById('proyectoFechaInicio').value;
-    const fechaFin   = document.getElementById('proyectoFechaFin').value;
-    const monto      = parseFloat(document.getElementById('proyectoMonto').value);
+    const nombre      = document.getElementById('proyectoNombre').value.trim();
+    const idCliente   = document.getElementById('sel-cliente').value;
+    const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+    const fechaFin    = document.getElementById('proyectoFechaFin').value;
+    const monto       = parseFloat(document.getElementById('proyectoMonto').value);
     if (!nombre || !idCliente || !fechaInicio || !fechaFin || !document.getElementById('proyectoMonto').value) {
         setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.');
         return;
@@ -473,10 +478,7 @@ function irPaso2() {
         return;
     }
     setAlerta('modalProyectoAlerta', '');
-
     document.getElementById('aMontoWiz').value = '$' + (monto / 2).toFixed(2);
-
-    // Avanzar stepper
     document.getElementById('paso1').classList.remove('active');
     document.getElementById('paso2').classList.add('active');
     document.getElementById('sc1').className = 'wstep-circle done';
@@ -503,53 +505,46 @@ function irPaso1() {
 
 async function crearProyectoCompleto() {
     const montoProyecto = parseFloat(document.getElementById('proyectoMonto').value);
-    const monto  = (montoProyecto / 2).toFixed(2);  // Siempre 50%, calculado aquí también
     const fecha  = document.getElementById('aFechaWiz').value;
     const metodo = document.querySelector('input[name="aMetodoWiz"]:checked')?.value || '';
     const comp   = document.getElementById('aComprobanteWiz').value.trim();
-
     if (!fecha)  { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
     if (!metodo) { setAlerta('alertaPaso2', 'Selecciona un método de pago.'); return; }
     setAlerta('alertaPaso2', '');
-
     const btn = document.getElementById('btnCrearFinal');
     btn.disabled = true;
     document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Creando...';
-
     const payload = {
-        nombre:      document.getElementById('proyectoNombre').value.trim(),
-        idCliente:   document.getElementById('sel-cliente').value,
-        estado:      document.getElementById('proyectoEstado').value,
-        fechaInicio: document.getElementById('proyectoFechaInicio').value,
-        fechaFin:    document.getElementById('proyectoFechaFin').value,
-        monto:       montoProyecto,
-        anticipo_monto:       parseFloat(monto),
+        nombre:               document.getElementById('proyectoNombre').value.trim(),
+        idCliente:            document.getElementById('sel-cliente').value,
+        estado:               document.getElementById('proyectoEstado').value,
+        fechaInicio:          document.getElementById('proyectoFechaInicio').value,
+        fechaFin:             document.getElementById('proyectoFechaFin').value,
+        monto:                montoProyecto,
         anticipo_fecha:       fecha,
         anticipo_metodo:      metodo,
         anticipo_comprobante: comp
     };
-
     try {
         const res  = await fetch('php/proyectos_crear.php', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (data.success) { cerrarModalProyecto(); await cargarProyectos(); }
         else setAlerta('alertaPaso2', data.error || 'Error en el servidor.');
     } catch(e) { setAlerta('alertaPaso2', 'Error de conexión.'); }
-
     btn.disabled = false;
     document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear Proyecto';
 }
 
 async function guardarEdicion() {
-    const nombre     = document.getElementById('proyectoNombre').value.trim();
-    const idCliente  = document.getElementById('sel-cliente').value;
-    const estado     = document.getElementById('proyectoEstado').value;
-    const fechaInicio= document.getElementById('proyectoFechaInicio').value;
-    const fechaFin   = document.getElementById('proyectoFechaFin').value;
-    const monto      = document.getElementById('proyectoMonto').value;
+    const nombre      = document.getElementById('proyectoNombre').value.trim();
+    const idCliente   = document.getElementById('sel-cliente').value;
+    const estado      = document.getElementById('proyectoEstado').value;
+    const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+    const fechaFin    = document.getElementById('proyectoFechaFin').value;
+    const monto       = document.getElementById('proyectoMonto').value;
     if (!nombre || !idCliente || !fechaInicio || !fechaFin || !monto) {
         setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
     }
@@ -562,8 +557,8 @@ async function guardarEdicion() {
     document.getElementById('btnGuardarTexto').textContent = 'Guardando...';
     try {
         const res = await fetch('php/proyectos_actualizar.php', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto: parseFloat(monto) })
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ id:proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto:parseFloat(monto) })
         });
         const resp = await res.json();
         if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
@@ -576,14 +571,13 @@ async function guardarEdicion() {
 async function abrirModalProyecto() {
     modoEdicion = false;
     document.getElementById('modalProyectoTitle').textContent    = 'Nuevo Proyecto';
-    document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos del proyecto.';
+    document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos para el proyecto.';
     ['proyectoNombre','proyectoFechaInicio','proyectoFechaFin','proyectoMonto','aMontoWiz','aFechaWiz','aComprobanteWiz']
         .forEach(id => document.getElementById(id).value = '');
     document.getElementById('proyectoEstado').value = 'Pendiente';
     document.querySelectorAll('input[name="aMetodoWiz"]').forEach(r => r.checked = false);
-    // Modo creación: mostrar stepper + siguiente, ocultar edición
-    document.getElementById('wizardSteps').style.display     = 'flex';
-    document.getElementById('footerPaso1').style.display     = 'flex';
+    document.getElementById('wizardSteps').style.display      = 'flex';
+    document.getElementById('footerPaso1').style.display      = 'flex';
     document.getElementById('btnGuardarEdicion').style.display = 'none';
     irPaso1();
     setAlerta('modalProyectoAlerta', '');
@@ -604,8 +598,8 @@ async function abrirModalEditar(id) {
     document.getElementById('proyectoFechaInicio').value = p.fechaInicio || p.fecha_inicio;
     document.getElementById('proyectoFechaFin').value    = p.fechaFin   || p.fecha_fin;
     document.getElementById('proyectoMonto').value       = p.monto != null ? p.monto : '';
-    document.getElementById('wizardSteps').style.display     = 'none';
-    document.getElementById('footerPaso1').style.display     = 'none';
+    document.getElementById('wizardSteps').style.display      = 'none';
+    document.getElementById('footerPaso1').style.display      = 'none';
     document.getElementById('btnGuardarEdicion').style.display = 'block';
     document.getElementById('paso1').classList.add('active');
     document.getElementById('paso2').classList.remove('active');
@@ -614,12 +608,12 @@ async function abrirModalEditar(id) {
     document.body.style.overflow = 'hidden';
     await poblarSelectClientes(p.idCliente || p.id_cliente);
 }
- 
+
 function cerrarModalProyecto() {
     document.getElementById('modalProyectoOverlay').classList.remove('open');
     document.body.style.overflow = '';
 }
- 
+
 function abrirModalEliminar(id) {
     proyectoEliminarId = id;
     const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
@@ -627,44 +621,41 @@ function abrirModalEliminar(id) {
     document.getElementById('modalEliminarOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 }
- 
+
 function cerrarModalEliminar() {
     document.getElementById('modalEliminarOverlay').classList.remove('open');
     document.body.style.overflow = '';
 }
- 
+
 document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
     try {
         const res = await fetch('php/proyectos_eliminar.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ id: proyectoEliminarId })
         });
         if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
-    } catch (e) { alert('Error al eliminar'); }
+    } catch(e) { alert('Error al eliminar'); }
 });
- 
+
 function cerrarSesion() {
     fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
 }
- 
+
 async function inicializar() {
     try {
         const res  = await fetch('php/dashboard_data.php');
         const data = await res.json();
         if (data.error) { window.location.href = 'login.html'; return; }
- 
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
         document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
         if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
- 
         await cargarProyectos();
         document.getElementById('loadingBox').style.display = 'none';
         document.getElementById('tableWrap').style.display  = 'block';
     } catch(e) { console.error(e); }
 }
- 
+
 inicializar();
 </script>
 </body>

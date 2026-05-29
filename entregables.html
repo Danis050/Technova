@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entregables – TechNova</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="admin">
+
+  <!-- Sidebar (igual al resto del sistema) -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>🚀 TechNova</h2>
+      <p id="sidebarRol">Cargando...</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+      <a href="clientes.html"  class="nav-item"><i class="fa-solid fa-users"></i> Clientes</a>
+      <a href="proyectos.html" class="nav-item active"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+      <a href="facturas.html"  class="nav-item"><i class="fa-solid fa-file-invoice"></i> Facturación</a>
+      <a href="pagos.html"     class="nav-item"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+      <a href="servicios.html" class="nav-item"><i class="fa-solid fa-wrench"></i> Servicios</a>
+      <a href="reportes.html"  class="nav-item"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout-side" onclick="cerrarSesion()">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="proyectos.html" style="color:#64748b;font-size:.85rem;text-decoration:none;">
+            <i class="fa-solid fa-arrow-left"></i> Proyectos
+          </a>
+          <span style="color:#cbd5e1;">/</span>
+          <h1 id="topbarNombreProyecto" style="font-size:1.1rem;">Entregables</h1>
+        </div>
+      </div>
+      <div class="topbar-user">
+        <div class="user-info">
+          <div class="user-name" id="topbarUsuario">—</div>
+          <div class="user-role"  id="topbarRol">—</div>
+        </div>
+        <div class="avatar" id="topbarAvatar">?</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Encabezado de sección -->
+      <div class="content-card" style="margin-bottom:0;">
+        <div class="content-card-header">
+          <div>
+            <h2><i class="fa-solid fa-boxes-stacked" style="color:#6d28d9;margin-right:6px;"></i>Entregables del proyecto</h2>
+            <p id="subtituloProyecto" style="margin-top:4px;font-size:.8rem;color:#64748b;">Cargando proyecto…</p>
+          </div>
+          <button class="btn-primary" onclick="abrirModalCrear()">
+            <i class="fa-solid fa-plus"></i> Nuevo entregable
+          </button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Responsable</th>
+                <th>Fecha estimada</th>
+                <th>Estado</th>
+                <th style="text-align:right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaEntregables">
+              <tr>
+                <td colspan="7" style="padding:0;border-bottom:none;">
+                  <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+                    <h3>Cargando entregables…</h3>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-wrap -->
+
+  <!-- ═══════════ MODAL CREAR / EDITAR ═══════════ -->
+  <div class="overlay" id="overlayForm">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-head">
+        <div>
+          <h3 id="modalTitulo">Nuevo entregable</h3>
+          <p  id="modalSubtitulo">Completa los campos del entregable.</p>
+        </div>
+        <button class="btn-close" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+
+        <div id="alertaModal" class="modal-alert"></div>
+
+        <input type="hidden" id="inputIdEntregable" value="0" />
+
+        <div class="field">
+          <label>Nombre <span style="color:#ef4444;">*</span></label>
+          <input type="text" id="inputNombre" maxlength="150" placeholder="Nombre del entregable" />
+        </div>
+        <div class="field">
+          <label>Descripción <span style="color:#ef4444;">*</span></label>
+          <textarea id="inputDescripcion" rows="3"
+            style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;
+                   font-size:.875rem;font-family:inherit;color:#0f172a;background:#f8fafc;
+                   outline:none;resize:vertical;"
+            placeholder="Describe el entregable…"></textarea>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>Responsable <span style="color:#ef4444;">*</span></label>
+            <select id="inputResponsable">
+              <option value="">— Seleccionar —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Fecha estimada <span style="color:#ef4444;">*</span></label>
+            <input type="date" id="inputFecha" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <select id="inputEstado">
+            <option value="Pendiente">Pendiente</option>
+            <option value="En desarrollo">En desarrollo</option>
+            <option value="Entregado">Entregado</option>
+          </select>
+        </div>
+
+        <div class="modal-foot">
+          <button class="btn-cancel-m" onclick="cerrarModal()">Cancelar</button>
+          <button class="btn-save" id="btnGuardar" onclick="guardarEntregable()">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ MODAL CONFIRMAR ELIMINAR ═══════════ -->
+  <div class="overlay" id="overlayConfirm">
+    <div class="modal modal-confirm">
+      <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
+      <h3>¿Eliminar entregable?</h3>
+      <p>Esta acción no se puede deshacer. El entregable será eliminado permanentemente.</p>
+      <div class="confirm-btns">
+        <button class="btn-cancel-m" onclick="cerrarConfirm()">Cancelar</button>
+        <button class="btn-del-confirm" id="btnConfirmDel">
+          <i class="fa-solid fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ─── Utilidades ───────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+let idProyectoActual = 0;
+let usuariosCache    = [];
+
+function getParams() {
+  return new URLSearchParams(window.location.search);
+}
+
+function cerrarSesion() {
+  fetch('php/logout.php').finally(() => window.location.href = 'index.html');
+}
+
+// ─── Badges de estado ────────────────────────────────────
+function badgeEstado(estado) {
+  const mapa = {
+    'Pendiente'     : 'badge-pendiente',
+    'En desarrollo' : 'badge-proceso',
+    'Entregado'     : 'badge-completado',
+  };
+  const cls = mapa[estado] || 'badge-pendiente';
+  return `<span class="badge-estado ${cls}">${estado}</span>`;
+}
+
+// ─── Init ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  // Sesión
+  try {
+    const r = await fetch('php/dashboard_data.php');
+    const d = await r.json();
+    if (d.error) { window.location.href = 'index.html'; return; }
+    $('topbarUsuario').textContent = d.nombre  || '—';
+    $('topbarRol'    ).textContent = d.rol     || '—';
+    $('topbarAvatar' ).textContent = (d.nombre || '?')[0].toUpperCase();
+    $('sidebarRol'   ).textContent = d.rol     || '—';
+  } catch { window.location.href = 'index.html'; return; }
+
+  idProyectoActual = parseInt(getParams().get('id') || '0');
+  if (!idProyectoActual) {
+    window.location.href = 'proyectos.html'; return;
+  }
+
+  await cargarProyecto();
+  await cargarUsuarios();
+  await cargarEntregables();
+});
+
+// ─── Cargar datos del proyecto ────────────────────────────
+async function cargarProyecto() {
+  try {
+    const r = await fetch('php/proyectos_lista.php');
+    const lista = await r.json();
+    const p = lista.find(x => x.id === idProyectoActual);
+    if (p) {
+      $('topbarNombreProyecto').textContent = p.nombre;
+      $('subtituloProyecto').textContent =
+        `${p.nombreCliente} · Estado: ${p.estado} · Monto: $${parseFloat(p.monto||0).toFixed(2)}`;
+    }
+  } catch { /* silencioso */ }
+}
+
+// ─── Cargar usuarios para el select responsable ──────────
+async function cargarUsuarios() {
+  try {
+    const r = await fetch('php/clientes_lista.php');   // reutiliza lista existente
+    // Si hay endpoint de usuarios activos, úsalo; si no, construye con datos disponibles
+    // Fallback: dejar select vacío y esperar que el backend valide
+  } catch { /* silencioso */ }
+
+  // Intentar con endpoint genérico de usuarios
+  try {
+    const r = await fetch('php/get_usuarios_activos.php');
+    if (r.ok) {
+      const data = await r.json();
+      usuariosCache = data;
+      poblarSelectResponsable(data);
+    }
+  } catch { /* silencioso, el campo queda libre */ }
+}
+
+function poblarSelectResponsable(usuarios) {
+  const sel = $('inputResponsable');
+  sel.innerHTML = '<option value="">— Seleccionar —</option>';
+  usuarios.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value       = u.id_usuario;
+    opt.textContent = u.nombre || u.nombre_completo || `Usuario #${u.id_usuario}`;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── Cargar entregables del proyecto ─────────────────────
+async function cargarEntregables() {
+  const tbody = $('tablaEntregables');
+  tbody.innerHTML = `<tr><td colspan="7" style="padding:0;border-bottom:none;">
+    <div class="empty-state">
+      <div class="empty-icon"><i class="fa-solid fa-spinner fa-spin"></i></div>
+      <h3>Cargando entregables…</h3>
+    </div></td></tr>`;
+
+  try {
+    const r    = await fetch(`php/entregables_lista.php?id_proyecto=${idProyectoActual}`);
+    const data = await r.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="padding:0;border-bottom:none;">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
+          <h3>Sin entregables aún</h3>
+          <p>Crea el primer entregable para este proyecto.</p>
+          <button class="btn-primary" onclick="abrirModalCrear()">
+            <i class="fa-solid fa-plus"></i> Nuevo entregable
+          </button>
+        </div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((e, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td class="col-nombre">${e.nombre}</td>
+        <td style="max-width:240px;color:#475569;font-size:.82rem;">${e.descripcion}</td>
+        <td>${e.nombre_responsable || `#${e.id_responsable}`}</td>
+        <td class="col-fechas">${e.fecha_estimada}</td>
+        <td>${badgeEstado(e.estado)}</td>
+        <td>
+          <div class="acciones">
+            <button class="btn-icon btn-edit" title="Editar"
+              onclick='abrirModalEditar(${JSON.stringify(e)})'>
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </div>
+        </td>
+      </tr>`).join('');
+
+  } catch {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:#ef4444;">
+      Error al cargar entregables.</td></tr>`;
+  }
+}
+
+// ─── Modal crear ──────────────────────────────────────────
+function abrirModalCrear() {
+  $('modalTitulo').textContent    = 'Nuevo entregable';
+  $('modalSubtitulo').textContent = 'Completa los campos del entregable.';
+  $('inputIdEntregable').value    = '0';
+  $('inputNombre').value          = '';
+  $('inputDescripcion').value     = '';
+  $('inputResponsable').value     = '';
+  $('inputFecha').value           = '';
+  $('inputEstado').value          = 'Pendiente';
+  ocultarAlerta();
+  $('overlayForm').classList.add('open');
+  $('inputNombre').focus();
+}
+
+// ─── Modal editar ─────────────────────────────────────────
+function abrirModalEditar(e) {
+  $('modalTitulo').textContent    = 'Editar entregable';
+  $('modalSubtitulo').textContent = `Editando: ${e.nombre}`;
+  $('inputIdEntregable').value    = e.id_entregable;
+  $('inputNombre').value          = e.nombre;
+  $('inputDescripcion').value     = e.descripcion;
+  $('inputResponsable').value     = e.id_responsable;
+  $('inputFecha').value           = e.fecha_estimada;
+  $('inputEstado').value          = e.estado;
+  ocultarAlerta();
+  $('overlayForm').classList.add('open');
+}
+
+function cerrarModal() {
+  $('overlayForm').classList.remove('open');
+}
+
+// ─── Guardar (crear o editar) ────────────────────────────
+async function guardarEntregable() {
+  const id          = parseInt($('inputIdEntregable').value);
+  const nombre      = $('inputNombre').value.trim();
+  const descripcion = $('inputDescripcion').value.trim();
+  const responsable = parseInt($('inputResponsable').value);
+  const fecha       = $('inputFecha').value;
+  const estado      = $('inputEstado').value;
+
+  if (!nombre || !descripcion || !responsable || !fecha) {
+    mostrarAlerta('Completa todos los campos obligatorios.', 'error'); return;
+  }
+
+  const payload = {
+    id_entregable  : id,
+    id_proyecto    : idProyectoActual,
+    nombre, descripcion,
+    id_responsable : responsable,
+    fecha_estimada : fecha,
+    estado
+  };
+
+  $('btnGuardar').disabled = true;
+  $('btnGuardar').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
+
+  try {
+    const r    = await fetch('php/entregables_guardar.php', {
+      method  : 'POST',
+      headers : { 'Content-Type': 'application/json' },
+      body    : JSON.stringify(payload)
+    });
+    const data = await r.json();
+
+    if (data.error) {
+      mostrarAlerta(data.mensaje, 'error');
+    } else {
+      cerrarModal();
+      await cargarEntregables();
+    }
+  } catch {
+    mostrarAlerta('Error de conexión. Intenta de nuevo.', 'error');
+  } finally {
+    $('btnGuardar').disabled = false;
+    $('btnGuardar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar';
+  }
+}
+
+// ─── Alertas modal ────────────────────────────────────────
+function mostrarAlerta(msg, tipo) {
+  const el = $('alertaModal');
+  el.textContent   = msg;
+  el.style.display = 'block';
+  el.style.background = tipo === 'error' ? '#fee2e2' : '#d1fae5';
+  el.style.color      = tipo === 'error' ? '#991b1b' : '#065f46';
+}
+function ocultarAlerta() {
+  const el = $('alertaModal');
+  el.style.display = 'none';
+  el.textContent   = '';
+}
+
+// ─── Cerrar overlays al click fuera ──────────────────────
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => {
+    if (e.target === ov) {
+      ov.classList.remove('open');
+    }
+  });
+});
+
+function cerrarConfirm() {
+  $('overlayConfirm').classList.remove('open');
+}
+</script>
+</body>
+</html>

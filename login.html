@@ -51,18 +51,18 @@
             </button>
         </form>
 
-        <p style="text-align:center;margin-top:10px;color:#6b7280;font-size:0.9rem;">
-            <a href="recuperar_password.html" style="color:#6d28d9;font-weight:600;">Olvide mi contrasena</a>
+        <p style="text-align:center;margin-top:12px;margin-bottom:4px;">
+            <a href="recuperar_password.html" style="color:#6d28d9;font-weight:600;font-size:0.85rem;">
+                <i class="fa-solid fa-key" style="margin-right:4px;"></i>¿Olvidaste tu contraseña?
+            </a>
         </p>
-
-        <p style="text-align:center;margin-top:20px;color:#6b7280;font-size:0.9rem;">
+        <p style="text-align:center;margin-top:8px;color:#6b7280;font-size:0.9rem;">
             ¿No tienes cuenta? <a href="registro.html" style="color:#6d28d9;font-weight:600;">Regístrate aquí</a>
         </p>
     </div>
 </section>
 
 <script>
-    // Manejo del menú hamburguesa
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
     const navActions = document.getElementById('navActions');
@@ -73,7 +73,6 @@
         navActions.classList.toggle('open');
     });
 
-    // Lógica de Login
     document.getElementById('formLogin').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -95,21 +94,16 @@
             alerta.style.display = 'block';
 
             if (data.error) {
-                // Error en credenciales
                 alerta.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:.9rem;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
                 alerta.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${data.mensaje}`;
             } else {
-                // Login exitoso
                 alerta.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:.9rem;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
                 alerta.innerHTML = `<i class="fa-solid fa-circle-check"></i> ¡Bienvenido, ${data.nombre}!`;
-                
-                // Redirección según rol (Corrección de la lógica de comparación)
                 setTimeout(() => { 
-                    window.location.href = (data.rol === 'Cliente') ? 'index.html' : 'dashboard.html'; 
+                    window.location.href = (data.rol === 'Cliente') ? 'mis_proyectos.html' : 'dashboard.html'; 
                 }, 1000);
             }
         } catch(err) {
-            // Error de servidor o red
             alerta.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:16px;font-size:.9rem;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
             alerta.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Error de conexión con el servidor';
         }

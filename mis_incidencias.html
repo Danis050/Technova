@@ -188,25 +188,6 @@
             color: #94a3b8;
         }
         .empty-state i { font-size: 2rem; margin-bottom: 12px; display: block; }
-        .filters-row {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(160px, 1fr));
-            gap: 12px;
-            padding: 16px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            background: #fff;
-        }
-        .filters-row select {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            font: inherit;
-            font-size: .82rem;
-            color: #334155;
-            background: #f8fafc;
-        }
-        @media (max-width: 640px) { .filters-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="dash-body">
@@ -228,12 +209,9 @@
         </div>
         <nav class="sidebar-menu">
             <div class="menu-section-label">Mi Portal</div>
-            <a href="mis_proyectos.html">
-                <i class="fa-regular fa-rectangle-list"></i> Mis Proyectos
-            </a>
-            <a href="mis_incidencias.html" class="active">
-                <i class="fa-solid fa-triangle-exclamation"></i> Reportar Incidencia
-            </a>
+            <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+            <a href="mis_entregables.html" ><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
+            <a href="mis_incidencias.html" class="active"><i class="fa-solid fa-clipboard-check"></i>Mis incidencias</a>
             <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
             <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
         </nav>
@@ -262,7 +240,7 @@
             <div class="form-panel">
                 <div class="form-panel-header">
                     <h2><i class="fa-solid fa-circle-exclamation"></i> Nueva Incidencia</h2>
-                    <p>Solo proyectos con estado Finalizado</p>
+                    <p>Solo proyectos terminados</p>
                 </div>
                 <div class="form-panel-body">
 
@@ -321,18 +299,6 @@
                     <span id="incCount" style="font-size:0.78rem;color:#64748b;"></span>
                 </div>
                 <div class="card-body">
-                    <div class="filters-row">
-                        <select id="filtroProyecto" aria-label="Filtrar por proyecto">
-                            <option value="">Todos los proyectos</option>
-                        </select>
-                        <select id="filtroEstado" aria-label="Filtrar por estado">
-                            <option value="">Todos los estados</option>
-                            <option value="Abierta">Abierta</option>
-                            <option value="En Proceso">En Proceso</option>
-                            <option value="Resuelta">Resuelta</option>
-                            <option value="Cerrada">Cerrada</option>
-                        </select>
-                    </div>
                     <table class="inc-table">
                         <thead>
                             <tr>
@@ -378,7 +344,17 @@ function badgePrioridad(p) {
     return `<span class="badge badge-${map[p] || 'baja'}">${p}</span>`;
 }
 function badgeEstado(e) {
-    const map = { 'Abierta': 'abierta', 'En Proceso': 'en-proceso', 'Resuelta': 'resuelta', 'Cerrada': 'cerrada' };
+    const map = {
+        'Pendiente': 'abierta',
+        'En atención': 'en-proceso',
+        'En atencion': 'en-proceso',
+        'Resuelto': 'resuelta',
+        'Cerrado': 'cerrada',
+        'Abierta': 'abierta',
+        'En Proceso': 'en-proceso',
+        'Resuelta': 'resuelta',
+        'Cerrada': 'cerrada'
+    };
     return `<span class="badge badge-${map[e] || 'abierta'}">${e}</span>`;
 }
 function fmtFecha(f) {
@@ -395,7 +371,7 @@ async function init() {
         if (sesion.error) { window.location.href = 'login.html'; return; }
         if (sesion.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
 
-        document.getElementById('sidebarNombre').textContent = sesion.usuario || sesion.nombre || 'Cliente';
+        document.getElementById('sidebarNombre').textContent = sesion.nombre || 'Cliente';
         document.getElementById('sidebarRol').textContent    = sesion.rol;
 
         await cargarProyectos();
@@ -413,7 +389,7 @@ async function cargarProyectos() {
         const sel  = document.getElementById('selProyecto');
 
         const finalizados = Array.isArray(data)
-            ? data.filter(p => ['Cerrado', 'Finalizado'].includes(p.estado))
+            ? data.filter(p => ['Finalizado', 'Completado', 'Cerrado'].includes(p.estado))
             : [];
 
         if (finalizados.length === 0) {
@@ -429,49 +405,6 @@ async function cargarProyectos() {
 }
 
 // ── Cargar incidencias ────────────────────────────────────────
-let incidenciasCliente = [];
-
-function llenarFiltroProyectos(data) {
-    const sel = document.getElementById('filtroProyecto');
-    const actual = sel.value;
-    const proyectos = [...new Set(data.map(i => i.nombreProyecto).filter(Boolean))].sort();
-    sel.innerHTML = '<option value="">Todos los proyectos</option>' +
-        proyectos.map(p => `<option value="${p}">${p}</option>`).join('');
-    sel.value = proyectos.includes(actual) ? actual : '';
-}
-
-function renderIncidencias() {
-    const tbody = document.getElementById('incTbody');
-    const estado = document.getElementById('filtroEstado').value;
-    const proyecto = document.getElementById('filtroProyecto').value;
-    const data = incidenciasCliente.filter(i =>
-        (!estado || i.estado === estado) &&
-        (!proyecto || i.nombreProyecto === proyecto)
-    );
-
-    if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
-            <i class="fa-solid fa-filter"></i>
-            No hay incidencias con los filtros seleccionados.
-        </div></td></tr>`;
-        document.getElementById('incCount').textContent = '';
-        return;
-    }
-
-    document.getElementById('incCount').textContent = `${data.length} incidencia${data.length !== 1 ? 's' : ''}`;
-    tbody.innerHTML = data.map(i => `
-        <tr>
-            <td>${i.nombreProyecto}</td>
-            <td><strong>${i.titulo}</strong><br>
-                <span style="font-size:0.75rem;color:#64748b;">${i.descripcion.substring(0, 80)}${i.descripcion.length > 80 ? '...' : ''}</span>
-            </td>
-            <td>${badgePrioridad(i.prioridad)}</td>
-            <td>${badgeEstado(i.estado)}</td>
-            <td style="white-space:nowrap;">${fmtFecha(i.creadoEn)}</td>
-        </tr>
-    `).join('');
-}
-
 async function cargarIncidencias() {
     try {
         const res  = await fetch('php/mis_incidencias.php');
@@ -479,7 +412,6 @@ async function cargarIncidencias() {
         const tbody = document.getElementById('incTbody');
 
         if (!Array.isArray(data) || data.length === 0) {
-            incidenciasCliente = [];
             tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
                 <i class="fa-solid fa-circle-check"></i>
                 No has reportado incidencias aún.
@@ -488,18 +420,24 @@ async function cargarIncidencias() {
             return;
         }
 
-        incidenciasCliente = data;
-        llenarFiltroProyectos(data);
-        renderIncidencias();
+        document.getElementById('incCount').textContent = `${data.length} incidencia${data.length !== 1 ? 's' : ''}`;
+        tbody.innerHTML = data.map(i => `
+            <tr>
+                <td>${i.nombreProyecto}</td>
+                <td><strong>${i.titulo}</strong><br>
+                    <span style="font-size:0.75rem;color:#64748b;">${i.descripcion.substring(0, 80)}${i.descripcion.length > 80 ? '...' : ''}</span>
+                </td>
+                <td>${badgePrioridad(i.prioridad)}</td>
+                <td>${badgeEstado(i.estado)}</td>
+                <td style="white-space:nowrap;">${fmtFecha(i.creadoEn)}</td>
+            </tr>
+        `).join('');
     } catch (e) {
         console.error('Error cargando incidencias:', e);
     }
 }
 
 // ── Enviar incidencia ─────────────────────────────────────────
-document.getElementById('filtroProyecto').addEventListener('change', renderIncidencias);
-document.getElementById('filtroEstado').addEventListener('change', renderIncidencias);
-
 async function enviarIncidencia() {
     const idProyecto  = document.getElementById('selProyecto').value;
     const titulo      = document.getElementById('titulo').value.trim();
