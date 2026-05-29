@@ -50,7 +50,7 @@ if (!$valido || !in_array($valido['estado'], ['Finalizado', 'Completado', 'Cerra
 $conn->begin_transaction();
 
 $stmt = $conn->prepare(
-    "INSERT INTO incidencia (id_proyecto, id_usuario, titulo, descripcion, prioridad, estado, creado_en)
+    "INSERT INTO incidencia (id_proyecto, id_usuario_reporta, titulo, descripcion, prioridad, estado, creado_en)
      VALUES (?, ?, ?, ?, ?, 'Pendiente', NOW())"
 );
 $stmt->bind_param("iisss", $id_proyecto, $_SESSION['id_usuario'], $titulo, $descripcion, $prioridad);
