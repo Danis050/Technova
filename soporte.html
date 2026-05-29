@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .badge { display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600; }
+        .badge-baja     { background:#dcfce7;color:#15803d; }
+        .badge-media    { background:#fef9c3;color:#854d0e; }
+        .badge-alta     { background:#ffedd5;color:#c2410c; }
+        .badge-critica  { background:#fee2e2;color:#b91c1c; }
+        .badge-pendiente   { background:#f1f5f9;color:#475569; }
+        .badge-atencion    { background:#dbeafe;color:#1d4ed8; }
+        .badge-resuelto    { background:#dcfce7;color:#15803d; }
+        .badge-cerrado     { background:#e2e8f0;color:#64748b; }
+        .badge-alta-notif  { background:#fef2f2;color:#dc2626;border:1px solid #fca5a5; }
+
+        .filtros-bar { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center; }
+        .btn-filtro {
+            padding:6px 14px;border-radius:999px;border:1.5px solid #e2e8f0;
+            background:#f8fafc;color:#64748b;font-size:.78rem;font-weight:600;
+            cursor:pointer;font-family:inherit;transition:all .15s;
+        }
+        .btn-filtro:hover  { border-color:#818cf8;color:#4f46e5; }
+        .btn-filtro.activo { background:#0f172a;color:#fff;border-color:#0f172a; }
+
+        /* Modal */
+        .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+                   z-index:500;align-items:center;justify-content:center;
+                   padding:16px;backdrop-filter:blur(3px); }
+        .overlay.open { display:flex; }
+        .modal {
+            background:white;border-radius:16px;width:100%;max-width:500px;
+            max-height:90vh;overflow-y:auto;
+            box-shadow:0 20px 50px rgba(0,0,0,.2);
+            animation:mIn .22s ease;
+        }
+        @keyframes mIn {
+            from { opacity:0;transform:scale(.96) translateY(8px); }
+            to   { opacity:1;transform:scale(1) translateY(0); }
+        }
+        .modal-head {
+            padding:22px 22px 0;display:flex;
+            justify-content:space-between;align-items:flex-start;margin-bottom:16px;
+        }
+        .modal-head h3 { font-size:1.05rem;font-weight:700;color:#0f172a;margin-bottom:2px; }
+        .modal-head p  { font-size:.78rem;color:#64748b; }
+        .btn-close { background:none;border:none;cursor:pointer;font-size:1rem;color:#94a3b8; }
+        .btn-close:hover { color:#0f172a; }
+        .modal-body { padding:0 22px 22px; }
+
+        .inc-detalle {
+            background:#f8fafc;border-radius:10px;padding:14px;
+            margin-bottom:16px;font-size:.82rem;color:#334155;line-height:1.6;
+        }
+        .inc-detalle strong { color:#0f172a; }
+
+        .field { margin-bottom:14px; }
+        .field label { display:block;font-size:.78rem;font-weight:600;color:#374151;margin-bottom:5px; }
+        .field select,
+        .field textarea {
+            width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;
+            font-size:.875rem;font-family:inherit;color:#0f172a;background:#f8fafc;
+            outline:none;transition:border-color .15s,box-shadow .15s;
+        }
+        .field textarea { resize:vertical;min-height:80px; }
+        .field select:focus,
+        .field textarea:focus {
+            border-color:#6d28d9;box-shadow:0 0 0 3px rgba(109,40,217,.08);background:white;
+        }
+        .modal-alert {
+            display:none;padding:9px 12px;border-radius:7px;
+            margin-bottom:12px;font-size:.8rem;font-weight:500;
+        }
+        .modal-foot { display:flex;gap:8px;justify-content:flex-end;margin-top:4px; }
+        .btn-cancel-m {
+            padding:10px 18px;background:white;color:#374151;
+            border:1.5px solid #e2e8f0;border-radius:8px;
+            font-size:.875rem;font-weight:600;font-family:inherit;cursor:pointer;
+        }
+        .btn-cancel-m:hover { background:#f8fafc; }
+        .btn-save {
+            padding:10px 22px;background:#0f172a;color:white;border:none;
+            border-radius:8px;font-size:.875rem;font-weight:600;font-family:inherit;
+            cursor:pointer;display:flex;align-items:center;gap:6px;
+        }
+        .btn-save:hover { background:#1e293b; }
+        .btn-save:disabled { opacity:.6;cursor:not-allowed; }
+    </style>
+</head>
+<body class="dash-body">
+
+<div class="mobile-topbar">
+    <span class="brand">🔷 TechNova</span>
+    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+            TechNova
+        </div>
+        <nav class="sidebar-menu">
+            <div class="menu-section-label">Principal</div>
+            <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+            <a href="#"><i class="fa-solid fa-users"></i> Clientes</a>
+            <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+            <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+            <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+            <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+            <a href="soporte.html" class="active"><i class="fa-solid fa-headset"></i> Soporte</a>
+            <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+            <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+            <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+        </nav>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
+    </aside>
+
+    <main class="dash-main">
+        <div class="dash-header">
+            <div>
+                <h1><i class="fa-solid fa-headset" style="color:#6d28d9;margin-right:10px;"></i>Soporte</h1>
+                <p id="saludo">Gestión de incidencias post-entrega</p>
+            </div>
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </button>
+        </div>
+
+        <div class="table-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div>
+                    <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                        <i class="fa-solid fa-list-check" style="color:#6d28d9;margin-right:6px;"></i>
+                        Incidencias
+                    </h3>
+                    <p id="incCount" style="font-size:.8rem;color:#64748b;margin:0;">Cargando...</p>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filtros-bar">
+                <button class="btn-filtro activo" onclick="filtrar('todos', this)">Todos</button>
+                <button class="btn-filtro" onclick="filtrar('Pendiente', this)">Pendiente</button>
+                <button class="btn-filtro" onclick="filtrar('En atención', this)">En atención</button>
+                <button class="btn-filtro" onclick="filtrar('Resuelto', this)">Resuelto</button>
+                <button class="btn-filtro" onclick="filtrar('Cerrado', this)">Cerrado</button>
+                <button class="btn-filtro" onclick="filtrar('alta', this)" style="margin-left:auto;">
+                    <i class="fa-solid fa-bell" style="color:#dc2626;"></i> Prioridad Alta
+                </button>
+            </div>
+
+            <div id="loadingBox" style="text-align:center;padding:40px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+            </div>
+
+            <div class="table-wrap" id="tableWrap" style="display:none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Proyecto</th>
+                            <th>Título</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th style="text-align:right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ══════════ MODAL ACTUALIZAR ESTADO ══════════ -->
+<div class="overlay" id="overlayEstado">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h3>Actualizar incidencia</h3>
+                <p id="modalSubtitulo">—</p>
+            </div>
+            <button class="btn-close" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+
+            <!-- Detalle de la incidencia -->
+            <div class="inc-detalle" id="modalDetalle"></div>
+
+            <div id="modalAlerta" class="modal-alert"></div>
+
+            <input type="hidden" id="modalIdInc" />
+
+            <div class="field">
+                <label>Nuevo estado <span style="color:#ef4444;">*</span></label>
+                <select id="modalEstado">
+                    <option value="">— Seleccionar —</option>
+                    <option value="En atención">En atención</option>
+                    <option value="Resuelto">Resuelto</option>
+                    <option value="Cerrado">Cerrado</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Comentario de resolución <span style="color:#ef4444;">*</span></label>
+                <textarea id="modalComentario" placeholder="Describe qué se hizo para atender esta incidencia…"></textarea>
+            </div>
+
+            <div class="modal-foot">
+                <button class="btn-cancel-m" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-save" id="btnGuardar" onclick="guardarEstado()">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const sidebar    = document.getElementById('sidebar');
+const sidebarOvl = document.getElementById('sidebarOverlay');
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarOvl.classList.toggle('visible');
+});
+sidebarOvl.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sidebarOvl.classList.remove('visible');
+});
+document.getElementById('overlayEstado').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+let todasIncidencias = [];
+let filtroActual = 'todos';
+
+function fmtFecha(f) {
+    if (!f) return '—';
+    return new Date(f).toLocaleDateString('es-SV', { day:'2-digit', month:'short', year:'numeric' });
+}
+function escH(s) {
+    const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+function badgePrioridad(p) {
+    const m = { 'Baja':'baja','Media':'media','Alta':'alta','Crítica':'critica','Critica':'critica' };
+    return `<span class="badge badge-${m[p]||'baja'}">${p}</span>`;
+}
+function badgeEstado(e) {
+    const m = {
+        'Pendiente':'pendiente','En atención':'atencion','En atencion':'atencion',
+        'Resuelto':'resuelto','Cerrado':'cerrado'
+    };
+    return `<span class="badge badge-${m[e]||'pendiente'}">${e}</span>`;
+}
+
+// ─── Cargar incidencias ───────────────────────────────────────
+async function cargarIncidencias() {
+    try {
+        const res  = await fetch('php/get_incidencias_admin.php');
+        const data = await res.json();
+        todasIncidencias = Array.isArray(data) ? data : [];
+        renderTabla(todasIncidencias);
+        document.getElementById('loadingBox').style.display = 'none';
+        document.getElementById('tableWrap').style.display  = 'block';
+    } catch {
+        document.getElementById('loadingBox').innerHTML =
+            '<p style="color:#ef4444;">Error al cargar incidencias.</p>';
+    }
+}
+
+function renderTabla(lista) {
+    const tbody = document.getElementById('incTbody');
+    document.getElementById('incCount').textContent =
+        `${lista.length} incidencia${lista.length !== 1 ? 's' : ''}`;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">
+            No hay incidencias.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(i => {
+        const notifBadge = i.notificacion_alta
+            ? `<span class="badge badge-alta-notif" style="margin-left:4px;">
+                <i class="fa-solid fa-bell"></i> Alta</span>`
+            : '';
+        return `
+        <tr>
+            <td>${i.id}</td>
+            <td>${escH(i.nombreCliente)}</td>
+            <td>${escH(i.nombreProyecto)}</td>
+            <td>
+                <strong>${escH(i.titulo)}</strong>${notifBadge}
+                <div style="font-size:.75rem;color:#64748b;margin-top:2px;">
+                    ${escH(i.descripcion.substring(0,60))}${i.descripcion.length>60?'…':''}
+                </div>
+            </td>
+            <td>${badgePrioridad(i.prioridad)}</td>
+            <td>${badgeEstado(i.estado)}</td>
+            <td style="white-space:nowrap;font-size:.8rem;">${fmtFecha(i.creadoEn)}</td>
+            <td style="text-align:right;">
+                <button class="btn-icon btn-edit" title="Actualizar estado"
+                    onclick='abrirModal(${JSON.stringify(i)})'>
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ─── Filtros ──────────────────────────────────────────────────
+function filtrar(valor, btn) {
+    document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    filtroActual = valor;
+
+    let lista = todasIncidencias;
+    if (valor === 'alta') {
+        lista = todasIncidencias.filter(i => i.notificacion_alta);
+    } else if (valor !== 'todos') {
+        lista = todasIncidencias.filter(i => i.estado === valor);
+    }
+    renderTabla(lista);
+}
+
+// ─── Modal ────────────────────────────────────────────────────
+function abrirModal(inc) {
+    document.getElementById('modalIdInc').value      = inc.id;
+    document.getElementById('modalSubtitulo').textContent = `#${inc.id} · ${inc.titulo}`;
+    document.getElementById('modalEstado').value     = '';
+    document.getElementById('modalComentario').value = inc.comentario_resolucion || '';
+    document.getElementById('modalDetalle').innerHTML = `
+        <div style="margin-bottom:6px;">
+            <strong>Cliente:</strong> ${escH(inc.nombreCliente)} &nbsp;·&nbsp;
+            <strong>Proyecto:</strong> ${escH(inc.nombreProyecto)}
+        </div>
+        <div style="margin-bottom:6px;">
+            <strong>Prioridad:</strong> ${badgePrioridad(inc.prioridad)} &nbsp;
+            <strong>Estado actual:</strong> ${badgeEstado(inc.estado)}
+        </div>
+        <div><strong>Descripción:</strong> ${escH(inc.descripcion)}</div>`;
+    ocultarAlerta();
+    document.getElementById('overlayEstado').classList.add('open');
+}
+
+function cerrarModal() {
+    document.getElementById('overlayEstado').classList.remove('open');
+}
+
+function mostrarAlerta(msg, tipo = 'error') {
+    const el = document.getElementById('modalAlerta');
+    const [bg,col,bdr] = tipo === 'error'
+        ? ['#fee2e2','#dc2626','#fca5a5']
+        : ['#d1fae5','#065f46','#6ee7b7'];
+    el.style.cssText = `display:block;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+    el.textContent = msg;
+}
+function ocultarAlerta() {
+    document.getElementById('modalAlerta').style.display = 'none';
+}
+
+// ─── Guardar estado ───────────────────────────────────────────
+async function guardarEstado() {
+    const id         = document.getElementById('modalIdInc').value;
+    const estado     = document.getElementById('modalEstado').value;
+    const comentario = document.getElementById('modalComentario').value.trim();
+
+    if (!estado)     { mostrarAlerta('Selecciona un estado.'); return; }
+    if (!comentario) { mostrarAlerta('El comentario de resolución es obligatorio.'); return; }
+
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando…';
+
+    try {
+        const res  = await fetch('php/soporte_actualizar_estado.php', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify({
+                id_incidencia        : parseInt(id),
+                estado               : estado,
+                comentario_resolucion: comentario
+            })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+            mostrarAlerta(data.mensaje);
+        } else {
+            cerrarModal();
+            await cargarIncidencias();
+        }
+    } catch {
+        mostrarAlerta('Error de conexión. Intenta de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar';
+    }
+}
+
+// ─── Init ─────────────────────────────────────────────────────
+async function cerrarSesion() {
+    try { await fetch('php/logout.php'); } catch {}
+    window.location.href = 'login.html';
+}
+
+async function init() {
+    try {
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent =
+            'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        await cargarIncidencias();
+    } catch { window.location.href = 'login.html'; }
+}
+
+init();
+</script>
+</body>
+</html>

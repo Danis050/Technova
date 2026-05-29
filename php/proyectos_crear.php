@@ -33,7 +33,6 @@ if (!$nombre || !$idCliente || !$fechaInicio || !$fechaFin) {
 if ($monto <= 0) {
     echo json_encode(['success' => false, 'error' => 'El monto del proyecto debe ser mayor a 0']); exit;
 }
-
 if (!$anticipo_fecha) {
     echo json_encode(['success' => false, 'error' => 'La fecha del anticipo es requerida']); exit;
 }
@@ -45,7 +44,7 @@ $conn = getConexion();
 $conn->begin_transaction();
 
 try {
-    // 1. Insertar proyecto con anticipo_pagado = 1 desde el inicio
+    // 1. Insertar proyecto con monto
     $stmt1 = $conn->prepare(
         "INSERT INTO proyecto (nombre, estado, fecha_inicio, fecha_entrega, id_cliente, monto, anticipo_pagado)
          VALUES (?, ?, ?, ?, ?, ?, 1)"
@@ -55,6 +54,7 @@ try {
     $id_proyecto = $conn->insert_id;
     $stmt1->close();
 
+    // 2. Insertar anticipo en tabla pago
     $stmt2 = $conn->prepare(
         "INSERT INTO pago (id_proyecto, tipo_pago, monto, fecha_pago, metodo_pago, comprobante, registrado_por)
          VALUES (?, 'Anticipo', ?, ?, ?, ?, ?)"
@@ -72,6 +72,7 @@ try {
 
     $conn->commit();
 
+    // 3. Generar factura del anticipo
     $IVA_PCT          = 0.13;
     $monto_factura    = $anticipo_monto;
     $subtotal_factura = round($monto_factura / (1 + $IVA_PCT), 2);

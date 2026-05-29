@@ -5,7 +5,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');        // Cambia por tu usuario MySQL
 define('DB_PASS', '');            // Cambia por tu contraseña MySQL
-define('DB_NAME', 'technova_db');
+define('DB_NAME', 'technova_db-1');
 
 function getConexion() {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, 3307);
