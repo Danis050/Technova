@@ -246,7 +246,7 @@
                 if (sesion.error) { window.location.href = 'login.html'; return; }
                 if (sesion.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
 
-                document.getElementById('sidebarNombre').textContent = sesion.nombre || 'Cliente';
+                document.getElementById('sidebarNombre').textContent = sesion.usuario || sesion.nombre || 'Cliente';
                 document.getElementById('sidebarRol').textContent = sesion.rol;
 
                 await cargarProyectos();
