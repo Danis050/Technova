@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body class="dash-body">
@@ -321,6 +322,15 @@
             document.getElementById('puestoSection').classList.add('visible');
             ocultarAlertaModal();
         }
+        function limpiarModal() {
+            ['mNombre', 'mApellido', 'mEmail', 'mPassword', 'mConfirmar'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('rolEmpleado').checked = true;
+            document.getElementById('pDesarrollador').checked = true;
+            document.getElementById('puestoSection').classList.add('visible');
+            ocultarAlertaModal();
+        }
 
         document.querySelectorAll('input[name="rolNuevo"]').forEach(radio => {
             radio.addEventListener('change', () => {
@@ -486,3 +496,7 @@
 </body>
 
 </html>
+
+
+
+
