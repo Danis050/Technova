@@ -391,7 +391,7 @@
             } catch (e) { console.error('Error:', e); }
         }
 
-        function renderTabla() {
+function renderTabla() {
             const tbody = document.getElementById('tablaProyectosBody');
             document.getElementById('proyectosCount').textContent =
                 `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
@@ -401,25 +401,19 @@
             No hay proyectos registrados</td></tr>`;
                 return;
             }
-            // ORDENAR: De más nuevo a más viejo (usando el ID de forma descendente)
             proyectos.sort((a, b) => {
                 const idA = a.id || a.id_proyecto;
                 const idB = b.id || b.id_proyecto;
                 return idB - idA;
             });
 
-            document.getElementById('proyectosCount').textContent =
-                `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
-
-            if (proyectos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
-            No hay proyectos registrados</td></tr>`;
-                return;
-            }
             tbody.innerHTML = proyectos.map(p => {
+                const id = p.id || p.id_proyecto; 
+                
                 const anticipoBadge = p.anticipo_pagado == 1
                     ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
                     : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
+                
                 return `
         <tr>
             <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
@@ -443,9 +437,7 @@
             </td>
         </tr>`;
             }).join('');
-            console.log(proyectos);
         }
-
         async function poblarSelectClientes(idSeleccionado = '') {
             const sel = document.getElementById('sel-cliente');
             sel.innerHTML = '<option value="">Cargando...</option>';
