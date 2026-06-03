@@ -29,11 +29,15 @@
         </ul>
         
 <div class="flex items-center nav-actions" id="navActions">
-    <a href="login.html" class="btn-login">Inicio de Sesión</a>
-    
-    <a href="mis_proyectos.html" class="nav-user-icon flex items-center justify-center ml-4">
-        <i class="fa-solid fa-user fa-2xl" style="color: rgb(0, 0, 0); transform: translateY(7px); padding-left: 3px;"></i>
-    </a>
+    <a href="login.html" class="btn-login" id="btnLogin">Inicio de Sesión</a>
+    <div id="navUserInfo" style="display:none; align-items:center; gap:10px;">
+        <a href="#" id="navDashboardLink" style="font-size:0.88rem;font-weight:600;color:#6d28d9;text-decoration:none;">
+            <i class="fa-solid fa-gauge" style="margin-right:4px;"></i><span id="navUserName"></span>
+        </a>
+        <a href="#" onclick="cerrarSesionIndex()" style="font-size:0.82rem;color:#64748b;text-decoration:none;border:1.5px solid #e2e8f0;padding:5px 12px;border-radius:8px;">
+            <i class="fa-solid fa-right-from-bracket"></i> Salir
+        </a>
+    </div>
 </div>
     </nav>
 </header>
@@ -182,6 +186,25 @@
             navActions.classList.remove('open');
         });
     });
+
+    (async function verificarSesion() {
+        try {
+            const res = await fetch('php/dashboard_data.php');
+            const data = await res.json();
+            if (!data.error) {
+                document.getElementById('btnLogin').style.display = 'none';
+                document.getElementById('navUserInfo').style.display = 'flex';
+                document.getElementById('navUserName').textContent = data.usuario || data.nombre || 'Usuario';
+                const rol = data.rol || '';
+                document.getElementById('navDashboardLink').href = (rol === 'Cliente') ? 'mis_proyectos.html' : 'dashboard.html';
+            }
+        } catch (e) {}
+    })();
+
+    async function cerrarSesionIndex() {
+        try { await fetch('php/logout.php'); } catch(e) {}
+        window.location.href = 'login.html';
+    }
 </script>
 </body>
 </html>
