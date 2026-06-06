@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dash-body">
+
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dash-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+
+                <div class="menu-section-label">Administración</div>
+                <a href="listado_usuarios.html"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html"><i class="fa-solid fa-star"></i> Calificaciones</a>
+
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) a.classList.add('active');
+                });
+            });
+        </script>
+
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-clock-rotate-left" style="color:#6d28d9;margin-right:10px;"></i>Auditoría del Sistema</h1>
+                    <p id="saludo">Registro de actividades del sistema</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div class="notif-wrapper" id="notifWrapper">
+                        <button class="btn-notif" id="btnNotif" title="Notificaciones">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <h4>Notificaciones</h4>
+                                <span onclick="marcarTodasLeidas()">Marcar todas leídas</span>
+                            </div>
+                            <div class="notif-list" id="notifList"></div>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="cerrarSesion()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <div>
+                        <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                            <i class="fa-solid fa-list-check" style="color:#6d28d9;margin-right:6px;"></i>
+                            Registro de Actividades
+                        </h3>
+                        <p id="auditCount" style="font-size:.8rem;color:#64748b;margin:0;">Cargando...</p>
+                    </div>
+                </div>
+
+                <div class="filtros-bar">
+                    <button class="btn-filtro activo" onclick="filtrarAccion('todos', this)">Todos</button>
+                    <button class="btn-filtro" onclick="filtrarAccion('Creación', this)">Creación</button>
+                    <button class="btn-filtro" onclick="filtrarAccion('Edición', this)">Edición</button>
+                    <button class="btn-filtro" onclick="filtrarAccion('Eliminación', this)">Eliminación</button>
+                    <button class="btn-filtro" onclick="filtrarAccion('Sesión', this)">Sesión</button>
+                    <button class="btn-filtro" onclick="filtrarAccion('Pago', this)">Pago</button>
+                    <input type="date" class="input-busqueda" id="filtroFecha" style="width:180px;" oninput="aplicarFiltros()">
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha y Hora</th>
+                                <th>Usuario</th>
+                                <th>Acción</th>
+                                <th>Módulo</th>
+                                <th>Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyAudit"></tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="paginacion"></div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOvl = document.getElementById('sidebarOverlay');
+    document.getElementById('btnMenuToggle').addEventListener('click', () => {
+        sidebar.classList.toggle('open'); sidebarOvl.classList.toggle('visible');
+    });
+    sidebarOvl.addEventListener('click', () => {
+        sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
+    });
+
+    document.getElementById('btnNotif').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('notifDropdown').classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('notifWrapper').contains(e.target))
+            document.getElementById('notifDropdown').classList.remove('open');
+    });
+    function cargarNotificaciones() {
+        document.getElementById('notifList').innerHTML = '<div class="notif-empty"><i class="fa-regular fa-bell-slash"></i>Sin notificaciones nuevas</div>';
+    }
+    function marcarTodasLeidas() {}
+
+    const auditData = [
+        { id:1, fecha:'2026-06-05 14:32:10', usuario:'Carlos Lobos', accion:'Creación', modulo:'Proyectos', detalle:'Creó el proyecto "Sitio Web Corporativo"' },
+        { id:2, fecha:'2026-06-05 14:35:22', usuario:'Carlos Lobos', accion:'Pago', modulo:'Pagos', detalle:'Registró anticipo de $500.00 para proyecto #23' },
+        { id:3, fecha:'2026-06-05 15:10:05', usuario:'Juan Ramirez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
+        { id:4, fecha:'2026-06-05 15:12:33', usuario:'Juan Ramirez', accion:'Edición', modulo:'Proyectos', detalle:'Cambió estado de proyecto "Sistema Facturación" a En Proceso' },
+        { id:5, fecha:'2026-06-05 16:00:00', usuario:'Carlos Lobos', accion:'Creación', modulo:'Usuarios', detalle:'Creó usuario "María López" con rol Empleado' },
+        { id:6, fecha:'2026-06-05 16:22:15', usuario:'Misael Juárez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
+        { id:7, fecha:'2026-06-05 16:45:30', usuario:'Misael Juárez', accion:'Edición', modulo:'Entregables', detalle:'Actualizó entregable "Diseño UI" a Entregado' },
+        { id:8, fecha:'2026-06-04 09:00:00', usuario:'Carlos Lobos', accion:'Eliminación', modulo:'Servicios', detalle:'Eliminó servicio "Sitio de prueba" (ID: 5)' },
+        { id:9, fecha:'2026-06-04 10:15:00', usuario:'Juan Pérez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión desde portal cliente' },
+        { id:10, fecha:'2026-06-04 10:20:00', usuario:'Juan Pérez', accion:'Creación', modulo:'Incidencias', detalle:'Reportó incidencia "Error en factura" prioridad Alta' },
+        { id:11, fecha:'2026-06-04 11:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Incidencias', detalle:'Cambió estado de incidencia #10 a "En atención"' },
+        { id:12, fecha:'2026-06-04 14:30:00', usuario:'Juan Ramirez', accion:'Pago', modulo:'Pagos', detalle:'Registró pago parcial de $200.00 para proyecto #18' },
+        { id:13, fecha:'2026-06-04 15:00:00', usuario:'Juan Ramirez', accion:'Creación', modulo:'Facturas', detalle:'Generó factura TN-2026-000012' },
+        { id:14, fecha:'2026-06-03 08:30:00', usuario:'Carlos Lobos', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
+        { id:15, fecha:'2026-06-03 09:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Servicios', detalle:'Actualizó precio de "Desarrollo de Software" a $2,800.00' },
+        { id:16, fecha:'2026-06-03 10:30:00', usuario:'Kevin Benavides', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
+        { id:17, fecha:'2026-06-03 11:00:00', usuario:'Kevin Benavides', accion:'Edición', modulo:'Entregables', detalle:'Subió evidencia para entregable "Logo Final"' },
+        { id:18, fecha:'2026-06-03 14:00:00', usuario:'Carlos Lobos', accion:'Eliminación', modulo:'Proyectos', detalle:'Eliminó proyecto "Prueba eliminada" (ID: 25)' },
+        { id:19, fecha:'2026-06-02 09:15:00', usuario:'Juan Ramirez', accion:'Creación', modulo:'Proyectos', detalle:'Creó el proyecto "App Móvil Inventario"' },
+        { id:20, fecha:'2026-06-02 10:00:00', usuario:'Juan Ramirez', accion:'Pago', modulo:'Pagos', detalle:'Registró anticipo de $1,000.00 para proyecto #24' },
+        { id:21, fecha:'2026-06-02 11:30:00', usuario:'Misael Juárez', accion:'Edición', modulo:'Proyectos', detalle:'Cambió fecha de entrega del proyecto #22' },
+        { id:22, fecha:'2026-06-01 08:00:00', usuario:'Carlos Lobos', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
+        { id:23, fecha:'2026-06-01 09:00:00', usuario:'Carlos Lobos', accion:'Creación', modulo:'Usuarios', detalle:'Creó usuario "Ana Martínez" con rol Cliente' },
+        { id:24, fecha:'2026-06-01 10:00:00', usuario:'Ju Perez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión fallido — contraseña incorrecta' },
+        { id:25, fecha:'2026-06-01 12:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Usuarios', detalle:'Cambió rol de "Ju Perez" de Empleado a Administrador' },
+    ];
+
+    let filtroAccion = 'todos';
+    let paginaActual = 1;
+    const POR_PAGINA = 10;
+
+    function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+    function getAccionBadge(a) {
+        const m = {
+            'Creación':  ['#d1fae5','#059669'],
+            'Edición':   ['#dbeafe','#1d4ed8'],
+            'Eliminación':['#fee2e2','#dc2626'],
+            'Sesión':    ['#f1f5f9','#475569'],
+            'Pago':      ['#fef3c7','#d97706'],
+        };
+        const [bg,col] = m[a] || ['#f1f5f9','#475569'];
+        return `<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;background:${bg};color:${col};">${a}</span>`;
+    }
+
+    function getModuloIcon(mod) {
+        const icons = {
+            'Proyectos':'fa-diagram-project','Pagos':'fa-hand-holding-dollar','Autenticación':'fa-right-to-bracket',
+            'Usuarios':'fa-users','Facturas':'fa-file-invoice-dollar','Servicios':'fa-screwdriver-wrench',
+            'Entregables':'fa-clipboard-check','Incidencias':'fa-triangle-exclamation'
+        };
+        return icons[mod] || 'fa-circle-info';
+    }
+
+    function getFilteredData() {
+        let lista = [...auditData];
+        if (filtroAccion !== 'todos') lista = lista.filter(r => r.accion === filtroAccion);
+        const fecha = document.getElementById('filtroFecha').value;
+        if (fecha) lista = lista.filter(r => r.fecha.startsWith(fecha));
+        return lista;
+    }
+
+    function renderTabla() {
+        const lista = getFilteredData();
+        document.getElementById('auditCount').textContent = `${lista.length} registro${lista.length!==1?'s':''} encontrado${lista.length!==1?'s':''}`;
+
+        const totalPaginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
+        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+        const inicio = (paginaActual - 1) * POR_PAGINA;
+        const pagina = lista.slice(inicio, inicio + POR_PAGINA);
+
+        const tbody = document.getElementById('tbodyAudit');
+        if (pagina.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:40px;">No se encontraron registros</td></tr>`;
+        } else {
+            tbody.innerHTML = pagina.map(r => {
+                const fechaFmt = new Date(r.fecha).toLocaleString('es-SV', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+                return `
+                <tr>
+                    <td style="font-weight:600;color:#6d28d9;">#${r.id}</td>
+                    <td style="font-size:.8rem;color:#64748b;white-space:nowrap;">${fechaFmt}</td>
+                    <td><strong>${escH(r.usuario)}</strong></td>
+                    <td>${getAccionBadge(r.accion)}</td>
+                    <td><i class="fa-solid ${getModuloIcon(r.modulo)}" style="color:#94a3b8;margin-right:4px;font-size:.75rem;"></i>${escH(r.modulo)}</td>
+                    <td style="font-size:.82rem;color:#475569;">${escH(r.detalle)}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        renderPaginacion(totalPaginas);
+    }
+
+    function renderPaginacion(totalPaginas) {
+        const pag = document.getElementById('paginacion');
+        if (totalPaginas <= 1) { pag.innerHTML = ''; return; }
+        let html = `<button ${paginaActual===1?'disabled':''} onclick="irPagina(${paginaActual-1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+        for (let i = 1; i <= totalPaginas; i++) {
+            html += `<button class="${i===paginaActual?'active':''}" onclick="irPagina(${i})">${i}</button>`;
+        }
+        html += `<button ${paginaActual===totalPaginas?'disabled':''} onclick="irPagina(${paginaActual+1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+        html += `<span class="page-info">Página ${paginaActual} de ${totalPaginas}</span>`;
+        pag.innerHTML = html;
+    }
+
+    function irPagina(n) { paginaActual = n; renderTabla(); }
+
+    function filtrarAccion(valor, btn) {
+        document.querySelectorAll('.filtros-bar .btn-filtro').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+        filtroAccion = valor;
+        paginaActual = 1;
+        aplicarFiltros();
+    }
+
+    function aplicarFiltros() { paginaActual = 1; renderTabla(); }
+
+    function cerrarSesion() {
+        window.location.href = 'login.html';
+    }
+
+    function init() {
+        const sesion = { usuario: 'Carlos Lobos', rol: 'Administrador' };
+        document.getElementById('sidebarNombre').textContent = sesion.usuario;
+        document.getElementById('sidebarRol').textContent = sesion.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' · ' + sesion.rol;
+        renderTabla();
+        cargarNotificaciones();
+    }
+
+    init();
+</script>
+</body>
+</html>
