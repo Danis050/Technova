@@ -29,27 +29,31 @@
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Principal</div>
                 <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                <!-- <a href="#"><i class="fa-solid fa-users"></i> Clientes</a> -->
+                
                 <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
                 <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
                 <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-                <!-- <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a> -->
+                
                 <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
+                
                 <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
                 <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
+                
                 <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-                <!-- <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a> -->
-
+                
                 <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
+                <a href="listado_usuarios.html" id="linkListadoUsuarios" style="display:none;"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html" id="linkReportes" style="display:none;"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html" id="linkAuditoria" style="display:none;"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html" id="linkCalificaciones" style="display:none;"><i class="fa-solid fa-star"></i> Calificaciones</a>
                 <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
                     <i class="fa-solid fa-user-plus"></i>
                     Crear Usuario
                     <span class="badge-new">ADMIN</span>
                 </button>
 
-                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
             <div class="sidebar-user">
@@ -70,9 +74,25 @@
                         <h1>Panel de Control</h1>
                         <p id="saludo">Bienvenido al sistema de gestión TechNova</p>
                     </div>
-                    <button class="btn-logout" onclick="cerrarSesion()">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-                    </button>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        
+                        <div class="notif-wrapper" id="notifWrapper">
+                            <button class="btn-notif" id="btnNotif" title="Notificaciones">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                            </button>
+                            <div class="notif-dropdown" id="notifDropdown">
+                                <div class="notif-header">
+                                    <h4>Notificaciones</h4>
+                                    <span onclick="marcarTodasLeidas()">Marcar todas leídas</span>
+                                </div>
+                                <div class="notif-list" id="notifList"></div>
+                            </div>
+                        </div>
+                        <button class="btn-logout" onclick="cerrarSesion()">
+                            <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-cards">
@@ -108,7 +128,7 @@
                             <p>Pagos Recibidos</p>
                         </div>
                     </div>
-                    <!-- ── Stat card incidencias ── -->
+                    
                     <div class="stat-card-dash" style="cursor:pointer;" onclick="window.location.href='soporte.html'">
                         <div class="stat-icon" style="background:#fee2e2;"><i class="fa-solid fa-triangle-exclamation"
                                 style="color:#dc2626;"></i></div>
@@ -174,7 +194,6 @@
         </main>
     </div>
 
-    <!-- ===== MODAL CREAR USUARIO ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal-header">
@@ -299,6 +318,43 @@
             overlay.classList.remove('visible');
         });
 
+        document.getElementById('btnNotif').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('notifDropdown').classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('notifWrapper').contains(e.target)) {
+                document.getElementById('notifDropdown').classList.remove('open');
+            }
+        });
+        function cargarNotificaciones() {
+            const notifs = [
+                { icon:'fa-solid fa-user-plus', color:'purple', msg:'Nuevo usuario registrado', time:'Hace 10 min', unread:true },
+                { icon:'fa-solid fa-file-invoice-dollar', color:'green', msg:'Factura pagada por Empresa Pérez', time:'Hace 1 hora', unread:true },
+                { icon:'fa-solid fa-triangle-exclamation', color:'red', msg:'Nueva incidencia reportada', time:'Hace 2 horas', unread:false }
+            ];
+            const unread = notifs.filter(n => n.unread).length;
+            const badge = document.getElementById('notifBadge');
+            if (unread > 0) { badge.textContent = unread; badge.style.display = 'flex'; }
+            else { badge.style.display = 'none'; }
+            document.getElementById('notifList').innerHTML = notifs.length === 0
+                ? '<div class="notif-empty"><i class="fa-regular fa-bell-slash"></i>Sin notificaciones</div>'
+                : notifs.map(n => `
+                    <div class="notif-item ${n.unread ? 'unread' : ''}">
+                        <div class="notif-icon ${n.color}"><i class="${n.icon}"></i></div>
+                        <div class="notif-content">
+                            <p>${n.msg}</p>
+                            <div class="notif-time">${n.time}</div>
+                        </div>
+                        ${n.unread ? '<div class="notif-dot"></div>' : ''}
+                    </div>`).join('');
+        }
+        function marcarTodasLeidas() {
+            document.getElementById('notifBadge').style.display = 'none';
+            document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+            document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+        }
+
         function abrirModal() {
             document.getElementById('modalOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -313,15 +369,6 @@
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
-        function limpiarModal() {
-            ['mNombre', 'mApellido', 'mEmail', 'mPassword', 'mConfirmar'].forEach(id => {
-                document.getElementById(id).value = '';
-            });
-            document.getElementById('rolEmpleado').checked = true;
-            document.getElementById('pDesarrollador').checked = true;
-            document.getElementById('puestoSection').classList.add('visible');
-            ocultarAlertaModal();
-        }
         function limpiarModal() {
             ['mNombre', 'mApellido', 'mEmail', 'mPassword', 'mConfirmar'].forEach(id => {
                 document.getElementById(id).value = '';
@@ -444,6 +491,10 @@
 
                 if (data.rol === 'Administrador') {
                     document.getElementById('adminSection').style.display = 'block';
+                    document.getElementById('linkListadoUsuarios').style.display = 'block';
+                    document.getElementById('linkReportes').style.display = 'block';
+                    document.getElementById('linkAuditoria').style.display = 'block';
+                    document.getElementById('linkCalificaciones').style.display = 'block';
                     document.getElementById('btnAbrirModal').style.display = 'flex';
                 }
 
@@ -478,10 +529,11 @@
                             document.getElementById('incidenciasAlta').style.display = 'block';
                         }
                     }
-                } catch { /* silencioso */ }
+                } catch {  }
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('contenido').style.display = 'block';
+                cargarNotificaciones();
 
             } catch { window.location.href = 'login.html'; }
         }
@@ -496,7 +548,3 @@
 </body>
 
 </html>
-
-
-
-
