@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dash-body">
+
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dash-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
+            <nav class="sidebar-menu" id="sidebarMenu">
+                
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-user-circle" style="color:#6d28d9;margin-right:10px;"></i>Mi Perfil</h1>
+                    <p id="saludo">Gestiona tu información personal</p>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                </button>
+            </div>
+
+            <div class="perfil-avatar-section" style="background:#fff;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid #f1f5f9;margin-bottom:24px;">
+                <div class="perfil-avatar" id="perfilAvatar">?</div>
+                <div class="perfil-avatar-info">
+                    <h2 id="perfilNombreCompleto">Cargando...</h2>
+                    <p><i class="fa-solid fa-envelope" style="margin-right:6px;color:#94a3b8;"></i><span id="perfilEmail">—</span></p>
+                    <p style="margin-top:4px;"><span class="badge-rol" id="perfilRolBadge">—</span></p>
+                </div>
+            </div>
+
+            <div class="perfil-grid">
+                
+                <div class="perfil-card">
+                    <h3><i class="fa-solid fa-id-card"></i> Información Personal</h3>
+                    <p class="card-desc">Tus datos registrados en el sistema</p>
+
+                    <div class="mfield">
+                        <label>Nombre</label>
+                        <input type="text" id="perfilNombre" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    </div>
+                    <div class="mfield">
+                        <label>Apellido</label>
+                        <input type="text" id="perfilApellido" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    </div>
+                    <div class="mfield">
+                        <label>Correo electrónico</label>
+                        <input type="email" id="perfilEmailInput" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    </div>
+                    <div class="mfield">
+                        <label>Rol</label>
+                        <input type="text" id="perfilRolInput" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    </div>
+                    <div class="mfield" id="perfilPuestoField" style="display:none;">
+                        <label>Puesto</label>
+                        <input type="text" id="perfilPuesto" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    </div>
+                </div>
+
+                <div class="perfil-card">
+                    <h3><i class="fa-solid fa-lock"></i> Cambiar Contraseña</h3>
+                    <p class="card-desc">Actualiza tu contraseña de acceso</p>
+
+                    <div class="mfield">
+                        <label>Contraseña actual <span style="color:#ef4444;">*</span></label>
+                        <input type="password" id="pwdActual" placeholder="Ingresa tu contraseña actual">
+                    </div>
+                    <div class="mfield">
+                        <label>Nueva contraseña <span style="color:#ef4444;">*</span></label>
+                        <input type="password" id="pwdNueva" placeholder="Mínimo 8 caracteres" oninput="validarPassword()">
+                    </div>
+
+                    <div class="pwd-rules" id="pwdRules">
+                        <p><i class="fa-solid fa-shield-halved" style="margin-right:4px;"></i> Requisitos de contraseña</p>
+                        <div class="pwd-rule" id="rule-length">
+                            <i class="fa-solid fa-circle"></i> Mínimo 8 caracteres
+                        </div>
+                        <div class="pwd-rule" id="rule-upper">
+                            <i class="fa-solid fa-circle"></i> Al menos una mayúscula
+                        </div>
+                        <div class="pwd-rule" id="rule-lower">
+                            <i class="fa-solid fa-circle"></i> Al menos una minúscula
+                        </div>
+                        <div class="pwd-rule" id="rule-number">
+                            <i class="fa-solid fa-circle"></i> Al menos un número
+                        </div>
+                        <div class="pwd-rule" id="rule-special">
+                            <i class="fa-solid fa-circle"></i> Al menos un carácter especial (!@#$%...)
+                        </div>
+
+                        <div class="pwd-strength-bar" id="strengthBar">
+                            <div class="bar-bg">
+                                <div class="bar-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-label" id="strengthLabel"></div>
+                        </div>
+                    </div>
+
+                    <div class="mfield" style="margin-top:14px;">
+                        <label>Confirmar nueva contraseña <span style="color:#ef4444;">*</span></label>
+                        <input type="password" id="pwdConfirmar" placeholder="Repite la nueva contraseña" oninput="validarCoincidencia()">
+                    </div>
+                    <div class="pwd-match" id="pwdMatch" style="display:none;"></div>
+
+                    <div id="perfilAlerta" style="display:none;"></div>
+
+                    <button class="btn-modal-submit" style="margin-top:16px;" onclick="guardarPassword()">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span id="btnGuardarPwdTexto">Guardar Contraseña</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOvl = document.getElementById('sidebarOverlay');
+    document.getElementById('btnMenuToggle').addEventListener('click', () => {
+        sidebar.classList.toggle('open'); sidebarOvl.classList.toggle('visible');
+    });
+    sidebarOvl.addEventListener('click', () => {
+        sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
+    });
+
+    function validarPassword() {
+        const pwd = document.getElementById('pwdNueva').value;
+        const rules = [
+            { id: 'rule-length',  test: pwd.length >= 8 },
+            { id: 'rule-upper',   test: /[A-Z]/.test(pwd) },
+            { id: 'rule-lower',   test: /[a-z]/.test(pwd) },
+            { id: 'rule-number',  test: /[0-9]/.test(pwd) },
+            { id: 'rule-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
+        ];
+
+        let score = 0;
+        rules.forEach(r => {
+            const el = document.getElementById(r.id);
+            const icon = el.querySelector('i');
+            if (r.test) {
+                el.classList.add('valid'); el.classList.remove('invalid');
+                icon.className = 'fa-solid fa-circle-check';
+                score++;
+            } else if (pwd.length > 0) {
+                el.classList.add('invalid'); el.classList.remove('valid');
+                icon.className = 'fa-solid fa-circle-xmark';
+            } else {
+                el.classList.remove('valid', 'invalid');
+                icon.className = 'fa-solid fa-circle';
+            }
+        });
+
+        // Barra de fortaleza
+        const fill = document.getElementById('strengthFill');
+        const label = document.getElementById('strengthLabel');
+        if (pwd.length === 0) {
+            fill.style.width = '0'; label.textContent = '';
+        } else if (score <= 2) {
+            fill.style.width = '33%'; fill.style.background = '#ef4444';
+            label.textContent = 'Débil'; label.style.color = '#ef4444';
+        } else if (score <= 4) {
+            fill.style.width = '66%'; fill.style.background = '#f59e0b';
+            label.textContent = 'Media'; label.style.color = '#f59e0b';
+        } else {
+            fill.style.width = '100%'; fill.style.background = '#059669';
+            label.textContent = 'Fuerte'; label.style.color = '#059669';
+        }
+
+        validarCoincidencia();
+    }
+
+    function validarCoincidencia() {
+        const pwd = document.getElementById('pwdNueva').value;
+        const conf = document.getElementById('pwdConfirmar').value;
+        const el = document.getElementById('pwdMatch');
+        if (conf.length === 0) { el.style.display = 'none'; return; }
+        el.style.display = 'flex';
+        if (pwd === conf) {
+            el.className = 'pwd-match ok';
+            el.innerHTML = '<i class="fa-solid fa-circle-check"></i> Las contraseñas coinciden';
+        } else {
+            el.className = 'pwd-match no';
+            el.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Las contraseñas no coinciden';
+        }
+    }
+
+    function mostrarAlerta(msg, tipo = 'error') {
+        const el = document.getElementById('perfilAlerta');
+        const [bg, col, bdr, ico] = tipo === 'error'
+            ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
+            : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
+        el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-top:14px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+        el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
+    }
+
+    async function guardarPassword() {
+        const actual = document.getElementById('pwdActual').value;
+        const nueva = document.getElementById('pwdNueva').value;
+        const confirmar = document.getElementById('pwdConfirmar').value;
+
+        if (!actual || !nueva || !confirmar) return mostrarAlerta('Todos los campos son requeridos.');
+        if (nueva.length < 8) return mostrarAlerta('La contraseña debe tener al menos 8 caracteres.');
+        if (!/[A-Z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una mayúscula.');
+        if (!/[a-z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una minúscula.');
+        if (!/[0-9]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un número.');
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un carácter especial.');
+        if (nueva !== confirmar) return mostrarAlerta('Las contraseñas no coinciden.');
+
+        const btn = document.getElementById('btnGuardarPwdTexto');
+        btn.textContent = 'Guardando...';
+        
+        // Simulación de guardado
+        setTimeout(() => {
+            mostrarAlerta('¡Contraseña actualizada correctamente!', 'ok');
+            document.getElementById('pwdActual').value = '';
+            document.getElementById('pwdNueva').value = '';
+            document.getElementById('pwdConfirmar').value = '';
+            validarPassword();
+            document.getElementById('pwdMatch').style.display = 'none';
+            btn.textContent = 'Guardar Contraseña';
+        }, 800);
+    }
+
+    function buildSidebar(rol) {
+        const menu = document.getElementById('sidebarMenu');
+        if (rol === 'Cliente') {
+            menu.innerHTML = `
+                <div class="menu-section-label">Mi Portal</div>
+                <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i> Mis entregables</a>
+                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i> Mis incidencias</a>
+                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i> Mis solicitudes</a>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
+        } else {
+            menu.innerHTML = `
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                ${rol === 'Administrador' ? `
+                <div class="menu-section-label">Administración</div>
+                <a href="listado_usuarios.html"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html"><i class="fa-solid fa-star"></i> Calificaciones</a>` : ''}
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
+        }
+        // Active link
+        const currentPage = location.pathname.split('/').pop() || 'index.html';
+        menu.querySelectorAll('a').forEach(a => {
+            if (a.getAttribute('href') === currentPage) a.classList.add('active');
+        });
+    }
+
+    function cerrarSesion() {
+        window.location.href = 'login.html';
+    }
+
+    function init() {
+        // Simulación sin PHP
+        const data = {
+            usuario: 'Carlos Lobos',
+            email: 'carlos@technova.com',
+            rol: 'Administrador',
+            puesto: 'Gerente IT'
+        };
+
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent = data.rol;
+        document.getElementById('saludo').textContent = 'Gestiona tu información personal';
+        buildSidebar(data.rol);
+
+        const nombre = data.usuario.split(' ')[0];
+        const apellido = data.usuario.split(' ').slice(1).join(' ');
+        document.getElementById('perfilAvatar').textContent = nombre[0].toUpperCase();
+        document.getElementById('perfilNombreCompleto').textContent = data.usuario;
+        document.getElementById('perfilEmail').textContent = data.email;
+        document.getElementById('perfilNombre').value = nombre;
+        document.getElementById('perfilApellido').value = apellido;
+        document.getElementById('perfilEmailInput').value = data.email;
+        document.getElementById('perfilRolInput').value = data.rol;
+
+        const rolBadge = document.getElementById('perfilRolBadge');
+        rolBadge.className = 'badge-rol badge-rol-admin';
+        rolBadge.textContent = data.rol;
+
+        document.getElementById('perfilPuestoField').style.display = 'block';
+        document.getElementById('perfilPuesto').value = data.puesto;
+    }
+
+    init();
+</script>
+</body>
+</html>
