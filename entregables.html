@@ -30,7 +30,7 @@
             <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
             <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
         </nav>
-        <div class="sidebar-user"><strong id="sidebarNombre">Administrador</strong><span id="sidebarRol">Administrador</span></div>
+        <div class="sidebar-user"><strong id="sidebarNombre">Cargando...</strong><span id="sidebarRol"></span></div>
     </aside>
 
     <main class="dash-main">
@@ -39,7 +39,7 @@
                 <h1><i class="fa-solid fa-clipboard-check" style="color:#6d28d9;margin-right:10px;"></i>Entregables</h1>
                 <p>Gestión de entregables por proyecto</p>
             </div>
-            <button class="btn-logout" onclick="location.href='login.html'"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
         </div>
 
         <div class="table-card">
@@ -209,6 +209,21 @@ function eliminarEntregable(id){
 }
 
 cargarEntregables();
+
+(async function cargarSesion() {
+    try {
+        const res = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+        document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre || '';
+        document.getElementById('sidebarRol').textContent = data.rol || '';
+    } catch (e) { window.location.href = 'login.html'; }
+})();
+
+async function cerrarSesion() {
+    try { await fetch('php/logout.php'); } catch(e) {}
+    window.location.href = 'login.html';
+}
 </script>
 </body>
 </html>

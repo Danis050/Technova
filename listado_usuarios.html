@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Usuarios | TechNova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dash-body">
+
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dash-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+
+                <div class="menu-section-label">Administración</div>
+                <a href="listado_usuarios.html" class="active"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html"><i class="fa-solid fa-star"></i> Calificaciones</a>
+
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
+            </nav>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const currentPage = location.pathname.split('/').pop() || 'index.html';
+                document.querySelectorAll('.sidebar-menu a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === currentPage) a.classList.add('active');
+                });
+            });
+        </script>
+
+        <main class="dash-main">
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-users-gear" style="color:#6d28d9;margin-right:10px;"></i>Listado de Usuarios</h1>
+                    <p id="saludo">Gestión de usuarios del sistema</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    
+                    <div class="notif-wrapper" id="notifWrapper">
+                        <button class="btn-notif" id="btnNotif" title="Notificaciones">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+                        </button>
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <h4>Notificaciones</h4>
+                                <span onclick="marcarTodasLeidas()">Marcar todas leídas</span>
+                            </div>
+                            <div class="notif-list" id="notifList"></div>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="cerrarSesion()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <div>
+                        <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                            <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
+                            Usuarios Registrados
+                        </h3>
+                        <p id="usuariosCount" style="font-size:.8rem;color:#64748b;margin:0;">Cargando...</p>
+                    </div>
+                </div>
+
+                <div class="usuarios-filtros">
+                    <button class="btn-filtro activo" onclick="filtrarRol('todos', this)">Todos</button>
+                    <button class="btn-filtro" onclick="filtrarRol('Administrador', this)">Administradores</button>
+                    <button class="btn-filtro" onclick="filtrarRol('Empleado', this)">Empleados</button>
+                    <button class="btn-filtro" onclick="filtrarRol('Cliente', this)">Clientes</button>
+                    <input type="text" class="usuarios-search" id="searchUsuarios" placeholder="Buscar por nombre o email..." oninput="buscarUsuarios()">
+                </div>
+
+                <div id="loadingBox" style="text-align:center;padding:40px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+                    <p style="margin-top:8px;color:#94a3b8;">Cargando usuarios...</p>
+                </div>
+
+                <div class="table-wrap" id="tableWrap" style="display:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Puesto</th>
+                                <th>Estado</th>
+                                <th>Fecha Registro</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyUsuarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalRolOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <div>
+                    <h2>
+                        <span class="modal-icon"><i class="fa-solid fa-user-pen"></i></span>
+                        Cambiar Rol de Usuario
+                    </h2>
+                    <p class="modal-subtitle" id="modalRolSubtitle">Selecciona el nuevo rol</p>
+                </div>
+                <button class="btn-close-modal" onclick="cerrarModalRol()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalUserId">
+
+                <div style="background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:16px;">
+                    <div style="font-size:.82rem;color:#334155;">
+                        <strong>Usuario:</strong> <span id="modalUserName">—</span>
+                    </div>
+                    <div style="font-size:.82rem;color:#334155;margin-top:4px;">
+                        <strong>Email:</strong> <span id="modalUserEmail">—</span>
+                    </div>
+                    <div style="font-size:.82rem;color:#334155;margin-top:4px;">
+                        <strong>Rol actual:</strong> <span id="modalUserRolActual">—</span>
+                    </div>
+                </div>
+
+                <p style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:10px;">Selecciona el nuevo rol</p>
+                <div class="role-selector">
+                    <div class="role-option rc-admin">
+                        <input type="radio" name="nuevoRol" id="nrAdmin" value="Administrador">
+                        <label class="role-card" for="nrAdmin">
+                            <div class="role-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <span class="role-card-name">Admin</span>
+                        </label>
+                    </div>
+                    <div class="role-option rc-emp">
+                        <input type="radio" name="nuevoRol" id="nrEmpleado" value="Empleado">
+                        <label class="role-card" for="nrEmpleado">
+                            <div class="role-card-icon"><i class="fa-solid fa-briefcase"></i></div>
+                            <span class="role-card-name">Empleado</span>
+                        </label>
+                    </div>
+                    <div class="role-option rc-client">
+                        <input type="radio" name="nuevoRol" id="nrCliente" value="Cliente">
+                        <label class="role-card" for="nrCliente">
+                            <div class="role-card-icon"><i class="fa-solid fa-user"></i></div>
+                            <span class="role-card-name">Cliente</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="modalRolAlerta" style="display:none;"></div>
+
+                <button class="btn-modal-submit" id="btnCambiarRol" onclick="cambiarRol()">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span id="btnCambiarRolTexto">Guardar Cambio de Rol</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOvl = document.getElementById('sidebarOverlay');
+    document.getElementById('btnMenuToggle').addEventListener('click', () => {
+        sidebar.classList.toggle('open'); sidebarOvl.classList.toggle('visible');
+    });
+    sidebarOvl.addEventListener('click', () => {
+        sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
+    });
+
+    document.getElementById('btnNotif').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('notifDropdown').classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('notifWrapper').contains(e.target)) {
+            document.getElementById('notifDropdown').classList.remove('open');
+        }
+    });
+    function cargarNotificaciones() {
+        const notifs = [
+            { icon:'fa-solid fa-user-plus', color:'purple', msg:'Nuevo usuario registrado en el sistema', time:'Hace 5 min', unread:true },
+            { icon:'fa-solid fa-diagram-project', color:'blue', msg:'Proyecto "Sitio Web" actualizado a En Proceso', time:'Hace 1 hora', unread:true },
+            { icon:'fa-solid fa-triangle-exclamation', color:'red', msg:'Incidencia de alta prioridad reportada', time:'Hace 2 horas', unread:false },
+            { icon:'fa-solid fa-file-invoice-dollar', color:'green', msg:'Factura TN-2026-000011 generada correctamente', time:'Hace 3 horas', unread:false },
+        ];
+        const unread = notifs.filter(n => n.unread).length;
+        const badge = document.getElementById('notifBadge');
+        if (unread > 0) { badge.textContent = unread; badge.style.display = 'flex'; }
+        else { badge.style.display = 'none'; }
+        document.getElementById('notifList').innerHTML = notifs.length === 0
+            ? '<div class="notif-empty"><i class="fa-regular fa-bell-slash"></i>Sin notificaciones</div>'
+            : notifs.map(n => `
+                <div class="notif-item ${n.unread ? 'unread' : ''}">
+                    <div class="notif-icon ${n.color}"><i class="${n.icon}"></i></div>
+                    <div class="notif-content">
+                        <p>${n.msg}</p>
+                        <div class="notif-time">${n.time}</div>
+                    </div>
+                    ${n.unread ? '<div class="notif-dot"></div>' : ''}
+                </div>`).join('');
+    }
+    function marcarTodasLeidas() {
+        document.getElementById('notifBadge').style.display = 'none';
+        document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+        document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+    }
+
+    document.getElementById('modalRolOverlay').addEventListener('click', e => {
+        if (e.target === e.currentTarget) cerrarModalRol();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModalRol(); });
+
+    let todosUsuarios = [];
+    let filtroRolActual = 'todos';
+
+    function escH(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function fmtFecha(f) {
+        if (!f) return '—';
+        return new Date(f).toLocaleDateString('es-SV', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function getBadgeRol(rol) {
+        const m = { 'Administrador':'badge-rol-admin', 'Empleado':'badge-rol-emp', 'Cliente':'badge-rol-client' };
+        return `<span class="badge-rol ${m[rol]||'badge-rol-client'}">${rol}</span>`;
+    }
+
+    function renderTabla(lista) {
+        document.getElementById('usuariosCount').textContent = `${lista.length} usuario${lista.length !== 1 ? 's' : ''} en total`;
+        const tbody = document.getElementById('tbodyUsuarios');
+        if (lista.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="color:#94a3b8;text-align:center;padding:40px;">No se encontraron usuarios</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = lista.map(u => `
+            <tr>
+                <td style="font-weight:600;color:#6d28d9;">#${u.id_usuario}</td>
+                <td><strong>${escH(u.nombre)} ${escH(u.apellido)}</strong></td>
+                <td style="color:#64748b;">${escH(u.email)}</td>
+                <td>${getBadgeRol(u.rol)}</td>
+                <td>${u.puesto ? escH(u.puesto) : '<span style="color:#cbd5e1;">—</span>'}</td>
+                <td>${u.estado == 1 ? '<span class="badge-activo-u"><i class="fa-solid fa-circle" style="font-size:.4rem;vertical-align:middle;margin-right:4px;"></i>Activo</span>' : '<span class="badge-inactivo-u">Inactivo</span>'}</td>
+                <td style="font-size:.8rem;color:#64748b;white-space:nowrap;">${fmtFecha(u.creado_en)}</td>
+                <td style="text-align:right;">
+                    <button class="btn-icon btn-edit" title="Cambiar rol" onclick='abrirModalRol(${JSON.stringify(u)})'>
+                        <i class="fa-solid fa-user-pen"></i>
+                    </button>
+                </td>
+            </tr>`).join('');
+    }
+
+    function filtrarRol(valor, btn) {
+        document.querySelectorAll('.usuarios-filtros .btn-filtro').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+        filtroRolActual = valor;
+        aplicarFiltros();
+    }
+
+    function buscarUsuarios() {
+        aplicarFiltros();
+    }
+
+    function aplicarFiltros() {
+        const search = document.getElementById('searchUsuarios').value.toLowerCase().trim();
+        let lista = todosUsuarios;
+        if (filtroRolActual !== 'todos') {
+            lista = lista.filter(u => u.rol === filtroRolActual);
+        }
+        if (search) {
+            lista = lista.filter(u =>
+                (u.nombre + ' ' + u.apellido).toLowerCase().includes(search) ||
+                u.email.toLowerCase().includes(search)
+            );
+        }
+        renderTabla(lista);
+    }
+
+    function abrirModalRol(u) {
+        document.getElementById('modalUserId').value = u.id_usuario;
+        document.getElementById('modalUserName').textContent = u.nombre + ' ' + u.apellido;
+        document.getElementById('modalUserEmail').textContent = u.email;
+        document.getElementById('modalUserRolActual').textContent = u.rol;
+        document.getElementById('modalRolSubtitle').textContent = `Cambiar rol de ${u.nombre} ${u.apellido}`;
+        // Preseleccionar rol actual
+        const radio = document.querySelector(`input[name="nuevoRol"][value="${u.rol}"]`);
+        if (radio) radio.checked = true;
+        ocultarAlerta();
+        document.getElementById('modalRolOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalRol() {
+        document.getElementById('modalRolOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function mostrarAlerta(msg, tipo = 'error') {
+        const el = document.getElementById('modalRolAlerta');
+        const [bg, col, bdr, ico] = tipo === 'error'
+            ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
+            : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
+        el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+        el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
+    }
+
+    function ocultarAlerta() {
+        const el = document.getElementById('modalRolAlerta');
+        el.style.display = 'none'; el.innerHTML = '';
+    }
+
+    async function cambiarRol() {
+        const id = document.getElementById('modalUserId').value;
+        const nuevoRol = document.querySelector('input[name="nuevoRol"]:checked')?.value;
+        const rolActual = document.getElementById('modalUserRolActual').textContent;
+        if (!nuevoRol) return mostrarAlerta('Selecciona un rol.');
+        if (nuevoRol === rolActual) return mostrarAlerta('El rol seleccionado es el mismo que el actual.');
+        const btn = document.getElementById('btnCambiarRol');
+        btn.disabled = true;
+        document.getElementById('btnCambiarRolTexto').textContent = 'Guardando...';
+        // Simulación frontend
+        setTimeout(() => {
+            const u = todosUsuarios.find(u => u.id_usuario == id);
+            if (u) u.rol = nuevoRol;
+            aplicarFiltros();
+            mostrarAlerta('¡Rol actualizado correctamente!', 'ok');
+            setTimeout(() => cerrarModalRol(), 1200);
+            btn.disabled = false;
+            document.getElementById('btnCambiarRolTexto').textContent = 'Guardar Cambio de Rol';
+        }, 800);
+    }
+
+    function cerrarSesion() {
+        window.location.href = 'login.html';
+    }
+
+    function init() {
+        const sesion = { usuario: 'Carlos Lobos', rol: 'Administrador' };
+        document.getElementById('sidebarNombre').textContent = sesion.usuario;
+        document.getElementById('sidebarRol').textContent = sesion.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' · ' + sesion.rol;
+
+        // Datos demo
+        todosUsuarios = [
+            { id_usuario:1, nombre:'Carlos', apellido:'Lobos Soriano', email:'carlos.lobos@technova.com', rol:'Administrador', puesto:'', estado:1, creado_en:'2026-03-05' },
+            { id_usuario:2, nombre:'Misael', apellido:'Juárez Reyes', email:'misael.juarez@technova.com', rol:'Empleado', puesto:'Desarrollador', estado:1, creado_en:'2026-03-05' },
+            { id_usuario:3, nombre:'Kevin', apellido:'Benavides Ruiz', email:'kevin.benavides@technova.com', rol:'Empleado', puesto:'Diseñador', estado:1, creado_en:'2026-03-05' },
+            { id_usuario:5, nombre:'Juan', apellido:'Pérez García', email:'juan.perez@cliente.com', rol:'Cliente', puesto:'', estado:1, creado_en:'2026-03-05' },
+            { id_usuario:6, nombre:'Juan', apellido:'Ramirez', email:'jure@gmail.com', rol:'Administrador', puesto:'', estado:1, creado_en:'2026-03-05' },
+            { id_usuario:9, nombre:'Ju', apellido:'Perez', email:'perez@gmail.com', rol:'Empleado', puesto:'Diseñador', estado:1, creado_en:'2026-03-06' },
+        ];
+
+        renderTabla(todosUsuarios);
+        document.getElementById('loadingBox').style.display = 'none';
+        document.getElementById('tableWrap').style.display = 'block';
+        cargarNotificaciones();
+    }
+
+    init();
+</script>
+</body>
+</html>

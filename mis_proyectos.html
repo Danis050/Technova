@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -33,7 +33,6 @@
             border-color: #fb923c;
         }
 
-        /* Modal incidencia */
         .inc-overlay {
             display: none;
             position: fixed;
@@ -227,7 +226,8 @@
                 <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
                 <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i>Mis incidencias</a>
                 <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i>Mis solicitudes</a>
-                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
             <div class="sidebar-user">
@@ -270,7 +270,6 @@
         </main>
     </div>
 
-    <!-- ══════════ MODAL REPORTAR INCIDENCIA ══════════ -->
     <div class="inc-overlay" id="incOverlay">
         <div class="inc-modal">
             <div class="inc-head">
@@ -370,6 +369,43 @@
                </button>`
                     : '';
 
+                // HU-25 SCRUM-128: Componente de 5 estrellas para proyectos completados
+                const puedeCalificar = ESTADOS_FINALIZADOS.includes(p.estado);
+                const yaCalificado = localStorage.getItem('rating_' + p.id);
+                let starHtml = '';
+                if (puedeCalificar) {
+                    if (yaCalificado) {
+                        const rating = parseInt(yaCalificado);
+                        let starsDisplay = '';
+                        for (let i = 1; i <= 5; i++) {
+                            starsDisplay += `<i class="fa-solid fa-star" style="color:${i<=rating?'#fbbf24':'#d1d5db'};font-size:1.1rem;"></i>`;
+                        }
+                        starHtml = `
+                        <div style="margin-top:10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;">
+                            <div style="font-size:.75rem;font-weight:600;color:#92400e;margin-bottom:4px;"><i class="fa-solid fa-star" style="color:#fbbf24;"></i> Tu calificación</div>
+                            <div>${starsDisplay} <span style="font-weight:700;margin-left:4px;color:#92400e;">${rating}.0</span></div>
+                        </div>`;
+                    } else {
+                        starHtml = `
+                        <div style="margin-top:10px;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;">
+                            <div style="font-size:.75rem;font-weight:600;color:#374151;margin-bottom:6px;"><i class="fa-regular fa-star" style="color:#fbbf24;"></i> Califica este proyecto</div>
+                            <div class="star-rating" id="stars-${p.id}">
+                                <input type="radio" name="rating-${p.id}" id="star5-${p.id}" value="5" onchange="calificar(${p.id}, 5)">
+                                <label for="star5-${p.id}"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" name="rating-${p.id}" id="star4-${p.id}" value="4" onchange="calificar(${p.id}, 4)">
+                                <label for="star4-${p.id}"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" name="rating-${p.id}" id="star3-${p.id}" value="3" onchange="calificar(${p.id}, 3)">
+                                <label for="star3-${p.id}"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" name="rating-${p.id}" id="star2-${p.id}" value="2" onchange="calificar(${p.id}, 2)">
+                                <label for="star2-${p.id}"><i class="fa-solid fa-star"></i></label>
+                                <input type="radio" name="rating-${p.id}" id="star1-${p.id}" value="1" onchange="calificar(${p.id}, 1)">
+                                <label for="star1-${p.id}"><i class="fa-solid fa-star"></i></label>
+                            </div>
+                            <div class="rating-feedback" id="feedback-${p.id}"></div>
+                        </div>`;
+                    }
+                }
+
                 return `
         <div class="project-card">
             <div class="card-nombre">${escH(p.nombre)}</div>
@@ -384,10 +420,36 @@
                 <span>${fmt(p.fechaInicio)} → ${fmt(p.fechaEntrega)}</span>
             </div>
             ${p.id ? `<p class="card-id">Proyecto #${p.id}</p>` : ''}
+            ${starHtml}
             ${btnIncidencia}
         </div>`;
             }).join('');
         }
+
+        // ─── HU-25: Calificar proyecto ───────────────────────────────
+        function calificar(idProyecto, estrellas) {
+            localStorage.setItem('rating_' + idProyecto, estrellas);
+            const feedback = document.getElementById('feedback-' + idProyecto);
+            if (feedback) {
+                const mensajes = {
+                    1: '😞 Gracias por tu feedback',
+                    2: '😕 Tomaremos en cuenta tu opinión',
+                    3: '😊 ¡Gracias por calificar!',
+                    4: '😃 ¡Nos alegra que te gustó!',
+                    5: '🎉 ¡Excelente! ¡Gracias por tu calificación!'
+                };
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${mensajes[estrellas] || 'Calificación guardada'}`;
+                feedback.classList.add('show');
+                const starContainer = document.getElementById('stars-' + idProyecto);
+                if (starContainer) starContainer.classList.add('rated');
+            }
+            // Re-render después de 1.5s para mostrar la calificación guardada
+            setTimeout(() => {
+                if (typeof proyectosGlobal !== 'undefined') renderCards(proyectosGlobal);
+            }, 1500);
+        }
+
+        let proyectosGlobal = [];
 
         // ─── Modal incidencia ─────────────────────────────────────────
         function abrirModalInc(idProyecto, nombreProyecto) {
@@ -487,6 +549,7 @@
                     mostrarError(proyectos.mensaje || 'Error al cargar proyectos.');
                     return;
                 }
+                proyectosGlobal = proyectos;
                 renderCards(proyectos);
 
             } catch (e) {
