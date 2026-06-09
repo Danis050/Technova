@@ -88,6 +88,7 @@ try {
         throw new Exception('No se puede cambiar el rol de un usuario inactivo.');
     }
 
+    // SCRUM-HU17-03 | Danis Vides: protege contra degradar al ultimo admin activo.
     if ($usuarioActual['rol'] === 'Administrador' && $rolBase !== 'Administrador') {
         $stmtAdmins = $conn->prepare(
             "SELECT COUNT(*) AS total

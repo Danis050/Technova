@@ -207,6 +207,21 @@ CREATE TABLE `password_reset_token` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `mensaje` varchar(255) NOT NULL,
+  `url_referencia` varchar(255) DEFAULT NULL,
+  `leida` tinyint(1) NOT NULL DEFAULT 0,
+  `fecha_creacion` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Notificaciones internas del sistema';
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `proyecto`
 --
 
@@ -530,6 +545,14 @@ ALTER TABLE `password_reset_token`
   ADD KEY `email` (`email`);
 
 --
+-- Indexes for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_notificaciones_usuario` (`id_usuario`),
+  ADD KEY `idx_notificaciones_leida` (`leida`);
+
+--
 -- Indexes for table `proyecto`
 --
 ALTER TABLE `proyecto`
@@ -633,6 +656,12 @@ ALTER TABLE `password_reset_token`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `proyecto`
 --
 ALTER TABLE `proyecto`
@@ -705,6 +734,12 @@ ALTER TABLE `factura`
 ALTER TABLE `incidencia`
   ADD CONSTRAINT `fk_incidencia_proyecto` FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_incidencia_usuario` FOREIGN KEY (`id_usuario_reporta`) REFERENCES `usuario` (`id_usuario`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD CONSTRAINT `fk_notificaciones_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `pago`
