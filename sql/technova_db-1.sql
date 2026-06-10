@@ -786,6 +786,71 @@ ALTER TABLE `solicitud`
 --
 ALTER TABLE `soporte_notificacion`
   ADD CONSTRAINT `fk_soporte_notificacion_incidencia` FOREIGN KEY (`id_incidencia`) REFERENCES `incidencia` (`id_incidencia`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- ============================================================
+-- SCRUM-HU24-01 | HU-24: Registro de Auditoría
+-- Responsable: David Alexander Urias Blanco (U20240435)
+-- Sprint 4 · Semana 3 · TechNova · Equipo Aevum
+-- ⚠️ PRIORITARIA — ejecutar PRIMERO (bloquea HU24-02, HU24-03, HU17-04)
+-- ============================================================
+
+--
+-- Table structure for table `auditoria`
+--
+
+CREATE TABLE IF NOT EXISTS `auditoria` (
+  `id`             int(11)      NOT NULL AUTO_INCREMENT,
+  `id_usuario`     int(11)      DEFAULT NULL COMMENT 'NULL si el usuario fue eliminado',
+  `nombre_usuario` varchar(100) DEFAULT NULL COMMENT 'Respaldo del nombre al momento de la acción',
+  `accion`         varchar(100) NOT NULL COMMENT 'login | logout | cambio_rol | cambio_estado_proyecto | registro_pago | crear_cliente | editar_cliente | eliminar_cliente',
+  `entidad`        varchar(100) DEFAULT NULL COMMENT 'Nombre de la tabla/entidad afectada',
+  `id_entidad`     int(11)      DEFAULT NULL COMMENT 'PK del registro afectado',
+  `descripcion`    text         DEFAULT NULL COMMENT 'Detalle legible de la acción realizada',
+  `ip_origen`      varchar(45)  DEFAULT NULL COMMENT 'IPv4 o IPv6 del cliente',
+  `fecha`          datetime     NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_fecha`   (`fecha`),
+  KEY `idx_usuario` (`id_usuario`),
+  KEY `idx_accion`  (`accion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='HU-24 · Registro inmutable de acciones críticas del sistema';
+
+--
+-- Constraints for table `auditoria`
+--
+ALTER TABLE `auditoria`
+  ADD CONSTRAINT `fk_auditoria_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- ============================================================
+-- SCRUM-HU25-01 | HU-25: Calificar Servicio Recibido
+-- Responsable: David Alexander Urias Blanco (U20240435)
+-- Sprint 4 · Semana 3 · TechNova · Equipo Aevum
+-- ============================================================
+
+--
+-- Table structure for table `calificaciones`
+--
+
+CREATE TABLE IF NOT EXISTS `calificaciones` (
+  `id`          int(11)    NOT NULL AUTO_INCREMENT,
+  `id_proyecto` int(11)    NOT NULL,
+  `id_cliente`  int(11)    NOT NULL,
+  `puntuacion`  tinyint(1) NOT NULL COMMENT '1 a 5 estrellas',
+  `comentario`  text       DEFAULT NULL,
+  `fecha`       datetime   NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unica_calificacion` (`id_proyecto`,`id_cliente`),
+  KEY `idx_calif_proyecto` (`id_proyecto`),
+  KEY `idx_calif_cliente`  (`id_cliente`),
+  CONSTRAINT `chk_puntuacion` CHECK (`puntuacion` BETWEEN 1 AND 5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='HU-25 · Calificaciones de servicio por proyecto y cliente';
+
+--
+-- Constraints for table `calificaciones`
+--
+ALTER TABLE `calificaciones`
+  ADD CONSTRAINT `fk_calif_proyecto` FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_calif_cliente`  FOREIGN KEY (`id_cliente`)  REFERENCES `cliente`  (`id_cliente`)  ON DELETE CASCADE ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
