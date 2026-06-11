@@ -128,159 +128,173 @@
     </div>
 
 <script>
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOvl = document.getElementById('sidebarOverlay');
-    document.getElementById('btnMenuToggle').addEventListener('click', () => {
-        sidebar.classList.toggle('open'); sidebarOvl.classList.toggle('visible');
-    });
-    sidebarOvl.addEventListener('click', () => {
-        sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
-    });
+// Variables globales
+let filtroAccion = ''; // Vacío significa 'todos'
+let paginaActual = 1;
 
-    document.getElementById('btnNotif').addEventListener('click', (e) => {
-        e.stopPropagation();
-        document.getElementById('notifDropdown').classList.toggle('open');
-    });
-    document.addEventListener('click', (e) => {
-        if (!document.getElementById('notifWrapper').contains(e.target))
-            document.getElementById('notifDropdown').classList.remove('open');
-    });
-    function cargarNotificaciones() {
-        document.getElementById('notifList').innerHTML = '<div class="notif-empty"><i class="fa-regular fa-bell-slash"></i>Sin notificaciones nuevas</div>';
+// Función auxiliar para escapar HTML y evitar XSS
+function escH(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+function getAccionBadge(a) {
+    const m = {
+        'Creación':  ['#d1fae5','#059669'],
+        'Edición':   ['#dbeafe','#1d4ed8'],
+        'Eliminación':['#fee2e2','#dc2626'],
+        'Sesión':    ['#f1f5f9','#475569'],
+        'Pago':      ['#fef3c7','#d97706'],
+    };
+    const [bg,col] = m[a] || ['#f1f5f9','#475569'];
+    return `<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;background:${bg};color:${col};">${a}</span>`;
+}
+
+function getModuloIcon(mod) {
+    const icons = {
+        'proyecto':'fa-diagram-project', 'pago':'fa-hand-holding-dollar', 'usuario':'fa-users',
+        'factura':'fa-file-invoice-dollar', 'servicio':'fa-screwdriver-wrench',
+        'entregable':'fa-clipboard-check', 'incidencia':'fa-triangle-exclamation'
+    };
+    // Convertimos a minúsculas para que coincida mejor con los nombres de tablas reales
+    const modLower = (mod || '').toLowerCase();
+    return icons[modLower] || 'fa-circle-info';
+}
+
+// ─── CONEXIÓN CON EL BACKEND ───
+async function cargarAuditoria() {
+    const tbody = document.getElementById('tbodyAudit');
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;"><i class="fa-solid fa-spinner fa-spin" style="color:#6d28d9;font-size:1.5rem;"></i><br><span style="color:#64748b;font-size:0.9rem;margin-top:10px;display:inline-block;">Cargando registros...</span></td></tr>`;
+
+    // 1. Construir la URL con los parámetros GET
+    let url = `php/consultar_auditoria.php?pagina=${paginaActual}`;
+    
+    if (filtroAccion && filtroAccion !== 'todos') {
+        url += `&accion=${encodeURIComponent(filtroAccion)}`;
     }
-    function marcarTodasLeidas() {}
-
-    const auditData = [
-        { id:1, fecha:'2026-06-05 14:32:10', usuario:'Carlos Lobos', accion:'Creación', modulo:'Proyectos', detalle:'Creó el proyecto "Sitio Web Corporativo"' },
-        { id:2, fecha:'2026-06-05 14:35:22', usuario:'Carlos Lobos', accion:'Pago', modulo:'Pagos', detalle:'Registró anticipo de $500.00 para proyecto #23' },
-        { id:3, fecha:'2026-06-05 15:10:05', usuario:'Juan Ramirez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
-        { id:4, fecha:'2026-06-05 15:12:33', usuario:'Juan Ramirez', accion:'Edición', modulo:'Proyectos', detalle:'Cambió estado de proyecto "Sistema Facturación" a En Proceso' },
-        { id:5, fecha:'2026-06-05 16:00:00', usuario:'Carlos Lobos', accion:'Creación', modulo:'Usuarios', detalle:'Creó usuario "María López" con rol Empleado' },
-        { id:6, fecha:'2026-06-05 16:22:15', usuario:'Misael Juárez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
-        { id:7, fecha:'2026-06-05 16:45:30', usuario:'Misael Juárez', accion:'Edición', modulo:'Entregables', detalle:'Actualizó entregable "Diseño UI" a Entregado' },
-        { id:8, fecha:'2026-06-04 09:00:00', usuario:'Carlos Lobos', accion:'Eliminación', modulo:'Servicios', detalle:'Eliminó servicio "Sitio de prueba" (ID: 5)' },
-        { id:9, fecha:'2026-06-04 10:15:00', usuario:'Juan Pérez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión desde portal cliente' },
-        { id:10, fecha:'2026-06-04 10:20:00', usuario:'Juan Pérez', accion:'Creación', modulo:'Incidencias', detalle:'Reportó incidencia "Error en factura" prioridad Alta' },
-        { id:11, fecha:'2026-06-04 11:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Incidencias', detalle:'Cambió estado de incidencia #10 a "En atención"' },
-        { id:12, fecha:'2026-06-04 14:30:00', usuario:'Juan Ramirez', accion:'Pago', modulo:'Pagos', detalle:'Registró pago parcial de $200.00 para proyecto #18' },
-        { id:13, fecha:'2026-06-04 15:00:00', usuario:'Juan Ramirez', accion:'Creación', modulo:'Facturas', detalle:'Generó factura TN-2026-000012' },
-        { id:14, fecha:'2026-06-03 08:30:00', usuario:'Carlos Lobos', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
-        { id:15, fecha:'2026-06-03 09:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Servicios', detalle:'Actualizó precio de "Desarrollo de Software" a $2,800.00' },
-        { id:16, fecha:'2026-06-03 10:30:00', usuario:'Kevin Benavides', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
-        { id:17, fecha:'2026-06-03 11:00:00', usuario:'Kevin Benavides', accion:'Edición', modulo:'Entregables', detalle:'Subió evidencia para entregable "Logo Final"' },
-        { id:18, fecha:'2026-06-03 14:00:00', usuario:'Carlos Lobos', accion:'Eliminación', modulo:'Proyectos', detalle:'Eliminó proyecto "Prueba eliminada" (ID: 25)' },
-        { id:19, fecha:'2026-06-02 09:15:00', usuario:'Juan Ramirez', accion:'Creación', modulo:'Proyectos', detalle:'Creó el proyecto "App Móvil Inventario"' },
-        { id:20, fecha:'2026-06-02 10:00:00', usuario:'Juan Ramirez', accion:'Pago', modulo:'Pagos', detalle:'Registró anticipo de $1,000.00 para proyecto #24' },
-        { id:21, fecha:'2026-06-02 11:30:00', usuario:'Misael Juárez', accion:'Edición', modulo:'Proyectos', detalle:'Cambió fecha de entrega del proyecto #22' },
-        { id:22, fecha:'2026-06-01 08:00:00', usuario:'Carlos Lobos', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión exitoso' },
-        { id:23, fecha:'2026-06-01 09:00:00', usuario:'Carlos Lobos', accion:'Creación', modulo:'Usuarios', detalle:'Creó usuario "Ana Martínez" con rol Cliente' },
-        { id:24, fecha:'2026-06-01 10:00:00', usuario:'Ju Perez', accion:'Sesión', modulo:'Autenticación', detalle:'Inicio de sesión fallido — contraseña incorrecta' },
-        { id:25, fecha:'2026-06-01 12:00:00', usuario:'Carlos Lobos', accion:'Edición', modulo:'Usuarios', detalle:'Cambió rol de "Ju Perez" de Empleado a Administrador' },
-    ];
-
-    let filtroAccion = 'todos';
-    let paginaActual = 1;
-    const POR_PAGINA = 10;
-
-    function escH(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
-
-    function getAccionBadge(a) {
-        const m = {
-            'Creación':  ['#d1fae5','#059669'],
-            'Edición':   ['#dbeafe','#1d4ed8'],
-            'Eliminación':['#fee2e2','#dc2626'],
-            'Sesión':    ['#f1f5f9','#475569'],
-            'Pago':      ['#fef3c7','#d97706'],
-        };
-        const [bg,col] = m[a] || ['#f1f5f9','#475569'];
-        return `<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;background:${bg};color:${col};">${a}</span>`;
+    
+    const fecha = document.getElementById('filtroFecha').value;
+    if (fecha) {
+        // Enviamos la misma fecha como inicio y fin para buscar en un solo día
+        url += `&fecha_inicio=${fecha}&fecha_fin=${fecha}`;
     }
 
-    function getModuloIcon(mod) {
-        const icons = {
-            'Proyectos':'fa-diagram-project','Pagos':'fa-hand-holding-dollar','Autenticación':'fa-right-to-bracket',
-            'Usuarios':'fa-users','Facturas':'fa-file-invoice-dollar','Servicios':'fa-screwdriver-wrench',
-            'Entregables':'fa-clipboard-check','Incidencias':'fa-triangle-exclamation'
-        };
-        return icons[mod] || 'fa-circle-info';
+    try {
+        // 2. Hacer la petición al PHP
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.error) {
+            tbody.innerHTML = `<tr><td colspan="6" style="color:#dc2626;text-align:center;padding:40px;">Error: ${data.mensaje}</td></tr>`;
+            if(data.mensaje.includes('Acceso denegado')) {
+                setTimeout(() => window.location.href = 'dashboard.html', 2000);
+            }
+            return;
+        }
+        
+        // 3. Renderizar los datos reales
+        renderTabla(data);
+        
+    } catch (e) {
+        console.error("Error cargando auditoría", e);
+        tbody.innerHTML = `<tr><td colspan="6" style="color:#dc2626;text-align:center;padding:40px;">Error de conexión con el servidor.</td></tr>`;
+    }
+}
+
+function renderTabla(data) {
+    document.getElementById('auditCount').textContent = `${data.total_registros} registro${data.total_registros !== 1 ? 's' : ''} encontrado${data.total_registros !== 1 ? 's' : ''}`;
+    const tbody = document.getElementById('tbodyAudit');
+    
+    if (!data.registros || data.registros.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:40px;">No se encontraron registros de auditoría</td></tr>`;
+        document.getElementById('paginacion').innerHTML = '';
+        return;
     }
 
-    function getFilteredData() {
-        let lista = [...auditData];
-        if (filtroAccion !== 'todos') lista = lista.filter(r => r.accion === filtroAccion);
-        const fecha = document.getElementById('filtroFecha').value;
-        if (fecha) lista = lista.filter(r => r.fecha.startsWith(fecha));
-        return lista;
+    tbody.innerHTML = data.registros.map(r => {
+        // Formatear la fecha que viene de MySQL (YYYY-MM-DD HH:MM:SS)
+        const fechaFmt = new Date(r.fecha.replace(' ', 'T')).toLocaleString('es-SV', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        
+        return `
+        <tr>
+            <td style="font-weight:600;color:#6d28d9;">#${r.id}</td>
+            <td style="font-size:.8rem;color:#64748b;white-space:nowrap;">${fechaFmt}</td>
+            <td><strong>${escH(r.nombre_usuario || 'Sistema')}</strong></td>
+            <td>${getAccionBadge(r.accion)}</td>
+            <td>
+                <i class="fa-solid ${getModuloIcon(r.entidad)}" style="color:#94a3b8;margin-right:4px;font-size:.75rem;"></i>
+                <span style="text-transform: capitalize;">${escH(r.entidad || 'N/A')}</span>
+            </td>
+            <td style="font-size:.82rem;color:#475569;">${escH(r.descripcion)}</td>
+        </tr>`;
+    }).join('');
+
+    renderPaginacion(data.total_paginas, data.pagina_actual);
+}
+
+function renderPaginacion(totalPaginas, actual) {
+    const pag = document.getElementById('paginacion');
+    if (totalPaginas <= 1) { pag.innerHTML = ''; return; }
+    
+    let html = `<button ${actual === 1 ? 'disabled' : ''} onclick="irPagina(${actual - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+    
+    for (let i = 1; i <= totalPaginas; i++) {
+        // Mostrar máximo 5 botones de página para no romper el diseño si hay muchas páginas
+        if (i === 1 || i === totalPaginas || (i >= actual - 2 && i <= actual + 2)) {
+            html += `<button class="${i === actual ? 'active' : ''}" onclick="irPagina(${i})">${i}</button>`;
+        } else if (i === actual - 3 || i === actual + 3) {
+            html += `<span style="padding:0 10px;color:#94a3b8;">...</span>`;
+        }
     }
+    
+    html += `<button ${actual === totalPaginas ? 'disabled' : ''} onclick="irPagina(${actual + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+    html += `<span class="page-info">Página ${actual} de ${totalPaginas}</span>`;
+    pag.innerHTML = html;
+}
 
-    function renderTabla() {
-        const lista = getFilteredData();
-        document.getElementById('auditCount').textContent = `${lista.length} registro${lista.length!==1?'s':''} encontrado${lista.length!==1?'s':''}`;
+function irPagina(n) { 
+    paginaActual = n; 
+    cargarAuditoria(); 
+}
 
-        const totalPaginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
-        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
-        const inicio = (paginaActual - 1) * POR_PAGINA;
-        const pagina = lista.slice(inicio, inicio + POR_PAGINA);
+function filtrarAccion(valor, btn) {
+    document.querySelectorAll('.filtros-bar .btn-filtro').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    filtroAccion = valor === 'todos' ? '' : valor;
+    paginaActual = 1;
+    cargarAuditoria();
+}
 
-        const tbody = document.getElementById('tbodyAudit');
-        if (pagina.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:40px;">No se encontraron registros</td></tr>`;
-        } else {
-            tbody.innerHTML = pagina.map(r => {
-                const fechaFmt = new Date(r.fecha).toLocaleString('es-SV', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-                return `
-                <tr>
-                    <td style="font-weight:600;color:#6d28d9;">#${r.id}</td>
-                    <td style="font-size:.8rem;color:#64748b;white-space:nowrap;">${fechaFmt}</td>
-                    <td><strong>${escH(r.usuario)}</strong></td>
-                    <td>${getAccionBadge(r.accion)}</td>
-                    <td><i class="fa-solid ${getModuloIcon(r.modulo)}" style="color:#94a3b8;margin-right:4px;font-size:.75rem;"></i>${escH(r.modulo)}</td>
-                    <td style="font-size:.82rem;color:#475569;">${escH(r.detalle)}</td>
-                </tr>`;
-            }).join('');
+function aplicarFiltros() { 
+    paginaActual = 1; 
+    cargarAuditoria(); 
+}
+
+function cerrarSesion() {
+    fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
+}
+
+// Obtenemos los datos de la sesión real antes de cargar la auditoría
+async function init() {
+    try {
+        const resSesion = await fetch('php/dashboard_data.php');
+        const dataSesion = await resSesion.json();
+        
+        if (dataSesion.error) {
+            window.location.href = 'login.html';
+            return;
         }
 
-        renderPaginacion(totalPaginas);
+        document.getElementById('sidebarNombre').textContent = dataSesion.usuario;
+        document.getElementById('sidebarRol').textContent = dataSesion.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + dataSesion.usuario + ' · ' + dataSesion.rol;
+        
+        // Cargar los registros reales de la BD
+        cargarAuditoria();
+        
+    } catch (e) {
+        console.error("Error validando sesión:", e);
     }
+}
 
-    function renderPaginacion(totalPaginas) {
-        const pag = document.getElementById('paginacion');
-        if (totalPaginas <= 1) { pag.innerHTML = ''; return; }
-        let html = `<button ${paginaActual===1?'disabled':''} onclick="irPagina(${paginaActual-1})"><i class="fa-solid fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPaginas; i++) {
-            html += `<button class="${i===paginaActual?'active':''}" onclick="irPagina(${i})">${i}</button>`;
-        }
-        html += `<button ${paginaActual===totalPaginas?'disabled':''} onclick="irPagina(${paginaActual+1})"><i class="fa-solid fa-chevron-right"></i></button>`;
-        html += `<span class="page-info">Página ${paginaActual} de ${totalPaginas}</span>`;
-        pag.innerHTML = html;
-    }
-
-    function irPagina(n) { paginaActual = n; renderTabla(); }
-
-    function filtrarAccion(valor, btn) {
-        document.querySelectorAll('.filtros-bar .btn-filtro').forEach(b => b.classList.remove('activo'));
-        btn.classList.add('activo');
-        filtroAccion = valor;
-        paginaActual = 1;
-        aplicarFiltros();
-    }
-
-    function aplicarFiltros() { paginaActual = 1; renderTabla(); }
-
-    function cerrarSesion() {
-        window.location.href = 'login.html';
-    }
-
-    function init() {
-        const sesion = { usuario: 'Carlos Lobos', rol: 'Administrador' };
-        document.getElementById('sidebarNombre').textContent = sesion.usuario;
-        document.getElementById('sidebarRol').textContent = sesion.rol;
-        document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' · ' + sesion.rol;
-        renderTabla();
-        cargarNotificaciones();
-    }
-
-    init();
+init();
 </script>
 </body>
 </html>

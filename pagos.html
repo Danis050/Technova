@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/pages/pagos.css">
 </head>
 <body class="dash-body">
 
@@ -184,7 +183,7 @@
                             </div>
 
                             <div class="field-group">
-                                <label>NÂ° Comprobante <span class="opt">(opcional)</span></label>
+                                <label>Comprobante <span class="opt">(opcional)</span></label>
                                 <input type="text" id="fComprobante" placeholder="TRF-2026-XXXX">
                             </div>
 
@@ -303,7 +302,7 @@ async function cargarProyectos() {
             return;
         }
 
-        sel.innerHTML = '<option value="">â€” Selecciona un proyecto â€”</option>';
+        sel.innerHTML = '<option value="">— Selecciona un proyecto — </option>';
 
         lista.forEach(p => {
             const opt = document.createElement('option');
@@ -312,14 +311,14 @@ async function cargarProyectos() {
             if (saldado) {
                 opt.value    = '';
                 opt.disabled = true;
-                opt.text     = 'âœ“ Saldado Â· ' + p.nombre + ' â€” ' + p.nombre_empresa;
+                opt.text     = 'Saldado' + p.nombre + ' - ' + p.nombre_empresa;
                 opt.style.color = '#94a3b8';
             } else {
                 opt.value                  = p.id_proyecto;
                 opt.dataset.empresa        = p.nombre_empresa;
                 opt.dataset.estado         = p.estado;
-                opt.dataset.entrega        = p.fecha_entrega || '';
-                opt.text                   = p.nombre + ' Â· ' + p.nombre_empresa;
+                opt.dataset.entrega        = p.fecha_entrega || ' ';
+                opt.text                   = p.nombre + ' - ' + p.nombre_empresa;
             }
 
             sel.appendChild(opt);
@@ -354,7 +353,7 @@ function onProyectoChange() {
     const entrega = opt.dataset.entrega
         ? 'Entrega: ' + new Date(opt.dataset.entrega + 'T00:00:00').toLocaleDateString('es-SV', { day:'2-digit', month:'short', year:'numeric' })
         : 'Sin fecha de entrega';
-    txt.textContent = `${opt.dataset.estado} Â· ${entrega}`;
+    txt.textContent = `${opt.dataset.estado} · ${entrega}`;
     info.classList.add('visible');
 
     document.getElementById('grupTipo').style.display = 'block';
@@ -539,7 +538,7 @@ function filtrarHistorial() {
         });
         const comp = p.comprobante
             ? `<span style="font-family:monospace;font-size:0.78rem;color:#6d28d9;">${p.comprobante}</span>`
-            : `<span style="color:#cbd5e1;">â€”</span>`;
+            : `<span style="color:#cbd5e1;">”</span>`;
 
         return `<tr>
             <td style="font-weight:600;color:#1e293b;">${p.proyecto}</td>
@@ -562,7 +561,7 @@ async function init() {
 
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
-        document.getElementById('saludo').textContent        = 'Bienvenido, ' + data.usuario + ' Â· ' + data.rol;
+        document.getElementById('saludo').textContent        = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
         rolActual = data.rol;
 
         if (data.rol === 'Administrador') {
