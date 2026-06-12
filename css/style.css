@@ -6525,3 +6525,117 @@ body.admin {
     .report-stats { grid-template-columns:1fr; }
     .perfil-avatar-section { flex-direction:column; text-align:center; }
 }
+
+/* ============================================
+   RESPONSIVE — body.admin (proyectos, servicios, etc.)
+   ============================================ */
+
+/* Topbar móvil para páginas admin */
+.admin-mobile-topbar {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: #0f172a;
+    z-index: 150;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    color: white;
+}
+
+.admin-mobile-topbar .brand {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.admin-btn-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.admin-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99;
+}
+
+.admin-overlay.visible { display: block; }
+
+@media (max-width: 768px) {
+
+    /* Mostrar topbar móvil */
+    .admin-mobile-topbar {
+        display: flex;
+    }
+
+    /* Sidebar: oculto por defecto */
+    body.admin .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 100;
+    }
+
+    body.admin .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Quitar el margen del sidebar */
+    .main-wrap {
+        margin-left: 0 !important;
+        padding-top: 56px; /* altura del topbar */
+    }
+
+    /* Topbar interno */
+    .topbar {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Tablas con scroll horizontal */
+    .table-wrap {
+        overflow-x: auto;
+    }
+
+    .admin table {
+        min-width: 550px;
+    }
+
+    /* Grids de cards */
+    .cards-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Perfil */
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Reportes */
+    .report-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Soporte stats */
+    .soporte-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Calificaciones */
+    .calif-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .report-stats {
+        grid-template-columns: 1fr;
+    }
+}
