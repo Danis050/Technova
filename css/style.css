@@ -6639,3 +6639,105 @@ body.admin {
         grid-template-columns: 1fr;
     }
 }
+/* ============================================================
+   FIX RESPONSIVE — icon-box y secciones landing (móvil)
+   ============================================================ */
+
+/* Problema raíz: icon-box tiene 200x200px fijos */
+@media (max-width: 768px) {
+
+    /* ── Productos ── */
+    .icon-box {
+        width: 100% !important;
+        height: 160px !important;
+        border-radius: 10px;
+    }
+
+    .icon-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+    }
+
+    .products-card {
+        padding: 16px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px;
+    }
+
+    /* ── Hero: forzar columna en la section Y en el container ── */
+    section.hero,
+    .hero.container,
+    div.container.hero {
+        flex-direction: column !important;
+        padding: 40px 16px 32px !important;
+        gap: 24px !important;
+        text-align: center;
+    }
+
+    .hero-content {
+        align-items: center;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 2rem !important;
+    }
+
+    .hero-image {
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    /* ── Servicios ── */
+    .services-container {
+        flex-direction: column !important;
+        gap: 20px;
+        padding: 0 16px;
+    }
+
+    /* ── Proyectos ── */
+    .projects-container {
+        flex-direction: column !important;
+        gap: 20px;
+        padding: 0 16px;
+    }
+
+    /* ── Contact cards ── */
+    .contact-info-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .contact-card .icon-box {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    /* ── Stats grid ── */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* ── Secciones: padding lateral ── */
+    .productos .container,
+    .servicios .container,
+    .projects .container,
+    .contact .container {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .products-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .icon-box {
+        height: 140px !important;
+    }
+}
