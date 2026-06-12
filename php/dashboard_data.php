@@ -55,6 +55,7 @@ echo json_encode([
     'error'           => false,
     'usuario'         => $_SESSION['nombre'],
     'rol'             => $_SESSION['rol'],
+     'id_usuario'      => $_SESSION['id_usuario'],
     'total_clientes'  => $total_clientes,
     'total_proyectos' => $total_proyectos,
     'total_facturado' => $total_facturado,
