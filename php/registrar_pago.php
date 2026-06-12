@@ -1,99 +1,93 @@
 <?php
-// SCRUM-HU24-03 & SCRUM-HU20-05 | HU-24 & HU-20 — David Urias (U20240435)
 session_start();
 header('Content-Type: application/json');
 require_once 'conexion.php';
 require_once 'auditoria_helper.php';
 require_once 'notificaciones_helper.php';
- 
+
 if (!isset($_SESSION['id_usuario'])) {
     echo json_encode(['error' => true, 'mensaje' => 'No autorizado']); exit;
 }
 if (!in_array($_SESSION['rol'], ['Administrador', 'Empleado'])) {
     echo json_encode(['error' => true, 'mensaje' => 'Sin permisos para registrar pagos']); exit;
 }
- 
-$id_proyecto = intval($_POST['id_proyecto'] ?? 0);
-$monto       = floatval($_POST['monto'] ?? 0);
-$fecha_pago  = trim($_POST['fecha_pago'] ?? '');
-$metodo      = trim($_POST['metodo_pago'] ?? '');
-$comprobante = trim($_POST['comprobante'] ?? '');
- 
-if (!$id_proyecto || $monto <= 0 || !$fecha_pago || !$metodo) {
-    echo json_encode(['error' => true, 'mensaje' => 'Todos los campos requeridos deben completarse.']); exit;
+
+$json_data = json_decode(file_get_contents('php://input'), true) ?? [];
+
+$id_proyecto = intval($_POST['id_proyecto'] ?? $json_data['id_proyecto'] ?? 0);
+$tipo_pago   = trim($_POST['tipo_pago']   ?? $json_data['tipo_pago']   ?? '');
+$monto       = floatval($_POST['monto']   ?? $json_data['monto']       ?? 0);
+$fecha_pago  = trim($_POST['fecha_pago']  ?? $json_data['fecha_pago']  ?? '');
+$metodo      = trim($_POST['metodo_pago'] ?? $json_data['metodo_pago'] ?? '');
+$comprobante = trim($_POST['comprobante'] ?? $json_data['comprobante'] ?? '');
+
+if (!$id_proyecto || !$tipo_pago || !$fecha_pago || !$metodo) {
+    echo json_encode(['error' => true, 'mensaje' => 'Todos los campos son requeridos.']); exit;
 }
+
+if (!in_array($tipo_pago, ['Parcial', 'Saldo Final'])) {
+    echo json_encode(['error' => true, 'mensaje' => 'Tipo de pago no permitido en este módulo. Los anticipos se registran automáticamente al crear el proyecto.']); exit;
+}
+
+if ($monto <= 0 && $tipo_pago === 'Parcial') {
+    echo json_encode(['error' => true, 'mensaje' => 'El monto parcial debe ser mayor a 0.']); exit;
+}
+
 if (!in_array($metodo, ['Efectivo', 'Transferencia', 'Cheque'])) {
     echo json_encode(['error' => true, 'mensaje' => 'Método de pago inválido.']); exit;
 }
-if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_pago)) {
-    echo json_encode(['error' => true, 'mensaje' => 'Formato de fecha inválido.']); exit;
-}
- 
+
 $conn = getConexion();
- 
-$stmt = $conn->prepare("SELECT anticipo_pagado, estado FROM proyecto WHERE id_proyecto = ?");
+
+$stmt = $conn->prepare(
+    "SELECT p.monto AS monto_proyecto,
+            COALESCE(SUM(pg.monto), 0) AS total_pagado
+     FROM proyecto p
+     LEFT JOIN pago pg ON pg.id_proyecto = p.id_proyecto
+     WHERE p.id_proyecto = ?
+     GROUP BY p.id_proyecto"
+);
 $stmt->bind_param("i", $id_proyecto);
 $stmt->execute();
-$proyecto = $stmt->get_result()->fetch_assoc();
+$row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
- 
-if (!$proyecto) {
+
+if (!$row) {
     echo json_encode(['error' => true, 'mensaje' => 'Proyecto no encontrado.']); exit;
 }
-if ($proyecto['anticipo_pagado'] == 1) {
-    echo json_encode(['error' => true, 'mensaje' => 'Este proyecto ya tiene un anticipo registrado.']); exit;
+
+$saldo_pendiente = max(0, floatval($row['monto_proyecto']) - floatval($row['total_pagado']));
+
+if ($saldo_pendiente <= 0.01) {
+    echo json_encode(['error' => true, 'mensaje' => 'Este proyecto ya se encuentra totalmente saldado.']); exit;
 }
-if (in_array($proyecto['estado'], ['Completado', 'Cancelado'])) {
-    echo json_encode(['error' => true, 'mensaje' => 'No se puede registrar anticipo en un proyecto ' . $proyecto['estado'] . '.']); exit;
+
+if ($tipo_pago === 'Saldo Final') {
+    $monto = $saldo_pendiente; 
+} else if ($monto > $saldo_pendiente + 0.01) {
+    echo json_encode([
+        'error'   => true,
+        'mensaje' => 'El monto ($' . number_format($monto, 2) . ') supera el saldo pendiente ($' . number_format($saldo_pendiente, 2) . ').'
+    ]); exit;
 }
- 
+
 $stmt2 = $conn->prepare(
     "INSERT INTO pago (id_proyecto, tipo_pago, monto, fecha_pago, metodo_pago, comprobante, registrado_por)
-     VALUES (?, 'Anticipo', ?, ?, ?, ?, ?)"
+     VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
-$stmt2->bind_param("idsssi", $id_proyecto, $monto, $fecha_pago, $metodo, $comprobante, $_SESSION['id_usuario']);
- 
+$stmt2->bind_param("isdsssi",
+    $id_proyecto, $tipo_pago, $monto, $fecha_pago, $metodo, $comprobante, $_SESSION['id_usuario']
+);
+
 if (!$stmt2->execute()) {
-    echo json_encode(['error' => true, 'mensaje' => 'Error al guardar el pago: ' . $stmt2->error]); 
-    $stmt2->close(); $conn->close(); exit;
+    echo json_encode(['error' => true, 'mensaje' => 'Error al guardar el pago: ' . $stmt2->error]); exit;
 }
 $stmt2->close();
- 
-$stmt3 = $conn->prepare("UPDATE proyecto SET anticipo_pagado = 1 WHERE id_proyecto = ?");
-$stmt3->bind_param("i", $id_proyecto);
-$stmt3->execute();
-$stmt3->close();
- 
 $conn->close();
- 
-// SCRUM-HU24-03 | Registrar pago en auditoría
-registrarAuditoria(
-    'registro_pago',
-    'pago',
-    $id_proyecto,
-    "Anticipo de $$monto registrado para proyecto #$id_proyecto (método: $metodo)"
-);
- 
-// SCRUM-HU20-05 | Notificar al cliente del proyecto
-$connN = getConexion();
-$stmtN = $connN->prepare(
-    "SELECT c.id_usuario FROM cliente c
-     INNER JOIN proyecto p ON p.id_cliente = c.id_cliente
-     WHERE p.id_proyecto = ? LIMIT 1"
-);
-$stmtN->bind_param('i', $id_proyecto);
-$stmtN->execute();
-$rowN = $stmtN->get_result()->fetch_assoc();
-$stmtN->close();
-$connN->close();
- 
-if ($rowN) {
-    crearNotificacion(
-        (int) $rowN['id_usuario'],
-        "Se registró un anticipo de $$monto en tu proyecto #$id_proyecto.",
-        "../pagos.html?id=$id_proyecto"
-    );
-}
- 
-echo json_encode(['error' => false, 'mensaje' => 'Anticipo registrado exitosamente. El proyecto puede iniciar.']);
+
+$msg = $tipo_pago === 'Saldo Final'
+    ? 'Saldo final registrado. El proyecto queda totalmente saldado.'
+    : 'Pago parcial de $' . number_format($monto, 2) . ' registrado exitosamente.';
+
+echo json_encode(['error' => false, 'mensaje' => $msg]);
 ?>

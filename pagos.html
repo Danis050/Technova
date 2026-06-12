@@ -350,11 +350,6 @@ function onProyectoChange() {
     if (!sel.value) { info.classList.remove('visible'); return; }
 
     const opt     = sel.options[sel.selectedIndex];
-    const entrega = opt.dataset.entrega
-        ? 'Entrega: ' + new Date(opt.dataset.entrega + 'T00:00:00').toLocaleDateString('es-SV', { day:'2-digit', month:'short', year:'numeric' })
-        : 'Sin fecha de entrega';
-    txt.textContent = `${opt.dataset.estado} · ${entrega}`;
-    info.classList.add('visible');
 
     document.getElementById('grupTipo').style.display = 'block';
 
@@ -463,7 +458,7 @@ async function guardarPago() {
     } catch(e) { mostrarAlerta('Error de conexión con el servidor.'); }
 
     btn.disabled = false;
-    document.getElementById('txtGuardar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Pago';
+    document.getElementById('txtGuardar').innerHTML = 'Guardar Pago';
 }
 
 function limpiarFormulario() {
