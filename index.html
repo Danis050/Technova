@@ -15,11 +15,11 @@
         <div class="logo">
             <a href="index.html"><img src="img/logo.svg" alt="Logo TechNova" width="190" height="34"></a>
         </div>
-        
+
         <button class="hamburger" id="hamburger" aria-label="Menú">
             <span></span><span></span><span></span>
         </button>
-        
+
         <ul class="nav-links" id="navLinks">
             <li><a href="index.html">Inicio</a></li>
             <li><a href="#productos">Productos</a></li>
@@ -27,18 +27,19 @@
             <li><a href="#">Proyectos</a></li>
             <li><a href="#contacto">Contacto</a></li>
         </ul>
-        
-<div class="flex items-center nav-actions" id="navActions">
-    <a href="login.html" class="btn-login" id="btnLogin">Inicio de Sesión</a>
-    <div id="navUserInfo" style="display:none; align-items:center; gap:10px;">
-        <a href="#" id="navDashboardLink" style="font-size:0.88rem;font-weight:600;color:#6d28d9;text-decoration:none;">
-            <i class="fa-solid fa-gauge" style="margin-right:4px;"></i><span id="navUserName"></span>
-        </a>
-        <a href="#" onclick="cerrarSesionIndex()" style="font-size:0.82rem;color:#64748b;text-decoration:none;border:1.5px solid #e2e8f0;padding:5px 12px;border-radius:8px;">
-            <i class="fa-solid fa-right-from-bracket"></i> Salir
-        </a>
-    </div>
-</div>
+
+        <!-- ✅ Removidas clases "flex items-center" de Tailwind que no existen en style.css -->
+        <div class="nav-actions" id="navActions">
+            <a href="login.html" class="btn-login" id="btnLogin">Inicio de Sesión</a>
+            <div id="navUserInfo" style="display:none; align-items:center; gap:10px;">
+                <a href="#" id="navDashboardLink" style="font-size:0.88rem;font-weight:600;color:#6d28d9;text-decoration:none;">
+                    <i class="fa-solid fa-gauge" style="margin-right:4px;"></i><span id="navUserName"></span>
+                </a>
+                <a href="#" onclick="cerrarSesionIndex()" style="font-size:0.82rem;color:#64748b;text-decoration:none;border:1.5px solid #e2e8f0;padding:5px 12px;border-radius:8px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Salir
+                </a>
+            </div>
+        </div>
     </nav>
 </header>
 
@@ -174,11 +175,13 @@
     const hamburger  = document.getElementById('hamburger');
     const navLinks   = document.getElementById('navLinks');
     const navActions = document.getElementById('navActions');
+
     hamburger.addEventListener('click', () => {
         hamburger.classList.toggle('open');
         navLinks.classList.toggle('open');
         navActions.classList.toggle('open');
     });
+
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             hamburger.classList.remove('open');
@@ -189,7 +192,7 @@
 
     (async function verificarSesion() {
         try {
-            const res = await fetch('php/dashboard_data.php');
+            const res  = await fetch('php/dashboard_data.php');
             const data = await res.json();
             if (!data.error) {
                 document.getElementById('btnLogin').style.display = 'none';
