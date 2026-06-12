@@ -9,14 +9,18 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="dash-body">
+
 <div class="mobile-topbar">
     <span class="brand">🔷 TechNova</span>
     <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
 </div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="dash-layout">
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo"><img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova</div>
+        <div class="sidebar-logo">
+            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34"> TechNova
+        </div>
         <nav class="sidebar-menu">
             <div class="menu-section-label">Principal</div>
             <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
@@ -30,7 +34,10 @@
             <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
             <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
         </nav>
-        <div class="sidebar-user"><strong id="sidebarNombre">Cargando...</strong><span id="sidebarRol"></span></div>
+        <div class="sidebar-user">
+            <strong id="sidebarNombre">Cargando...</strong>
+            <span id="sidebarRol"></span>
+        </div>
     </aside>
 
     <main class="dash-main">
@@ -39,27 +46,42 @@
                 <h1><i class="fa-solid fa-clipboard-check" style="color:#6d28d9;margin-right:10px;"></i>Entregables</h1>
                 <p>Gestión de entregables por proyecto</p>
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+            </button>
         </div>
 
         <div class="table-card">
             <div class="filtro-bar">
-                <label style="font-weight:700;font-size:.88rem;color:#0f172a;"><i class="fa-solid fa-folder-open" style="color:#6d28d9;margin-right:6px;"></i>Proyecto:</label>
+                <label style="font-weight:700;font-size:.88rem;color:#0f172a;">
+                    <i class="fa-solid fa-folder-open" style="color:#6d28d9;margin-right:6px;"></i>Proyecto:
+                </label>
+                <!-- Los proyectos se cargan desde la DB -->
                 <select id="selProyecto" onchange="cargarEntregables()">
-                    <option value="">Selecciona un proyecto...</option>
-                    <option value="1" selected>Sitio Web Corporativo</option>
-                    <option value="2">App Móvil Delivery</option>
-                    <option value="3">Sistema ERP Finanzas</option>
+                    <option value="">Cargando proyectos...</option>
                 </select>
-                <button class="btn-save" onclick="abrirModal()"><i class="fa-solid fa-plus"></i> Nuevo Entregable</button>
+                <button class="btn-save" onclick="abrirModal()">
+                    <i class="fa-solid fa-plus"></i> Nuevo Entregable
+                </button>
             </div>
 
-            <div class="progress-bar-wrap" id="progressWrap">
-                <div class="progress-label"><span>Progreso del proyecto</span><span id="progressPct">50%</span></div>
-                <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:50%"></div></div>
+            <div class="progress-bar-wrap" id="progressWrap" style="display:none;">
+                <div class="progress-label">
+                    <span>Progreso del proyecto</span>
+                    <span id="progressPct">0%</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div id="loadingEntregables" style="text-align:center;padding:40px;display:none;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+                <p style="margin-top:8px;color:#94a3b8;">Cargando entregables...</p>
             </div>
 
             <div class="entregables-list" id="listaEntregables"></div>
+
             <div id="emptyState" style="display:none;text-align:center;padding:60px;color:#94a3b8;">
                 <i class="fa-solid fa-clipboard" style="font-size:2.5rem;display:block;margin-bottom:12px;color:#cbd5e1;"></i>
                 <h3 style="color:#334155;margin-bottom:6px;">Sin entregables</h3>
@@ -74,19 +96,25 @@
     <div class="modal" role="dialog" aria-modal="true">
         <div class="modal-header">
             <div>
-                <h2><span class="modal-icon"><i class="fa-solid fa-clipboard-check"></i></span><span id="modalTitle">Nuevo Entregable</span></h2>
+                <h2>
+                    <span class="modal-icon"><i class="fa-solid fa-clipboard-check"></i></span>
+                    <span id="modalTitle">Nuevo Entregable</span>
+                </h2>
                 <p class="modal-subtitle" id="modalSubtitle">Define los datos del entregable</p>
             </div>
-            <button class="btn-close-modal" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="btn-close-modal" onclick="cerrarModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="entId">
+
             <div class="mfield">
                 <label>Nombre del entregable <span style="color:#ef4444;">*</span></label>
                 <input type="text" id="entNombre" placeholder="Ej. Diseño de wireframes">
             </div>
             <div class="mfield">
-                <label>Descripción</label>
+                <label>Descripción <span style="color:#ef4444;">*</span></label>
                 <input type="text" id="entDesc" placeholder="Breve descripción del entregable">
             </div>
             <div class="form-row-2">
@@ -96,11 +124,14 @@
                 </div>
                 <div class="mfield">
                     <label>Estado</label>
+                    <!--
+                        Estados alineados con los que acepta guardar_entregable.php:
+                        'Pendiente' | 'En desarrollo' | 'Entregado'
+                    -->
                     <select id="entEstado">
                         <option value="Pendiente">Pendiente</option>
-                        <option value="En Progreso">En Progreso</option>
+                        <option value="En desarrollo">En desarrollo</option>
                         <option value="Entregado">Entregado</option>
-                        <option value="Aprobado">Aprobado</option>
                     </select>
                 </div>
             </div>
@@ -110,120 +141,314 @@
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                     <span id="fileName">Haz clic para seleccionar archivo</span>
                 </div>
-                <input type="file" id="fileInput" style="display:none" onchange="document.getElementById('fileName').textContent=this.files[0]?.name||'Haz clic para seleccionar archivo'">
+                <input type="file" id="fileInput" style="display:none"
+                    onchange="document.getElementById('fileName').textContent = this.files[0]?.name || 'Haz clic para seleccionar archivo'">
             </div>
+
             <div id="modalAlerta" style="display:none;"></div>
-            <button class="btn-modal-submit" onclick="guardarEntregable()"><i class="fa-solid fa-floppy-disk"></i><span id="btnGuardarTxt">Crear Entregable</span></button>
+
+            <button class="btn-modal-submit" id="btnGuardar" onclick="guardarEntregable()">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="btnGuardarTxt">Crear Entregable</span>
+            </button>
         </div>
     </div>
 </div>
 
 <script>
-document.getElementById('btnMenuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');});
-document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');});
+// ── Sidebar toggle ─────────────────────────────────────────────────────────
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('visible');
+});
+document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('visible');
+});
+document.getElementById('modalEntregable').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
-let entregables={
-    '1':[
-        {id:1,nombre:'Diseño de Wireframes',desc:'Wireframes de todas las páginas principales',fecha:'2026-06-01',estado:'Aprobado'},
-        {id:2,nombre:'Maquetación Frontend',desc:'HTML/CSS responsivo de todas las vistas',fecha:'2026-06-15',estado:'En Progreso'},
-        {id:3,nombre:'Integración Backend',desc:'APIs REST y conexión con base de datos',fecha:'2026-07-01',estado:'Pendiente'},
-        {id:4,nombre:'Pruebas QA',desc:'Testing funcional y de regresión',fecha:'2026-07-15',estado:'Pendiente'}
-    ],
-    '2':[{id:1,nombre:'Prototipo UI/UX',desc:'Diseño de la app en Figma',fecha:'2026-06-10',estado:'Entregado'}],
-    '3':[]
+// ── Estado global ──────────────────────────────────────────────────────────
+let idUsuarioActual = 0; // Se llena en cargarSesion()
+
+const iconEstado = {
+    'Pendiente':    'fa-clock',
+    'En desarrollo':'fa-spinner',
+    'Entregado':    'fa-paper-plane'
 };
-let nextId=10;
-const iconEstado={'Pendiente':'fa-clock','En Progreso':'fa-spinner','Entregado':'fa-paper-plane','Aprobado':'fa-circle-check'};
-const clsEstado={'Pendiente':'pendiente','En Progreso':'progreso','Entregado':'entregado','Aprobado':'aprobado'};
+const clsEstado = {
+    'Pendiente':    'pendiente',
+    'En desarrollo':'progreso',
+    'Entregado':    'entregado'
+};
 
-function fmtFecha(f){if(!f)return'-';const[y,m,d]=f.split('-');return`${d}/${m}/${y}`;}
-
-function cargarEntregables(){
-    const pid=document.getElementById('selProyecto').value;
-    const lista=entregables[pid]||[];
-    const el=document.getElementById('listaEntregables');
-    const empty=document.getElementById('emptyState');
-    const pw=document.getElementById('progressWrap');
-    if(!pid||lista.length===0){el.innerHTML='';empty.style.display='block';pw.style.display='none';return;}
-    empty.style.display='none';pw.style.display='block';
-    const done=lista.filter(e=>e.estado==='Aprobado'||e.estado==='Entregado').length;
-    const pct=Math.round(done/lista.length*100);
-    document.getElementById('progressPct').textContent=pct+'%';
-    document.getElementById('progressFill').style.width=pct+'%';
-    el.innerHTML=lista.map(e=>`
-        <div class="entregable-row">
-            <div class="ent-icon ${clsEstado[e.estado]}"><i class="fa-solid ${iconEstado[e.estado]}"></i></div>
-            <div class="ent-info"><h4>${e.nombre}</h4><p>${e.desc||'Sin descripción'}</p></div>
-            <div class="ent-fecha"><i class="fa-regular fa-calendar"></i>${fmtFecha(e.fecha)}</div>
-            <span class="ent-estado est-${clsEstado[e.estado]}">${e.estado}</span>
-            <div class="ent-actions">
-                <button class="btn-icon btn-edit" onclick="editarEntregable(${e.id})"><i class="fa-regular fa-pen-to-square"></i></button>
-                <button class="btn-icon btn-del" onclick="eliminarEntregable(${e.id})"><i class="fa-regular fa-trash-can"></i></button>
-            </div>
-        </div>
-    `).join('');
+function fmtFecha(f) {
+    if (!f) return '-';
+    const [y, m, d] = f.split('-');
+    return `${d}/${m}/${y}`;
 }
 
-function abrirModal(editar=false){
-    document.getElementById('modalEntregable').classList.add('open');
-    document.body.style.overflow='hidden';
-    if(!editar){document.getElementById('entId').value='';document.getElementById('entNombre').value='';document.getElementById('entDesc').value='';document.getElementById('entFecha').value='';document.getElementById('entEstado').value='Pendiente';document.getElementById('modalTitle').textContent='Nuevo Entregable';document.getElementById('btnGuardarTxt').textContent='Crear Entregable';}
-}
-function cerrarModal(){document.getElementById('modalEntregable').classList.remove('open');document.body.style.overflow='';}
-document.getElementById('modalEntregable').addEventListener('click',e=>{if(e.target===e.currentTarget)cerrarModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarModal();});
-
-function editarEntregable(id){
-    const pid=document.getElementById('selProyecto').value;
-    const ent=(entregables[pid]||[]).find(e=>e.id===id);
-    if(!ent)return;
-    document.getElementById('entId').value=id;
-    document.getElementById('entNombre').value=ent.nombre;
-    document.getElementById('entDesc').value=ent.desc;
-    document.getElementById('entFecha').value=ent.fecha;
-    document.getElementById('entEstado').value=ent.estado;
-    document.getElementById('modalTitle').textContent='Editar Entregable';
-    document.getElementById('btnGuardarTxt').textContent='Guardar Cambios';
-    abrirModal(true);
-}
-
-function guardarEntregable(){
-    const pid=document.getElementById('selProyecto').value;
-    const nombre=document.getElementById('entNombre').value.trim();
-    const fecha=document.getElementById('entFecha').value;
-    if(!nombre||!fecha){const al=document.getElementById('modalAlerta');al.style.cssText='display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';al.innerHTML='<i class="fa-solid fa-circle-exclamation"></i> Nombre y fecha son obligatorios.';return;}
-    const id=document.getElementById('entId').value;
-    if(id){
-        const ent=entregables[pid].find(e=>e.id==id);
-        if(ent){ent.nombre=nombre;ent.desc=document.getElementById('entDesc').value.trim();ent.fecha=fecha;ent.estado=document.getElementById('entEstado').value;}
-    }else{
-        if(!entregables[pid])entregables[pid]=[];
-        entregables[pid].push({id:nextId++,nombre,desc:document.getElementById('entDesc').value.trim(),fecha,estado:document.getElementById('entEstado').value});
-    }
-    cerrarModal();cargarEntregables();
-}
-
-function eliminarEntregable(id){
-    const pid=document.getElementById('selProyecto').value;
-    if(confirm('¿Eliminar este entregable?')){entregables[pid]=entregables[pid].filter(e=>e.id!==id);cargarEntregables();}
-}
-
-cargarEntregables();
-
-(async function cargarSesion() {
+// ── Cargar proyectos desde DB ──────────────────────────────────────────────
+async function cargarProyectos() {
     try {
-        const res = await fetch('php/dashboard_data.php');
+        const res  = await fetch('php/proyectos_lista.php');
         const data = await res.json();
-        if (data.error) { window.location.href = 'login.html'; return; }
-        document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre || '';
-        document.getElementById('sidebarRol').textContent = data.rol || '';
-    } catch (e) { window.location.href = 'login.html'; }
-})();
+        const lista = Array.isArray(data) ? data : (data.proyectos || []);
+        const sel = document.getElementById('selProyecto');
+        sel.innerHTML = '<option value="">Selecciona un proyecto...</option>';
+        lista.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id || p.id_proyecto;
+            opt.textContent = p.nombre || p.nombre_proyecto;
+            sel.appendChild(opt);
+        });
+    } catch(e) {
+        document.getElementById('selProyecto').innerHTML =
+            '<option value="">Error al cargar proyectos</option>';
+    }
+}
 
+// ── Cargar entregables desde DB ────────────────────────────────────────────
+async function cargarEntregables() {
+    const pid = document.getElementById('selProyecto').value;
+    const lista = document.getElementById('listaEntregables');
+    const empty = document.getElementById('emptyState');
+    const pw    = document.getElementById('progressWrap');
+    const load  = document.getElementById('loadingEntregables');
+
+    lista.innerHTML = '';
+    empty.style.display = 'none';
+    pw.style.display    = 'none';
+
+    if (!pid) return;
+
+    load.style.display = 'block';
+
+    try {
+        const res  = await fetch(`php/entregables_lista.php?id_proyecto=${pid}`);
+        const data = await res.json();
+
+        load.style.display = 'none';
+
+        if (!Array.isArray(data) || data.length === 0) {
+            empty.style.display = 'block';
+            return;
+        }
+
+        // Barra de progreso
+        pw.style.display = 'block';
+        const done = data.filter(e => e.estado === 'Entregado').length;
+        const pct  = Math.round(done / data.length * 100);
+        document.getElementById('progressPct').textContent = pct + '%';
+        document.getElementById('progressFill').style.width = pct + '%';
+
+        // Renderizar filas
+        lista.innerHTML = data.map(e => `
+            <div class="entregable-row">
+                <div class="ent-icon ${clsEstado[e.estado] || 'pendiente'}">
+                    <i class="fa-solid ${iconEstado[e.estado] || 'fa-clock'}"></i>
+                </div>
+                <div class="ent-info">
+                    <h4>${e.nombre}</h4>
+                    <p>${e.descripcion || 'Sin descripción'}</p>
+                </div>
+                <div class="ent-fecha">
+                    <i class="fa-regular fa-calendar"></i>${fmtFecha(e.fecha_estimada)}
+                </div>
+                <span class="ent-estado est-${clsEstado[e.estado] || 'pendiente'}">${e.estado}</span>
+                <div class="ent-actions">
+                    <button class="btn-icon btn-edit" onclick="editarEntregable(${e.id_entregable})" title="Editar">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </button>
+                    <button class="btn-icon btn-del" onclick="eliminarEntregable(${e.id_entregable})" title="Eliminar">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+    } catch(e) {
+        load.style.display = 'none';
+        console.error('Error cargando entregables:', e);
+    }
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────────
+function abrirModal(editar = false) {
+    if (!editar) {
+        document.getElementById('entId').value      = '';
+        document.getElementById('entNombre').value  = '';
+        document.getElementById('entDesc').value    = '';
+        document.getElementById('entFecha').value   = '';
+        document.getElementById('entEstado').value  = 'Pendiente';
+        document.getElementById('fileName').textContent = 'Haz clic para seleccionar archivo';
+        document.getElementById('modalTitle').textContent    = 'Nuevo Entregable';
+        document.getElementById('btnGuardarTxt').textContent = 'Crear Entregable';
+    }
+    ocultarAlerta();
+    document.getElementById('modalEntregable').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal() {
+    document.getElementById('modalEntregable').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// ── Editar ─────────────────────────────────────────────────────────────────
+async function editarEntregable(id) {
+    const pid = document.getElementById('selProyecto').value;
+    if (!pid) return;
+
+    // Obtener datos del entregable desde el DOM ya renderizado
+    // (podrías también hacer fetch de un endpoint de detalle)
+    try {
+        const res  = await fetch(`php/entregables_lista.php?id_proyecto=${pid}`);
+        const lista = await res.json();
+        const ent   = lista.find(e => e.id_entregable == id);
+        if (!ent) return;
+
+        document.getElementById('entId').value     = ent.id_entregable;
+        document.getElementById('entNombre').value = ent.nombre;
+        document.getElementById('entDesc').value   = ent.descripcion || '';
+        document.getElementById('entFecha').value  = ent.fecha_estimada;
+        document.getElementById('entEstado').value = ent.estado;
+        document.getElementById('modalTitle').textContent    = 'Editar Entregable';
+        document.getElementById('btnGuardarTxt').textContent = 'Guardar Cambios';
+        abrirModal(true);
+    } catch(e) {
+        console.error('Error cargando entregable:', e);
+    }
+}
+
+// ── Guardar (CREATE / UPDATE) → llama al PHP ───────────────────────────────
+async function guardarEntregable() {
+    const pid    = document.getElementById('selProyecto').value;
+    const nombre = document.getElementById('entNombre').value.trim();
+    const desc   = document.getElementById('entDesc').value.trim();
+    const fecha  = document.getElementById('entFecha').value;
+    const estado = document.getElementById('entEstado').value;
+    const idEnt  = parseInt(document.getElementById('entId').value) || 0;
+
+    // Validaciones frontend
+    if (!pid)    return mostrarAlerta('Selecciona un proyecto.');
+    if (!nombre) return mostrarAlerta('El nombre del entregable es obligatorio.');
+    if (!desc)   return mostrarAlerta('La descripción es obligatoria.');
+    if (!fecha)  return mostrarAlerta('La fecha de entrega es obligatoria.');
+
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true;
+    document.getElementById('btnGuardarTxt').textContent = 'Guardando...';
+
+    const payload = {
+        id_proyecto:   parseInt(pid),
+        nombre,
+        descripcion:   desc,
+        fecha_estimada: fecha,          // nombre que espera el PHP
+        estado,
+        id_responsable: idUsuarioActual, // usuario de sesión actual
+        id_entregable:  idEnt            // 0 = crear, >0 = editar
+    };
+
+    try {
+        const res  = await fetch('php/guardar_entregable.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) {
+            mostrarAlerta(data.mensaje);
+        } else {
+            cerrarModal();
+            await cargarEntregables(); // refrescar desde DB
+        }
+    } catch(e) {
+        mostrarAlerta('Error de conexión con el servidor.');
+    }
+
+    btn.disabled = false;
+    document.getElementById('btnGuardarTxt').textContent =
+        idEnt > 0 ? 'Guardar Cambios' : 'Crear Entregable';
+}
+
+// ── Eliminar → llama al PHP ────────────────────────────────────────────────
+async function eliminarEntregable(id) {
+    if (!confirm('¿Eliminar este entregable?')) return;
+
+    try {
+        const res  = await fetch('php/entregable_eliminar.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ id_entregable: id })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+            alert('Error: ' + data.mensaje);
+        } else {
+            await cargarEntregables(); // refrescar desde DB
+        }
+    } catch(e) {
+        alert('Error de conexión al eliminar.');
+    }
+}
+
+// ── Alertas modal ──────────────────────────────────────────────────────────
+function mostrarAlerta(msg) {
+    const el = document.getElementById('modalAlerta');
+    el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+    el.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${msg}`;
+}
+function ocultarAlerta() {
+    const el = document.getElementById('modalAlerta');
+    el.style.display = 'none';
+    el.innerHTML = '';
+}
+
+// ── Sesión ─────────────────────────────────────────────────────────────────
 async function cerrarSesion() {
     try { await fetch('php/logout.php'); } catch(e) {}
     window.location.href = 'login.html';
 }
+
+// ── Inicialización ─────────────────────────────────────────────────────────
+(async function init() {
+    try {
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+
+        document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre || '';
+        document.getElementById('sidebarRol').textContent    = data.rol || '';
+
+        // Guardar ID de usuario para usarlo como id_responsable al crear/editar
+        idUsuarioActual = data.id_usuario || 0;
+
+    } catch (e) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    await cargarProyectos();
+
+    // Si viene ?id=X en la URL (desde proyectos.html → "Ver entregables")
+    const params = new URLSearchParams(location.search);
+    const idParam = params.get('id');
+    if (idParam) {
+        const sel = document.getElementById('selProyecto');
+        sel.value = idParam;
+        if (!sel.value) {
+            // La opción puede no existir aún si proyectos tardó — esperar render
+            setTimeout(() => { sel.value = idParam; cargarEntregables(); }, 200);
+        } else {
+            await cargarEntregables();
+        }
+    }
+})();
 </script>
 </body>
 </html>

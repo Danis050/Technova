@@ -80,6 +80,7 @@
 
 <body class="dash-body">
 
+    <!-- Topbar móvil — ya responsivo con dash-body CSS -->
     <div class="mobile-topbar">
         <span class="brand">🔷 TechNova</span>
         <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
@@ -88,26 +89,21 @@
 
     <div class="dash-layout">
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
-            TechNova
-        </div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
+                TechNova
+            </div>
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Principal</div>
-                <a href="dashboard.html" class=""><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                <!-- <a href="#"><i class="fa-solid fa-users"></i> Clientes</a> -->
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
                 <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
                 <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
                 <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-                <!-- <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a> -->
                 <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
                 <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
                 <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
                 <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-                <!-- <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a> -->
 
                 <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
                 <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
@@ -119,30 +115,27 @@
                 <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
-        <div class="sidebar-user">
-            <strong id="sidebarNombre">Cargando...</strong>
-            <span id="sidebarRol"></span>
-        </div>
-    </aside>
+            <div class="sidebar-user">
+                <strong id="sidebarNombre">Cargando...</strong>
+                <span id="sidebarRol"></span>
+            </div>
+        </aside>
+
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const currentPage = location.pathname.split('/').pop() || 'index.html';
                 document.querySelectorAll('.sidebar-menu a').forEach(a => {
                     a.classList.remove('active');
-                    if (a.getAttribute('href') === currentPage) {
-                        a.classList.add('active');
-                    }
+                    if (a.getAttribute('href') === currentPage) a.classList.add('active');
                 });
             });
         </script>
-
 
         <main class="dash-main">
 
             <div class="dash-header">
                 <div>
-                    <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos
-                    </h1>
+                    <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos</h1>
                     <p id="saludo">Gestión de proyectos</p>
                 </div>
                 <button class="btn-logout" onclick="cerrarSesion()">
@@ -151,7 +144,7 @@
             </div>
 
             <div class="table-card">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
                     <div>
                         <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
                             <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
@@ -189,6 +182,7 @@
         </main>
     </div>
 
+    <!-- MODAL NUEVO / EDITAR PROYECTO -->
     <div class="modal-overlay" id="modalProyectoOverlay">
         <div class="modal" role="dialog" aria-modal="true">
             <div class="modal-header">
@@ -218,7 +212,7 @@
                     </div>
                 </div>
 
-                <!-- ── PASO 1 ── -->
+                <!-- PASO 1 -->
                 <div class="wpanel active" id="paso1">
                     <div class="mfield">
                         <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
@@ -268,7 +262,7 @@
                     </button>
                 </div>
 
-                <!-- ── PASO 2: Anticipo ── -->
+                <!-- PASO 2: Anticipo -->
                 <div class="wpanel" id="paso2">
                     <div class="anticipo-hdr">
                         <i class="fa-solid fa-hand-holding-dollar"></i>
@@ -280,9 +274,8 @@
                     <div class="mfield">
                         <label>Monto del anticipo (50% obligatorio)</label>
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <input type="text" id="aMontoWiz" readonly style="background:#f1f5f9;color:#ff0404;
-                                      cursor:not-allowed;border:1.5px solid #e2e8f0;border-radius:10px;
-                                      padding:10px 14px;width:100%;box-sizing:border-box;">
+                            <input type="text" id="aMontoWiz" readonly
+                                style="background:#f1f5f9;color:#ff0404;cursor:not-allowed;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;width:100%;box-sizing:border-box;">
                         </div>
                         <p style="margin:5px 0 0;font-size:.74rem;color:#64748b;">
                             <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
@@ -336,10 +329,12 @@
         </div>
     </div>
 
+    <!-- MODAL ELIMINAR -->
     <div class="modal-overlay" id="modalEliminarOverlay">
         <div class="modal modal-confirm" role="dialog" aria-modal="true">
             <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
-            <h3>Â¿Eliminar proyecto?</h3>
+            <!-- ✅ Fix encoding: Â¿ → ¿ -->
+            <h3>¿Eliminar proyecto?</h3>
             <p>Esta acción es permanente. El proyecto <strong id="eliminarNombreProyecto"></strong> será borrado.</p>
             <div class="confirm-btns">
                 <button class="btn-cancel-m" onclick="cerrarModalEliminar()">Cancelar</button>
@@ -351,7 +346,8 @@
     </div>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
+        // Sidebar toggle (dash-body ya tiene el CSS responsive)
+        const sidebar    = document.getElementById('sidebar');
         const sidebarOvl = document.getElementById('sidebarOverlay');
         document.getElementById('btnMenuToggle').addEventListener('click', () => {
             sidebar.classList.toggle('open');
@@ -385,7 +381,7 @@
         function getBadgeClass(e) {
             return {
                 'En Proceso': 'badge-en-progreso', 'Completado': 'badge-completado',
-                'Pendiente': 'badge-pendiente', 'Cancelado': 'badge-cancelado'
+                'Pendiente': 'badge-pendiente',    'Cancelado': 'badge-cancelado'
             }[e] || 'badge-pendiente';
         }
         function escapeHtml(s) {
@@ -396,65 +392,58 @@
 
         async function cargarProyectos() {
             try {
-                const res = await fetch('php/proyectos_lista.php');
+                const res  = await fetch('php/proyectos_lista.php');
                 const data = await res.json();
-                proyectos = Array.isArray(data) ? data : (data.proyectos || []);
+                proyectos  = Array.isArray(data) ? data : (data.proyectos || []);
                 renderTabla();
             } catch (e) { console.error('Error:', e); }
         }
 
-function renderTabla() {
+        function renderTabla() {
             const tbody = document.getElementById('tablaProyectosBody');
             document.getElementById('proyectosCount').textContent =
                 `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
 
             if (proyectos.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
-            No hay proyectos registrados</td></tr>`;
+                    No hay proyectos registrados</td></tr>`;
                 return;
             }
-            proyectos.sort((a, b) => {
-                const idA = a.id || a.id_proyecto;
-                const idB = b.id || b.id_proyecto;
-                return idB - idA;
-            });
+            proyectos.sort((a, b) => (b.id || b.id_proyecto) - (a.id || a.id_proyecto));
 
             tbody.innerHTML = proyectos.map(p => {
-                const id = p.id || p.id_proyecto; 
-                
+                const id = p.id || p.id_proyecto;
                 const anticipoBadge = p.anticipo_pagado == 1
                     ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
                     : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
-                
                 return `
-        <tr>
-            <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
-            <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
-            <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
-            <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
-            <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
-            <td style="text-align:right;">
-                <button class="btn-icon btn-entregables" title="Ver entregables"
-                    onclick="window.location.href='entregables.html?id=${id}'">
-                    <i class="fa-solid fa-boxes-stacked"></i>
-                </button>
-                <button class="btn-icon btn-edit" title="Editar proyecto"
-                    onclick="abrirModalEditar(${id})">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <button class="btn-icon btn-del" title="Eliminar proyecto"
-                    onclick="abrirModalEliminar(${id})">
-                    <i class="fa-regular fa-trash-can"></i>
-                </button>
-            </td>
-        </tr>`;
+                <tr>
+                    <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
+                    <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
+                    <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
+                    <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
+                    <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', { minimumFractionDigits:2, maximumFractionDigits:2 }) : '-'}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-icon btn-entregables" title="Ver entregables"
+                            onclick="window.location.href='entregables.html?id=${id}'">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </button>
+                        <button class="btn-icon btn-edit" title="Editar proyecto" onclick="abrirModalEditar(${id})">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-icon btn-del" title="Eliminar proyecto" onclick="abrirModalEliminar(${id})">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>`;
             }).join('');
         }
+
         async function poblarSelectClientes(idSeleccionado = '') {
             const sel = document.getElementById('sel-cliente');
             sel.innerHTML = '<option value="">Cargando...</option>';
             try {
-                const res = await fetch('php/clientes_lista.php');
+                const res  = await fetch('php/clientes_lista.php');
                 const data = await res.json();
                 sel.innerHTML = '<option value="">Selecciona un cliente</option>';
                 data.forEach(c => {
@@ -471,8 +460,8 @@ function renderTabla() {
             const el = document.getElementById(elId);
             if (!msg) { el.style.display = 'none'; el.innerHTML = ''; return; }
             const [bg, col, bdr, ico] = tipo === 'error'
-                ? ['#fee2e2', '#dc2626', '#fca5a5', 'fa-circle-exclamation']
-                : ['#d1fae5', '#065f46', '#6ee7b7', 'fa-circle-check'];
+                ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
+                : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
             el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
             el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
         }
@@ -480,32 +469,25 @@ function renderTabla() {
         function recalcularAnticipo() {
             const monto = parseFloat(document.getElementById('proyectoMonto').value);
             const campo = document.getElementById('aMontoWiz');
-            if (!isNaN(monto) && monto > 0) {
-                campo.value = '$' + (monto / 2).toFixed(2);
-            } else {
-                campo.value = '';
-            }
+            campo.value = (!isNaN(monto) && monto > 0) ? '$' + (monto / 2).toFixed(2) : '';
         }
 
         function irPaso2() {
-            const nombre = document.getElementById('proyectoNombre').value.trim();
-            const idCliente = document.getElementById('sel-cliente').value;
+            const nombre     = document.getElementById('proyectoNombre').value.trim();
+            const idCliente  = document.getElementById('sel-cliente').value;
             const fechaInicio = document.getElementById('proyectoFechaInicio').value;
-            const fechaFin = document.getElementById('proyectoFechaFin').value;
-            const monto = parseFloat(document.getElementById('proyectoMonto').value);
+            const fechaFin   = document.getElementById('proyectoFechaFin').value;
+            const monto      = parseFloat(document.getElementById('proyectoMonto').value);
+
             if (!nombre || !idCliente || !fechaInicio || !fechaFin || !document.getElementById('proyectoMonto').value) {
-                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.');
-                return;
+                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
             }
             if (isNaN(monto) || monto <= 0) {
-                setAlerta('modalProyectoAlerta', 'El monto del proyecto debe ser mayor a 0.');
-                return;
+                setAlerta('modalProyectoAlerta', 'El monto del proyecto debe ser mayor a 0.'); return;
             }
             setAlerta('modalProyectoAlerta', '');
-
             document.getElementById('aMontoWiz').value = '$' + (monto / 2).toFixed(2);
 
-            // Avanzar stepper
             document.getElementById('paso1').classList.remove('active');
             document.getElementById('paso2').classList.add('active');
             document.getElementById('sc1').className = 'wstep-circle done';
@@ -532,12 +514,12 @@ function renderTabla() {
 
         async function crearProyectoCompleto() {
             const montoProyecto = parseFloat(document.getElementById('proyectoMonto').value);
-            const monto = (montoProyecto / 2).toFixed(2);  // Siempre 50%, calculado aquí también
-            const fecha = document.getElementById('aFechaWiz').value;
+            const monto  = (montoProyecto / 2).toFixed(2);
+            const fecha  = document.getElementById('aFechaWiz').value;
             const metodo = document.querySelector('input[name="aMetodoWiz"]:checked')?.value || '';
-            const comp = document.getElementById('aComprobanteWiz').value.trim();
+            const comp   = document.getElementById('aComprobanteWiz').value.trim();
 
-            if (!fecha) { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
+            if (!fecha)  { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
             if (!metodo) { setAlerta('alertaPaso2', 'Selecciona un método de pago.'); return; }
             setAlerta('alertaPaso2', '');
 
@@ -546,20 +528,20 @@ function renderTabla() {
             document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Creando...';
 
             const payload = {
-                nombre: document.getElementById('proyectoNombre').value.trim(),
-                idCliente: document.getElementById('sel-cliente').value,
-                estado: document.getElementById('proyectoEstado').value,
-                fechaInicio: document.getElementById('proyectoFechaInicio').value,
-                fechaFin: document.getElementById('proyectoFechaFin').value,
-                monto: montoProyecto,
-                anticipo_monto: parseFloat(monto),
-                anticipo_fecha: fecha,
-                anticipo_metodo: metodo,
+                nombre:               document.getElementById('proyectoNombre').value.trim(),
+                idCliente:            document.getElementById('sel-cliente').value,
+                estado:               document.getElementById('proyectoEstado').value,
+                fechaInicio:          document.getElementById('proyectoFechaInicio').value,
+                fechaFin:             document.getElementById('proyectoFechaFin').value,
+                monto:                montoProyecto,
+                anticipo_monto:       parseFloat(monto),
+                anticipo_fecha:       fecha,
+                anticipo_metodo:      metodo,
                 anticipo_comprobante: comp
             };
 
             try {
-                const res = await fetch('php/proyectos_crear.php', {
+                const res  = await fetch('php/proyectos_crear.php', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
@@ -573,12 +555,13 @@ function renderTabla() {
         }
 
         async function guardarEdicion() {
-            const nombre = document.getElementById('proyectoNombre').value.trim();
-            const idCliente = document.getElementById('sel-cliente').value;
-            const estado = document.getElementById('proyectoEstado').value;
+            const nombre     = document.getElementById('proyectoNombre').value.trim();
+            const idCliente  = document.getElementById('sel-cliente').value;
+            const estado     = document.getElementById('proyectoEstado').value;
             const fechaInicio = document.getElementById('proyectoFechaInicio').value;
-            const fechaFin = document.getElementById('proyectoFechaFin').value;
-            const monto = document.getElementById('proyectoMonto').value;
+            const fechaFin   = document.getElementById('proyectoFechaFin').value;
+            const monto      = document.getElementById('proyectoMonto').value;
+
             if (!nombre || !idCliente || !fechaInicio || !fechaFin || !monto) {
                 setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
             }
@@ -586,11 +569,13 @@ function renderTabla() {
             if (estado === 'En Proceso' && p && p.anticipo_pagado == 0) {
                 setAlerta('modalProyectoAlerta', 'No se puede activar el proyecto sin anticipo registrado.'); return;
             }
+
             const btn = document.getElementById('btnGuardarEdicion');
             btn.disabled = true;
             document.getElementById('btnGuardarTexto').textContent = 'Guardando...';
+
             try {
-                const res = await fetch('php/proyectos_actualizar.php', {
+                const res  = await fetch('php/proyectos_actualizar.php', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto: parseFloat(monto) })
                 });
@@ -598,21 +583,21 @@ function renderTabla() {
                 if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
                 else setAlerta('modalProyectoAlerta', 'Error en el servidor.');
             } catch (e) { setAlerta('modalProyectoAlerta', 'Error de conexión.'); }
+
             btn.disabled = false;
             document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
         }
 
         async function abrirModalProyecto() {
             modoEdicion = false;
-            document.getElementById('modalProyectoTitle').textContent = 'Nuevo Proyecto';
+            document.getElementById('modalProyectoTitle').textContent   = 'Nuevo Proyecto';
             document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos del proyecto.';
-            ['proyectoNombre', 'proyectoFechaInicio', 'proyectoFechaFin', 'proyectoMonto', 'aMontoWiz', 'aFechaWiz', 'aComprobanteWiz']
+            ['proyectoNombre','proyectoFechaInicio','proyectoFechaFin','proyectoMonto','aMontoWiz','aFechaWiz','aComprobanteWiz']
                 .forEach(id => document.getElementById(id).value = '');
             document.getElementById('proyectoEstado').value = 'Pendiente';
             document.querySelectorAll('input[name="aMetodoWiz"]').forEach(r => r.checked = false);
-            // Modo creación: mostrar stepper + siguiente, ocultar edición
-            document.getElementById('wizardSteps').style.display = 'flex';
-            document.getElementById('footerPaso1').style.display = 'flex';
+            document.getElementById('wizardSteps').style.display    = 'flex';
+            document.getElementById('footerPaso1').style.display    = 'flex';
             document.getElementById('btnGuardarEdicion').style.display = 'none';
             irPaso1();
             setAlerta('modalProyectoAlerta', '');
@@ -624,17 +609,17 @@ function renderTabla() {
         async function abrirModalEditar(id) {
             const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
             if (!p) return;
-            modoEdicion = true;
+            modoEdicion    = true;
             proyectoEditId = id;
-            document.getElementById('modalProyectoTitle').textContent = 'Editar Proyecto';
+            document.getElementById('modalProyectoTitle').textContent   = 'Editar Proyecto';
             document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los datos del proyecto.';
-            document.getElementById('proyectoNombre').value = p.nombre || p.nombre_proyecto;
-            document.getElementById('proyectoEstado').value = p.estado;
+            document.getElementById('proyectoNombre').value      = p.nombre || p.nombre_proyecto;
+            document.getElementById('proyectoEstado').value      = p.estado;
             document.getElementById('proyectoFechaInicio').value = p.fechaInicio || p.fecha_inicio;
-            document.getElementById('proyectoFechaFin').value = p.fechaFin || p.fecha_fin;
-            document.getElementById('proyectoMonto').value = p.monto != null ? p.monto : '';
-            document.getElementById('wizardSteps').style.display = 'none';
-            document.getElementById('footerPaso1').style.display = 'none';
+            document.getElementById('proyectoFechaFin').value    = p.fechaFin   || p.fecha_fin;
+            document.getElementById('proyectoMonto').value       = p.monto != null ? p.monto : '';
+            document.getElementById('wizardSteps').style.display    = 'none';
+            document.getElementById('footerPaso1').style.display    = 'none';
             document.getElementById('btnGuardarEdicion').style.display = 'block';
             document.getElementById('paso1').classList.add('active');
             document.getElementById('paso2').classList.remove('active');
@@ -665,8 +650,7 @@ function renderTabla() {
         document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
             try {
                 const res = await fetch('php/proyectos_eliminar.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: proyectoEliminarId })
                 });
                 if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
@@ -679,7 +663,7 @@ function renderTabla() {
 
         async function inicializar() {
             try {
-                const res = await fetch('php/dashboard_data.php');
+                const res  = await fetch('php/dashboard_data.php');
                 const data = await res.json();
                 if (data.error) { window.location.href = 'login.html'; return; }
 
@@ -690,16 +674,11 @@ function renderTabla() {
 
                 await cargarProyectos();
                 document.getElementById('loadingBox').style.display = 'none';
-                document.getElementById('tableWrap').style.display = 'block';
+                document.getElementById('tableWrap').style.display  = 'block';
             } catch (e) { console.error(e); }
         }
 
         inicializar();
     </script>
 </body>
-
 </html>
-
-
-
-

@@ -1,45 +1,109 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicios | TechNova</title>
+    <title>Proyectos | TechNova</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .badge-estado-tabla { padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600; }
+        .badge-en-progreso  { background:#e0f2fe;color:#0369a1; }
+        .badge-completado   { background:#dcfce7;color:#15803d; }
+        .badge-pendiente    { background:#fef3c7;color:#b45309; }
+        .badge-cancelado    { background:#f1f5f9;color:#475569; }
+        .badge-anticipo-ok  { background:#d1fae5;color:#065f46;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:700; }
+        .badge-anticipo-no  { background:#fee2e2;color:#dc2626;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:700; }
+
+        .wizard-steps { display:flex;align-items:center;margin-bottom:20px; }
+        .wstep { display:flex;align-items:center;gap:7px;flex:1; }
+        .wstep-circle {
+            width:28px;height:28px;border-radius:50%;border:2px solid #e2e8f0;
+            display:flex;align-items:center;justify-content:center;
+            font-size:.75rem;font-weight:700;color:#94a3b8;background:#fff;
+            flex-shrink:0;transition:all .2s;
+        }
+        .wstep-circle.active { border-color:#6d28d9;background:#6d28d9;color:#fff; }
+        .wstep-circle.done   { border-color:#059669;background:#059669;color:#fff; }
+        .wstep-label { font-size:.73rem;font-weight:600;color:#94a3b8;white-space:nowrap; }
+        .wstep-label.active { color:#6d28d9; }
+        .wstep-label.done   { color:#059669; }
+        .wstep-conn { flex:1;height:2px;background:#e2e8f0;margin:0 8px;transition:background .2s; }
+        .wstep-conn.done { background:#059669; }
+
+        .wpanel { display:none; }
+        .wpanel.active { display:block; }
+
+        .anticipo-hdr {
+            background:linear-gradient(135deg,#6d28d9,#4f46e5);
+            border-radius:10px;padding:13px 16px;color:#fff;
+            margin-bottom:16px;display:flex;align-items:center;gap:12px;
+        }
+        .anticipo-hdr i { font-size:1.3rem;opacity:.9; }
+        .anticipo-hdr h4 { margin:0 0 2px;font-size:.87rem;font-weight:700; }
+        .anticipo-hdr p  { margin:0;font-size:.73rem;opacity:.85; }
+
+        .metodo-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:2px; }
+        .metodo-opt input { display:none; }
+        .metodo-card {
+            display:flex;flex-direction:column;align-items:center;gap:5px;
+            padding:10px 6px;border:1.5px solid #e2e8f0;border-radius:10px;
+            cursor:pointer;font-size:.71rem;font-weight:600;color:#64748b;
+            background:#f8fafc;transition:all .15s;text-align:center;
+        }
+        .metodo-card i { font-size:1.1rem;color:#94a3b8;transition:color .15s; }
+        .metodo-opt input:checked + .metodo-card { border-color:#6d28d9;background:#ede9fe;color:#5b21b6; }
+        .metodo-opt input:checked + .metodo-card i { color:#6d28d9; }
+        .metodo-card:hover { border-color:#a78bfa;background:#f5f3ff; }
+
+        .wfooter { display:flex;gap:10px;margin-top:18px; }
+        .btn-wback {
+            flex:1;padding:10px;background:transparent;border:1.5px solid #e2e8f0;
+            border-radius:10px;font-size:.83rem;font-weight:600;font-family:inherit;
+            color:#64748b;cursor:pointer;transition:background .15s;
+        }
+        .btn-wback:hover { background:#f1f5f9; }
+        .btn-wnext {
+            flex:2;padding:10px;background:linear-gradient(135deg,#6d28d9,#4f46e5);
+            border:none;border-radius:10px;font-size:.86rem;font-weight:700;
+            font-family:inherit;color:#fff;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s;
+        }
+        .btn-wnext:hover { opacity:.9; }
+        .btn-wnext:disabled { opacity:.6;cursor:not-allowed; }
+        .spin { animation:spin .8s linear infinite;display:inline-block; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+    </style>
 </head>
+
 <body class="dash-body">
 
-<!-- TOPBAR MÓVIL -->
-<div class="mobile-topbar">
-    <span class="brand">🔷 TechNova</span>
-    <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
-</div>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <!-- Topbar móvil — ya responsivo con dash-body CSS -->
+    <div class="mobile-topbar">
+        <span class="brand">🔷 TechNova</span>
+        <button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="dash-layout">
+    <div class="dash-layout">
 
-    <!-- SIDEBAR -->
-                    <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
                 TechNova
             </div>
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Principal</div>
-                <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                <!-- <a href="#"><i class="fa-solid fa-users"></i> Clientes</a> -->
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
                 <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
                 <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
                 <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-                <!-- <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a> -->
                 <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
                 <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
                 <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-                <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
                 <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-                <!-- <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a> -->
 
                 <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
                 <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
@@ -56,347 +120,567 @@
                 <span id="sidebarRol"></span>
             </div>
         </aside>
+
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const currentPage = location.pathname.split('/').pop() || 'index.html';
                 document.querySelectorAll('.sidebar-menu a').forEach(a => {
                     a.classList.remove('active');
-                    if (a.getAttribute('href') === currentPage) {
-                        a.classList.add('active');
-                    }
+                    if (a.getAttribute('href') === currentPage) a.classList.add('active');
                 });
             });
         </script>
 
-    <!-- MAIN -->
-    <main class="dash-main">
+        <main class="dash-main">
 
-        <!-- Encabezado -->
-        <div class="dash-header">
-            <div>
-                <h1><i class="fa-solid fa-screwdriver-wrench" style="color:#6d28d9;margin-right:10px;"></i>Servicios</h1>
-                <p id="saludo">Catálogo de servicios disponibles</p>
-            </div>
-            <button class="btn-logout" onclick="cerrarSesion()">
-                <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-            </button>
-        </div>
-
-        <!-- Tabla -->
-        <div class="table-card admin">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
-                <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0;">
-                    <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
-                    Catálogo de Servicios
-                </h3>
-                <button class="btn-save" onclick="abrirModal()">
-                    <i class="fa-solid fa-plus"></i> Nuevo Servicio
+            <div class="dash-header">
+                <div>
+                    <h1><i class="fa-solid fa-diagram-project" style="color:#6d28d9;margin-right:10px;"></i>Proyectos</h1>
+                    <p id="saludo">Gestión de proyectos</p>
+                </div>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
                 </button>
             </div>
 
-            <div id="loadingBox" class="state-box">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
-                <p>Cargando servicios...</p>
-            </div>
-
-            <div class="table-wrap" id="tableWrap" style="display:none;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Categoría</th>
-                            <th>Precio</th>
-                            <th>Estado</th>
-                            <th style="text-align:right;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody"></tbody>
-                </table>
-            </div>
-        </div>
-
-    </main>
-</div>
-
-<!-- MODAL NUEVO / EDITAR -->
-<div class="modal-overlay" id="overlayServicio">
-    <div class="modal" role="dialog" aria-modal="true">
-        <div class="modal-header">
-            <div>
-                <h2>
-                    <span class="modal-icon"><i class="fa-solid fa-screwdriver-wrench"></i></span>
-                    <span id="mTitle">Nuevo Servicio</span>
-                </h2>
-                <p class="modal-subtitle" id="mSub">Completa los campos para crear un nuevo servicio.</p>
-            </div>
-            <button class="btn-close-modal" onclick="cerrarModal()">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="mId">
-            <div class="mfield">
-                <label>Nombre del servicio</label>
-                <input type="text" id="mNombre" placeholder="Ej. Desarrollo Web Personalizado">
-            </div>
-            <div class="form-row-2">
-                <div class="mfield">
-                    <label>Categoría</label>
-                    <select id="mCategoria">
-                        <option value="">Selecciona</option>
-                        <option value="Desarrollo">Desarrollo</option>
-                        <option value="Diseño">Diseño</option>
-                        <option value="Consultoría">Consultoría</option>
-                        <option value="Soporte">Soporte</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Otro">Otro</option>
-                    </select>
+            <div class="table-card">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+                    <div>
+                        <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0 0 2px;">
+                            <i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>
+                            Lista de Proyectos
+                        </h3>
+                        <p id="proyectosCount" style="font-size:.8rem;color:#64748b;margin:0;">0 proyectos en total</p>
+                    </div>
+                    <button class="btn-save" onclick="abrirModalProyecto()">
+                        <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+                    </button>
                 </div>
-                <div class="mfield">
-                    <label>Precio ($)</label>
-                    <input type="number" id="mPrecio" placeholder="0.00" min="0" step="0.01">
+
+                <div id="loadingBox" style="text-align:center;padding:40px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;color:#6d28d9;"></i>
+                    <p style="margin-top:8px;color:#94a3b8;">Cargando proyectos...</p>
+                </div>
+
+                <div class="table-wrap" id="tableWrap" style="display:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cliente</th>
+                                <th>Estado</th>
+                                <th>Fechas</th>
+                                <th>Monto</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProyectosBody"></tbody>
+                    </table>
                 </div>
             </div>
-            <div class="mfield">
-                <label>Descripción (opcional)</label>
-                <input type="text" id="mDescripcion" placeholder="Breve descripción del servicio">
+
+        </main>
+    </div>
+
+    <!-- MODAL NUEVO / EDITAR PROYECTO -->
+    <div class="modal-overlay" id="modalProyectoOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <div>
+                    <h2>
+                        <span class="modal-icon"><i class="fa-solid fa-diagram-project"></i></span>
+                        <span id="modalProyectoTitle">Nuevo Proyecto</span>
+                    </h2>
+                    <p class="modal-subtitle" id="modalProyectoSubtitle">Completa los campos para el proyecto.</p>
+                </div>
+                <button class="btn-close-modal" onclick="cerrarModalProyecto()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <div id="modalAlerta"></div>
-            <button class="btn-modal-submit" onclick="guardarServicio()">
-                <i class="fa-solid fa-floppy-disk"></i>
-                <span id="mBtnTxt">Crear servicio</span>
-            </button>
+            <div class="modal-body">
+                <input type="hidden" id="proyectoId">
+
+                <div class="wizard-steps" id="wizardSteps">
+                    <div class="wstep">
+                        <div class="wstep-circle active" id="sc1">1</div>
+                        <span class="wstep-label active" id="sl1">Datos del proyecto</span>
+                    </div>
+                    <div class="wstep-conn" id="wconn"></div>
+                    <div class="wstep">
+                        <div class="wstep-circle" id="sc2">2</div>
+                        <span class="wstep-label" id="sl2">Anticipo obligatorio</span>
+                    </div>
+                </div>
+
+                <!-- PASO 1 -->
+                <div class="wpanel active" id="paso1">
+                    <div class="mfield">
+                        <label>Nombre del proyecto <span style="color:#ef4444;">*</span></label>
+                        <input type="text" id="proyectoNombre" placeholder="Ej. Sitio Web Corporativo">
+                    </div>
+                    <div class="mfield">
+                        <label>Cliente <span style="color:#ef4444;">*</span></label>
+                        <select id="sel-cliente">
+                            <option value="">Selecciona un cliente</option>
+                        </select>
+                    </div>
+                    <div class="mfield">
+                        <label>Estado</label>
+                        <select id="proyectoEstado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Proceso">En Proceso</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="mfield">
+                            <label>Fecha de inicio <span style="color:#ef4444;">*</span></label>
+                            <input type="date" id="proyectoFechaInicio">
+                        </div>
+                        <div class="mfield">
+                            <label>Fecha de fin <span style="color:#ef4444;">*</span></label>
+                            <input type="date" id="proyectoFechaFin">
+                        </div>
+                    </div>
+                    <div class="mfield">
+                        <label>Monto del proyecto <span style="color:#ef4444;">*</span></label>
+                        <input type="number" id="proyectoMonto" placeholder="0.00" min="0" step="0.01"
+                            oninput="recalcularAnticipo()">
+                    </div>
+                    <div id="modalProyectoAlerta" style="display:none;"></div>
+
+                    <div class="wfooter" id="footerPaso1">
+                        <button class="btn-wnext" style="flex:1;" onclick="irPaso2()">
+                            Siguiente: Anticipo <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <button class="btn-modal-submit" id="btnGuardarEdicion" style="display:none;"
+                        onclick="guardarEdicion()">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span id="btnGuardarTexto">Guardar cambios</span>
+                    </button>
+                </div>
+
+                <!-- PASO 2: Anticipo -->
+                <div class="wpanel" id="paso2">
+                    <div class="anticipo-hdr">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                        <div>
+                            <h4>Anticipo del proyecto</h4>
+                            <p>Obligatorio. El monto es el 50% del total del proyecto.</p>
+                        </div>
+                    </div>
+                    <div class="mfield">
+                        <label>Monto del anticipo (50% obligatorio)</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="text" id="aMontoWiz" readonly
+                                style="background:#f1f5f9;color:#ff0404;cursor:not-allowed;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;width:100%;box-sizing:border-box;">
+                        </div>
+                        <p style="margin:5px 0 0;font-size:.74rem;color:#64748b;">
+                            <i class="fa-solid fa-lock" style="font-size:.65rem;"></i>
+                            Calculado automáticamente. No editable.
+                        </p>
+                    </div>
+                    <div class="mfield">
+                        <label>Fecha de pago <span style="color:#ef4444;">*</span></label>
+                        <input type="date" id="aFechaWiz">
+                    </div>
+                    <div class="mfield">
+                        <label>Método de pago <span style="color:#ef4444;">*</span></label>
+                        <div class="metodo-grid">
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwEfectivo" value="Efectivo">
+                                <label class="metodo-card" for="mwEfectivo">
+                                    <i class="fa-solid fa-money-bill-wave"></i> Efectivo
+                                </label>
+                            </div>
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwTransferencia" value="Transferencia">
+                                <label class="metodo-card" for="mwTransferencia">
+                                    <i class="fa-solid fa-building-columns"></i> Transferencia
+                                </label>
+                            </div>
+                            <div class="metodo-opt">
+                                <input type="radio" name="aMetodoWiz" id="mwCheque" value="Cheque">
+                                <label class="metodo-card" for="mwCheque">
+                                    <i class="fa-solid fa-money-check"></i> Cheque
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mfield">
+                        <!-- ✅ Fix encoding: NÂ° → N° -->
+                        <label>N° Comprobante <span style="color:#94a3b8;font-weight:400;">(opcional)</span></label>
+                        <input type="text" id="aComprobanteWiz" placeholder="TRF-2026-XXXX">
+                    </div>
+                    <div id="alertaPaso2" style="display:none;"></div>
+                    <div class="wfooter">
+                        <button class="btn-wback" onclick="irPaso1()">
+                            <i class="fa-solid fa-arrow-left"></i> Atrás
+                        </button>
+                        <button class="btn-wnext" id="btnCrearFinal" onclick="crearProyectoCompleto()">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span id="txtCrearFinal">Crear Proyecto</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL CONFIRMAR DESACTIVAR -->
-<div class="modal-overlay" id="overlayEliminar">
-    <div class="modal modal-confirm" role="dialog" aria-modal="true">
-        <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
-        <h3>Â¿Desactivar servicio?</h3>
-        <p>El servicio <strong id="delNombre"></strong> quedará inactivo y no aparecerá en nuevas asignaciones.</p>
-        <div class="confirm-btns">
-            <button class="btn-cancel-m" onclick="cerrarEliminar()">Cancelar</button>
-            <button class="btn-del-confirm" id="btnConfDel">
-                <i class="fa-solid fa-ban"></i> Desactivar
-            </button>
+    <!-- MODAL ELIMINAR -->
+    <div class="modal-overlay" id="modalEliminarOverlay">
+        <div class="modal modal-confirm" role="dialog" aria-modal="true">
+            <div class="icon-danger"><i class="fa-solid fa-trash"></i></div>
+            <!-- ✅ Fix encoding: Â¿ → ¿ -->
+            <h3>¿Eliminar proyecto?</h3>
+            <p>Esta acción es permanente. El proyecto <strong id="eliminarNombreProyecto"></strong> será borrado.</p>
+            <div class="confirm-btns">
+                <button class="btn-cancel-m" onclick="cerrarModalEliminar()">Cancelar</button>
+                <button class="btn-del-confirm" id="btnConfirmarEliminar">
+                    <i class="fa-solid fa-trash"></i> Eliminar
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-// Sidebar móvil
-const sidebar       = document.getElementById('sidebar');
-const overlay       = document.getElementById('sidebarOverlay');
-document.getElementById('btnMenuToggle').addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('visible');
-});
-overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('visible');
-});
-
-// ─── Estado global ────────────────────────────────────────────
-let servicios = [];
-let editId    = null;
-let delId     = null;
-
-// ─── Utilidades ───────────────────────────────────────────────
-function fmtPrecio(p) {
-    return '$' + parseFloat(p || 0).toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-function escH(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
-
-// ─── cargarServicios ──────────────────────────────────────────
-async function cargarServicios() {
-    try {
-        const res  = await fetch('php/servicios.php?accion=listar');
-        const data = await res.json();
-        if (data.error) { mostrarAlert(data.mensaje || 'Error al cargar servicios.'); return; }
-        servicios = Array.isArray(data) ? data : [];
-        render();
-    } catch (e) {
-        mostrarAlert('No se pudo conectar con el servidor.');
-    } finally {
-        document.getElementById('loadingBox').style.display = 'none';
-        document.getElementById('tableWrap').style.display  = 'block';
-    }
-}
-
-// ─── Render tabla ─────────────────────────────────────────────
-function render() {
-    const tbody = document.getElementById('tbody');
-    if (servicios.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5">
-            <div class="state-box"><i class="fa-solid fa-box-open"></i>
-            <p>No hay servicios registrados aún</p></div></td></tr>`;
-        return;
-    }
-    tbody.innerHTML = servicios.map(s => `
-        <tr style="${s.activo == 0 ? 'opacity:0.5;' : ''}">
-            <td class="col-nombre">${escH(s.nombre)}</td>
-            <td>${escH(s.categoria || '-')}</td>
-            <td class="col-precio">${fmtPrecio(s.precio_base)}</td>
-            <td><span class="badge-sv ${s.activo == 1 ? 'badge-activo' : 'badge-inactivo'}">
-                ${s.activo == 1 ? 'Activo' : 'Inactivo'}</span></td>
-            <td><div class="acciones">
-                <button class="btn-icon btn-edit" onclick="abrirEditar(${s.id_servicio})" title="Editar">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                </button>
-                <button class="btn-icon btn-del" onclick="abrirEliminar(${s.id_servicio})"
-                    title="${s.activo == 1 ? 'Desactivar' : 'Ya inactivo'}"
-                    ${s.activo == 0 ? 'disabled' : ''}>
-                    <i class="fa-regular fa-trash-can"></i>
-                </button>
-            </div></td>
-        </tr>`).join('');
-}
-
-// ─── Modales ──────────────────────────────────────────────────
-function abrirModal() {
-    editId = null;
-    document.getElementById('mTitle').textContent  = 'Nuevo Servicio';
-    document.getElementById('mSub').textContent    = 'Completa los campos para crear un nuevo servicio.';
-    document.getElementById('mBtnTxt').textContent = 'Crear servicio';
-    ['mId','mNombre','mPrecio','mDescripcion'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('mCategoria').value = '';
-    ocultarAlert();
-    document.getElementById('overlayServicio').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-
-function abrirEditar(id) {
-    const s = servicios.find(x => x.id_servicio == id);
-    if (!s) return;
-    editId = id;
-    document.getElementById('mTitle').textContent  = 'Editar Servicio';
-    document.getElementById('mSub').textContent    = 'Modifica los campos del servicio.';
-    document.getElementById('mBtnTxt').textContent = 'Guardar cambios';
-    document.getElementById('mId').value           = s.id_servicio;
-    document.getElementById('mNombre').value       = s.nombre;
-    document.getElementById('mCategoria').value    = s.categoria || '';
-    document.getElementById('mPrecio').value       = s.precio_base;
-    document.getElementById('mDescripcion').value  = s.descripcion || '';
-    ocultarAlert();
-    document.getElementById('overlayServicio').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-
-function cerrarModal() {
-    document.getElementById('overlayServicio').classList.remove('open');
-    document.body.style.overflow = '';
-}
-document.getElementById('overlayServicio').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarModal();
-});
-
-async function guardarServicio() {
-    const nombre      = document.getElementById('mNombre').value.trim();
-    const categoria   = document.getElementById('mCategoria').value;
-    const precio_base = document.getElementById('mPrecio').value;
-    const descripcion = document.getElementById('mDescripcion').value.trim();
-
-    if (!nombre)    return mostrarAlert('El nombre del servicio es requerido.');
-    if (!categoria) return mostrarAlert('Selecciona una categoría.');
-    if (!precio_base || isNaN(precio_base) || Number(precio_base) < 0)
-        return mostrarAlert('Ingresa un precio válido.');
-
-    const accion  = editId ? 'editar' : 'crear';
-    const payload = { nombre, categoria, precio_base: Number(precio_base), descripcion };
-    if (editId) payload.id_servicio = editId;
-
-    try {
-        const res  = await fetch(`php/servicios.php?accion=${accion}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+    <script>
+        // Sidebar toggle (dash-body ya tiene el CSS responsive)
+        const sidebar    = document.getElementById('sidebar');
+        const sidebarOvl = document.getElementById('sidebarOverlay');
+        document.getElementById('btnMenuToggle').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOvl.classList.toggle('visible');
         });
-        const data = await res.json();
-        if (data.error) return mostrarAlert(data.mensaje || 'Error al guardar.');
-        cerrarModal();
-        await cargarServicios();
-    } catch (e) { mostrarAlert('No se pudo conectar con el servidor.'); }
-}
-
-function abrirEliminar(id) {
-    const s = servicios.find(x => x.id_servicio == id);
-    if (!s) return;
-    delId = id;
-    document.getElementById('delNombre').textContent = '"' + s.nombre + '"';
-    document.getElementById('overlayEliminar').classList.add('open');
-    document.body.style.overflow = 'hidden';
-}
-
-function cerrarEliminar() {
-    document.getElementById('overlayEliminar').classList.remove('open');
-    document.body.style.overflow = '';
-    delId = null;
-}
-document.getElementById('overlayEliminar').addEventListener('click', e => {
-    if (e.target === e.currentTarget) cerrarEliminar();
-});
-
-document.getElementById('btnConfDel').addEventListener('click', async () => {
-    if (delId === null) return;
-    try {
-        const res  = await fetch('php/servicios.php?accion=desactivar', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_servicio: delId })
+        sidebarOvl.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOvl.classList.remove('visible');
         });
-        const data = await res.json();
-        if (data.error) { cerrarEliminar(); mostrarAlert(data.mensaje || 'Error al desactivar.'); return; }
-        cerrarEliminar();
-        await cargarServicios();
-    } catch (e) { mostrarAlert('No se pudo conectar con el servidor.'); }
-});
 
-// ─── Alertas ──────────────────────────────────────────────────
-function mostrarAlert(msg) {
-    const el = document.getElementById('modalAlerta');
-    el.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
-    el.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + msg;
-}
-function ocultarAlert() {
-    const el = document.getElementById('modalAlerta');
-    el.style.display = 'none';
-    el.innerHTML = '';
-}
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { cerrarModalProyecto(); cerrarModalEliminar(); }
+        });
+        document.getElementById('modalProyectoOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) cerrarModalProyecto();
+        });
+        document.getElementById('modalEliminarOverlay').addEventListener('click', e => {
+            if (e.target === e.currentTarget) cerrarModalEliminar();
+        });
 
-// ─── Sesión ───────────────────────────────────────────────────
-async function cerrarSesion() {
-    try { await fetch('php/logout.php'); } catch (e) {}
-    window.location.href = 'login.html';
-}
+        let proyectos = [];
+        let modoEdicion = false;
+        let proyectoEditId = null;
+        let proyectoEliminarId = null;
 
-// ─── Init ─────────────────────────────────────────────────────
-async function init() {
-    try {
-        const res  = await fetch('php/dashboard_data.php');
-        const data = await res.json();
-        if (data.error) { window.location.href = 'login.html'; return; }
-        document.getElementById('sidebarNombre').textContent = data.usuario;
-        document.getElementById('sidebarRol').textContent    = data.rol;
-        document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' Â· ' + data.rol;
-        if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
-    } catch (e) { window.location.href = 'login.html'; }
-    await cargarServicios();
-}
+        function formatFecha(f) {
+            if (!f || f === '0000-00-00') return '-';
+            const [y, m, d] = f.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function getBadgeClass(e) {
+            return {
+                'En Proceso': 'badge-en-progreso', 'Completado': 'badge-completado',
+                'Pendiente': 'badge-pendiente',    'Cancelado': 'badge-cancelado'
+            }[e] || 'badge-pendiente';
+        }
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
 
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { cerrarModal(); cerrarEliminar(); }
-});
+        async function cargarProyectos() {
+            try {
+                const res  = await fetch('php/proyectos_lista.php');
+                const data = await res.json();
+                proyectos  = Array.isArray(data) ? data : (data.proyectos || []);
+                renderTabla();
+            } catch (e) { console.error('Error:', e); }
+        }
 
-init();
-</script>
+        function renderTabla() {
+            const tbody = document.getElementById('tablaProyectosBody');
+            document.getElementById('proyectosCount').textContent =
+                `${proyectos.length} proyecto${proyectos.length !== 1 ? 's' : ''} en total`;
+
+            if (proyectos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8;text-align:center;padding:28px;">
+                    No hay proyectos registrados</td></tr>`;
+                return;
+            }
+            proyectos.sort((a, b) => (b.id || b.id_proyecto) - (a.id || a.id_proyecto));
+
+            tbody.innerHTML = proyectos.map(p => {
+                const id = p.id || p.id_proyecto;
+                const anticipoBadge = p.anticipo_pagado == 1
+                    ? `<span class="badge-anticipo-ok"><i class="fa-solid fa-circle-check"></i> Pagado</span>`
+                    : `<span class="badge-anticipo-no"><i class="fa-solid fa-circle-xmark"></i> Pendiente</span>`;
+                return `
+                <tr>
+                    <td><strong>${escapeHtml(p.nombre || p.nombre_proyecto)}</strong></td>
+                    <td>${escapeHtml(p.nombreCliente || p.nombre_cliente || 'Sin asignar')}</td>
+                    <td><span class="badge-estado-tabla ${getBadgeClass(p.estado)}">${p.estado}</span></td>
+                    <td>${formatFecha(p.fechaInicio || p.fecha_inicio)} - ${formatFecha(p.fechaFin || p.fecha_fin)}</td>
+                    <td>${p.monto != null ? '$' + Number(p.monto).toLocaleString('es-SV', { minimumFractionDigits:2, maximumFractionDigits:2 }) : '-'}</td>
+                    <td style="text-align:right;">
+                        <button class="btn-icon btn-entregables" title="Ver entregables"
+                            onclick="window.location.href='entregables.html?id=${id}'">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </button>
+                        <button class="btn-icon btn-edit" title="Editar proyecto" onclick="abrirModalEditar(${id})">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn-icon btn-del" title="Eliminar proyecto" onclick="abrirModalEliminar(${id})">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function poblarSelectClientes(idSeleccionado = '') {
+            const sel = document.getElementById('sel-cliente');
+            sel.innerHTML = '<option value="">Cargando...</option>';
+            try {
+                const res  = await fetch('php/clientes_lista.php');
+                const data = await res.json();
+                sel.innerHTML = '<option value="">Selecciona un cliente</option>';
+                data.forEach(c => {
+                    const o = document.createElement('option');
+                    o.value = c.id;
+                    o.textContent = c.nombre_empresa;
+                    if (String(c.id) === String(idSeleccionado)) o.selected = true;
+                    sel.appendChild(o);
+                });
+            } catch (e) { sel.innerHTML = '<option>Error cargando clientes</option>'; }
+        }
+
+        function setAlerta(elId, msg, tipo = 'error') {
+            const el = document.getElementById(elId);
+            if (!msg) { el.style.display = 'none'; el.innerHTML = ''; return; }
+            const [bg, col, bdr, ico] = tipo === 'error'
+                ? ['#fee2e2','#dc2626','#fca5a5','fa-circle-exclamation']
+                : ['#d1fae5','#065f46','#6ee7b7','fa-circle-check'];
+            el.style.cssText = `display:block;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:.82rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+            el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
+        }
+
+        function recalcularAnticipo() {
+            const monto = parseFloat(document.getElementById('proyectoMonto').value);
+            const campo = document.getElementById('aMontoWiz');
+            campo.value = (!isNaN(monto) && monto > 0) ? '$' + (monto / 2).toFixed(2) : '';
+        }
+
+        function irPaso2() {
+            const nombre     = document.getElementById('proyectoNombre').value.trim();
+            const idCliente  = document.getElementById('sel-cliente').value;
+            const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+            const fechaFin   = document.getElementById('proyectoFechaFin').value;
+            const monto      = parseFloat(document.getElementById('proyectoMonto').value);
+
+            if (!nombre || !idCliente || !fechaInicio || !fechaFin || !document.getElementById('proyectoMonto').value) {
+                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
+            }
+            if (isNaN(monto) || monto <= 0) {
+                setAlerta('modalProyectoAlerta', 'El monto del proyecto debe ser mayor a 0.'); return;
+            }
+            setAlerta('modalProyectoAlerta', '');
+            document.getElementById('aMontoWiz').value = '$' + (monto / 2).toFixed(2);
+
+            document.getElementById('paso1').classList.remove('active');
+            document.getElementById('paso2').classList.add('active');
+            document.getElementById('sc1').className = 'wstep-circle done';
+            document.getElementById('sc1').innerHTML = '<i class="fa-solid fa-check" style="font-size:.65rem;"></i>';
+            document.getElementById('sl1').className = 'wstep-label done';
+            document.getElementById('wconn').classList.add('done');
+            document.getElementById('sc2').classList.add('active');
+            document.getElementById('sl2').classList.add('active');
+            if (!document.getElementById('aFechaWiz').value)
+                document.getElementById('aFechaWiz').value = new Date().toISOString().split('T')[0];
+        }
+
+        function irPaso1() {
+            document.getElementById('paso2').classList.remove('active');
+            document.getElementById('paso1').classList.add('active');
+            document.getElementById('sc1').className = 'wstep-circle active';
+            document.getElementById('sc1').innerHTML = '1';
+            document.getElementById('sl1').className = 'wstep-label active';
+            document.getElementById('wconn').classList.remove('done');
+            document.getElementById('sc2').className = 'wstep-circle';
+            document.getElementById('sl2').className = 'wstep-label';
+            setAlerta('alertaPaso2', '');
+        }
+
+        async function crearProyectoCompleto() {
+            const montoProyecto = parseFloat(document.getElementById('proyectoMonto').value);
+            const monto  = (montoProyecto / 2).toFixed(2);
+            const fecha  = document.getElementById('aFechaWiz').value;
+            const metodo = document.querySelector('input[name="aMetodoWiz"]:checked')?.value || '';
+            const comp   = document.getElementById('aComprobanteWiz').value.trim();
+
+            if (!fecha)  { setAlerta('alertaPaso2', 'La fecha del anticipo es requerida.'); return; }
+            if (!metodo) { setAlerta('alertaPaso2', 'Selecciona un método de pago.'); return; }
+            setAlerta('alertaPaso2', '');
+
+            const btn = document.getElementById('btnCrearFinal');
+            btn.disabled = true;
+            document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-spinner spin"></i> Creando...';
+
+            const payload = {
+                nombre:               document.getElementById('proyectoNombre').value.trim(),
+                idCliente:            document.getElementById('sel-cliente').value,
+                estado:               document.getElementById('proyectoEstado').value,
+                fechaInicio:          document.getElementById('proyectoFechaInicio').value,
+                fechaFin:             document.getElementById('proyectoFechaFin').value,
+                monto:                montoProyecto,
+                anticipo_monto:       parseFloat(monto),
+                anticipo_fecha:       fecha,
+                anticipo_metodo:      metodo,
+                anticipo_comprobante: comp
+            };
+
+            try {
+                const res  = await fetch('php/proyectos_crear.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) { cerrarModalProyecto(); await cargarProyectos(); }
+                else setAlerta('alertaPaso2', data.error || 'Error en el servidor.');
+            } catch (e) { setAlerta('alertaPaso2', 'Error de conexión.'); }
+
+            btn.disabled = false;
+            document.getElementById('txtCrearFinal').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Crear Proyecto';
+        }
+
+        async function guardarEdicion() {
+            const nombre     = document.getElementById('proyectoNombre').value.trim();
+            const idCliente  = document.getElementById('sel-cliente').value;
+            const estado     = document.getElementById('proyectoEstado').value;
+            const fechaInicio = document.getElementById('proyectoFechaInicio').value;
+            const fechaFin   = document.getElementById('proyectoFechaFin').value;
+            const monto      = document.getElementById('proyectoMonto').value;
+
+            if (!nombre || !idCliente || !fechaInicio || !fechaFin || !monto) {
+                setAlerta('modalProyectoAlerta', 'Todos los campos son obligatorios.'); return;
+            }
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == proyectoEditId);
+            if (estado === 'En Proceso' && p && p.anticipo_pagado == 0) {
+                setAlerta('modalProyectoAlerta', 'No se puede activar el proyecto sin anticipo registrado.'); return;
+            }
+
+            const btn = document.getElementById('btnGuardarEdicion');
+            btn.disabled = true;
+            document.getElementById('btnGuardarTexto').textContent = 'Guardando...';
+
+            try {
+                const res  = await fetch('php/proyectos_actualizar.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: proyectoEditId, nombre, idCliente, estado, fechaInicio, fechaFin, monto: parseFloat(monto) })
+                });
+                const resp = await res.json();
+                if (resp.success) { cerrarModalProyecto(); await cargarProyectos(); }
+                else setAlerta('modalProyectoAlerta', 'Error en el servidor.');
+            } catch (e) { setAlerta('modalProyectoAlerta', 'Error de conexión.'); }
+
+            btn.disabled = false;
+            document.getElementById('btnGuardarTexto').textContent = 'Guardar cambios';
+        }
+
+        async function abrirModalProyecto() {
+            modoEdicion = false;
+            document.getElementById('modalProyectoTitle').textContent   = 'Nuevo Proyecto';
+            document.getElementById('modalProyectoSubtitle').textContent = 'Completa los campos del proyecto.';
+            ['proyectoNombre','proyectoFechaInicio','proyectoFechaFin','proyectoMonto','aMontoWiz','aFechaWiz','aComprobanteWiz']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('proyectoEstado').value = 'Pendiente';
+            document.querySelectorAll('input[name="aMetodoWiz"]').forEach(r => r.checked = false);
+            document.getElementById('wizardSteps').style.display    = 'flex';
+            document.getElementById('footerPaso1').style.display    = 'flex';
+            document.getElementById('btnGuardarEdicion').style.display = 'none';
+            irPaso1();
+            setAlerta('modalProyectoAlerta', '');
+            document.getElementById('modalProyectoOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            await poblarSelectClientes();
+        }
+
+        async function abrirModalEditar(id) {
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+            if (!p) return;
+            modoEdicion    = true;
+            proyectoEditId = id;
+            document.getElementById('modalProyectoTitle').textContent   = 'Editar Proyecto';
+            document.getElementById('modalProyectoSubtitle').textContent = 'Modifica los datos del proyecto.';
+            document.getElementById('proyectoNombre').value      = p.nombre || p.nombre_proyecto;
+            document.getElementById('proyectoEstado').value      = p.estado;
+            document.getElementById('proyectoFechaInicio').value = p.fechaInicio || p.fecha_inicio;
+            document.getElementById('proyectoFechaFin').value    = p.fechaFin   || p.fecha_fin;
+            document.getElementById('proyectoMonto').value       = p.monto != null ? p.monto : '';
+            document.getElementById('wizardSteps').style.display    = 'none';
+            document.getElementById('footerPaso1').style.display    = 'none';
+            document.getElementById('btnGuardarEdicion').style.display = 'block';
+            document.getElementById('paso1').classList.add('active');
+            document.getElementById('paso2').classList.remove('active');
+            setAlerta('modalProyectoAlerta', '');
+            document.getElementById('modalProyectoOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            await poblarSelectClientes(p.idCliente || p.id_cliente);
+        }
+
+        function cerrarModalProyecto() {
+            document.getElementById('modalProyectoOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function abrirModalEliminar(id) {
+            proyectoEliminarId = id;
+            const p = proyectos.find(x => (x.id || x.id_proyecto) == id);
+            document.getElementById('eliminarNombreProyecto').textContent = p ? (p.nombre || p.nombre_proyecto) : '';
+            document.getElementById('modalEliminarOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function cerrarModalEliminar() {
+            document.getElementById('modalEliminarOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async () => {
+            try {
+                const res = await fetch('php/proyectos_eliminar.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: proyectoEliminarId })
+                });
+                if ((await res.json()).success) { cerrarModalEliminar(); await cargarProyectos(); }
+            } catch (e) { alert('Error al eliminar'); }
+        });
+
+        function cerrarSesion() {
+            fetch('php/logout.php').finally(() => { window.location.href = 'login.html'; });
+        }
+
+        async function inicializar() {
+            try {
+                const res  = await fetch('php/dashboard_data.php');
+                const data = await res.json();
+                if (data.error) { window.location.href = 'login.html'; return; }
+
+                document.getElementById('sidebarNombre').textContent = data.usuario;
+                document.getElementById('sidebarRol').textContent    = data.rol;
+                // ✅ Fix encoding: Â· → ·
+                document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+                if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
+
+                await cargarProyectos();
+                document.getElementById('loadingBox').style.display = 'none';
+                document.getElementById('tableWrap').style.display  = 'block';
+            } catch (e) { console.error(e); }
+        }
+
+        inicializar();
+    </script>
 </body>
 </html>
-
-
-
-
-
