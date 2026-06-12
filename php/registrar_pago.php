@@ -83,6 +83,7 @@ if (!$stmt2->execute()) {
     echo json_encode(['error' => true, 'mensaje' => 'Error al guardar el pago: ' . $stmt2->error]); exit;
 }
 $stmt2->close();
+
 $conn->close();
 
 $msg = $tipo_pago === 'Saldo Final'

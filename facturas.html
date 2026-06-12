@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    
 </head>
 <body class="dash-body">
 
@@ -128,7 +129,7 @@
                         <i class="fa-solid fa-ban"></i> Anulada
                     </button>
                     <input type="text" class="input-busqueda" id="inputBusqueda"
-                        placeholder="ðŸ” Buscar por número o cliente..."
+                        placeholder="Buscar por número o cliente..."
                         oninput="buscarFactura()">
                 </div>
 
@@ -137,7 +138,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>NÂ° Factura</th>
+                                <th>Factura</th>
                                 <th>Cliente</th>
                                 <th>Proyecto</th>
                                 <th>Fecha Emisión</th>
@@ -171,7 +172,7 @@
             <div>
                 <h2><span class="modal-icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
                     Detalle de Factura</h2>
-                <p class="modal-subtitle" id="modalSubtitulo">â€”</p>
+                <p class="modal-subtitle" id="modalSubtitulo"></p>
             </div>
             <button class="btn-close-modal" onclick="cerrarModal()">
                 <i class="fa-solid fa-xmark"></i>
@@ -181,44 +182,44 @@
         <div class="modal-body">
             <div class="detalle-grid">
                 <div class="detalle-item">
-                    <label>NÂ° Factura</label>
-                    <span id="dNumero">â€”</span>
+                    <label>Factura</label>
+                    <span id="dNumero"></span>
                 </div>
                 <div class="detalle-item">
                     <label>Estado Actual</label>
-                    <span id="dEstado">â€”</span>
+                    <span id="dEstado"></span>
                 </div>
                 <div class="detalle-item">
                     <label>Cliente</label>
-                    <span id="dCliente">â€”</span>
+                    <span id="dCliente"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Proyecto</label>
-                    <span id="dProyecto">â€”</span>
+                    <span id="dProyecto"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Fecha Emisión</label>
-                    <span id="dFecha">â€”</span>
+                    <span id="dFecha"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Generado Por</label>
-                    <span id="dGenerado">â€”</span>
+                    <span id="dGenerado"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Subtotal</label>
-                    <span id="dSubtotal">â€”</span>
+                    <span id="dSubtotal"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>IVA (13%)</label>
-                    <span id="dIva">â€”</span>
+                    <span id="dIva"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Total</label>
-                    <span id="dTotal" style="color:#4f46e5;font-size:1.1rem;">â€”</span>
+                    <span id="dTotal" style="color:#4f46e5;font-size:1.1rem;"> </span>
                 </div>
                 <div class="detalle-item">
                     <label>Total Pagado</label>
-                    <span id="dPagado">â€”</span>
+                    <span id="dPagado"> </span>
                 </div>
             </div>
 
@@ -250,21 +251,21 @@
             <span>Servicios de Tecnología</span>
         </div>
         <div class="fi-numero">
-            <h2 id="fiNumero">â€”</h2>
-            <p id="fiFecha">â€”</p>
-            <span class="fi-badge" id="fiEstadoBadge">â€”</span>
+            <h2 id="fiNumero"> </h2>
+            <p id="fiFecha"> </p>
+            <span class="fi-badge" id="fiEstadoBadge"> </span>
         </div>
     </div>
 
     <div class="fi-info-grid">
         <div class="fi-info-box">
             <h4>Facturado a</h4>
-            <p id="fiCliente">â€”</p>
-            <p class="sub" id="fiProyecto">â€”</p>
+            <p id="fiCliente"> </p>
+            <p class="sub" id="fiProyecto"> </p>
         </div>
         <div class="fi-info-box">
             <h4>Generado por</h4>
-            <p id="fiGenerado">â€”</p>
+            <p id="fiGenerado"> </p>
             <p class="sub">TechNova</p>
         </div>
     </div>
@@ -280,10 +281,10 @@
         </thead>
         <tbody>
             <tr>
-                <td id="fiDescripcion">â€”</td>
-                <td id="fiSubtotal">â€”</td>
-                <td id="fiIva">â€”</td>
-                <td id="fiTotal">â€”</td>
+                <td id="fiDescripcion"> </td>
+                <td id="fiSubtotal"> </td>
+                <td id="fiIva"> </td>
+                <td id="fiTotal"> </td>
             </tr>
         </tbody>
     </table>
@@ -292,25 +293,25 @@
         <table>
             <tr>
                 <td>Subtotal</td>
-                <td id="fiTotSubtotal">â€”</td>
+                <td id="fiTotSubtotal"> </td>
             </tr>
             <tr>
                 <td>IVA (13%)</td>
-                <td id="fiTotIva">â€”</td>
+                <td id="fiTotIva"> </td>
             </tr>
             <tr>
                 <td>Total Pagado</td>
-                <td id="fiTotPagado">â€”</td>
+                <td id="fiTotPagado"> </td>
             </tr>
             <tr class="total-final">
                 <td>TOTAL</td>
-                <td id="fiTotTotal">â€”</td>
+                <td id="fiTotTotal"> </td>
             </tr>
         </table>
     </div>
 
     <div class="fi-footer">
-        <p>TechNova â€” Documento generado el <span id="fiGeneradoEn">â€”</span></p>
+        <p>TechNova   Documento generado el <span id="fiGeneradoEn"> </span></p>
         <p>Este documento es una representación válida de la factura emitida.</p>
     </div>
 </div>
@@ -358,7 +359,7 @@ async function cargarFacturas(estado = '') {
         document.getElementById('sidebarNombre').textContent = data.usuario;
         document.getElementById('sidebarRol').textContent    = data.rol;
         document.getElementById('saludo').textContent =
-            `Bienvenido, ${data.usuario} Â· ${data.rol}`;
+            `Bienvenido, ${data.usuario} · ${data.rol}`;
 
         if (data.rol === 'Administrador') {
             document.getElementById('adminSection').style.display = 'block';
@@ -448,14 +449,14 @@ function abrirDetalle(idx) {
         day:'2-digit', month:'long', year:'numeric'
     });
 
-    document.getElementById('modalSubtitulo').textContent = f.nombre_empresa + ' â€” ' + f.nombre_proyecto;
+    document.getElementById('modalSubtitulo').textContent = f.nombre_empresa + '   ' + f.nombre_proyecto;
     document.getElementById('dNumero').textContent    = f.numero_factura;
     document.getElementById('dEstado').innerHTML      =
         `<span class="badge-estado ${BADGES[f.estado] || ''}">${f.estado}</span>`;
     document.getElementById('dCliente').textContent   = f.nombre_empresa;
     document.getElementById('dProyecto').textContent  = f.nombre_proyecto;
     document.getElementById('dFecha').textContent     = fecha;
-    document.getElementById('dGenerado').textContent  = f.generado_por || 'â€”';
+    document.getElementById('dGenerado').textContent  = f.generado_por || ' ';
     document.getElementById('dSubtotal').textContent  = '$' + parseFloat(f.subtotal).toFixed(2);
     document.getElementById('dIva').textContent       = '$' + parseFloat(f.iva).toFixed(2);
     document.getElementById('dTotal').textContent     = '$' + total.toFixed(2);
@@ -487,8 +488,8 @@ function descargarPDF() {
     document.getElementById('fiFecha').textContent        = 'Fecha de emisión: ' + fecha;
     document.getElementById('fiCliente').textContent      = f.nombre_empresa;
     document.getElementById('fiProyecto').textContent     = 'Proyecto: ' + f.nombre_proyecto;
-    document.getElementById('fiGenerado').textContent     = f.generado_por || 'â€”';
-    document.getElementById('fiDescripcion').textContent  = 'Servicios de desarrollo â€” ' + f.nombre_proyecto;
+    document.getElementById('fiGenerado').textContent     = f.generado_por || ' ';
+    document.getElementById('fiDescripcion').textContent  = 'Servicios de desarrollo   ' + f.nombre_proyecto;
     document.getElementById('fiSubtotal').textContent     = '$' + parseFloat(f.subtotal).toFixed(2);
     document.getElementById('fiIva').textContent          = '$' + parseFloat(f.iva).toFixed(2);
     document.getElementById('fiTotal').textContent        = '$' + total.toFixed(2);
