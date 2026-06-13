@@ -370,7 +370,7 @@
 
                 // HU-25 SCRUM-128: Componente de 5 estrellas para proyectos completados
                 const puedeCalificar = ESTADOS_FINALIZADOS.includes(p.estado);
-                const yaCalificado = localStorage.getItem('rating_' + p.id);
+                const yaCalificado = p.miCalificacion || localStorage.getItem('rating_' + p.id);
                 let starHtml = '';
                 if (puedeCalificar) {
                     if (yaCalificado) {
@@ -426,28 +426,30 @@
         }
 
         // ─── HU-25: Calificar proyecto ───────────────────────────────
-        function calificar(idProyecto, estrellas) {
-            localStorage.setItem('rating_' + idProyecto, estrellas);
+        async function calificar(idProyecto, estrellas) {
             const feedback = document.getElementById('feedback-' + idProyecto);
             if (feedback) {
-                const mensajes = {
-                    1: '😞 Gracias por tu feedback',
-                    2: '😕 Tomaremos en cuenta tu opinión',
-                    3: '😊 ¡Gracias por calificar!',
-                    4: '😃 ¡Nos alegra que te gustó!',
-                    5: '🎉 ¡Excelente! ¡Gracias por tu calificación!'
-                };
-                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${mensajes[estrellas] || 'Calificación guardada'}`;
+                feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando calificacion...';
                 feedback.classList.add('show');
+            }
+            try {
+                const form = new FormData();
+                form.append('id_proyecto', idProyecto);
+                form.append('puntuacion', estrellas);
+                form.append('comentario', '');
+                const res = await fetch('php/calificar_servicio.php', { method: 'POST', body: form });
+                const data = await res.json();
+                if (data.error) throw new Error(data.mensaje || 'No se pudo guardar la calificacion.');
+                localStorage.setItem('rating_' + idProyecto, estrellas);
                 const starContainer = document.getElementById('stars-' + idProyecto);
                 if (starContainer) starContainer.classList.add('rated');
+                if (feedback) feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${data.mensaje || 'Calificacion guardada'}`;
+                proyectosGlobal = proyectosGlobal.map(p => p.id == idProyecto ? { ...p, miCalificacion: estrellas } : p);
+                setTimeout(() => renderCards(proyectosGlobal), 1200);
+            } catch (e) {
+                if (feedback) feedback.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${e.message || 'Error de conexion.'}`;
             }
-            // Re-render después de 1.5s para mostrar la calificación guardada
-            setTimeout(() => {
-                if (typeof proyectosGlobal !== 'undefined') renderCards(proyectosGlobal);
-            }, 1500);
         }
-
         let proyectosGlobal = [];
 
         // ─── Modal incidencia ─────────────────────────────────────────

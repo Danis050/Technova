@@ -327,34 +327,68 @@
                 document.getElementById('notifDropdown').classList.remove('open');
             }
         });
-        function cargarNotificaciones() {
-            const notifs = [
-                { icon:'fa-solid fa-user-plus', color:'purple', msg:'Nuevo usuario registrado', time:'Hace 10 min', unread:true },
-                { icon:'fa-solid fa-file-invoice-dollar', color:'green', msg:'Factura pagada por Empresa Pérez', time:'Hace 1 hora', unread:true },
-                { icon:'fa-solid fa-triangle-exclamation', color:'red', msg:'Nueva incidencia reportada', time:'Hace 2 horas', unread:false }
-            ];
-            const unread = notifs.filter(n => n.unread).length;
+        function escH(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+        function tiempoRelativo(fecha) {
+            const diff = Math.max(0, Date.now() - new Date(fecha).getTime());
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'Ahora';
+            if (mins < 60) return `Hace ${mins} min`;
+            const horas = Math.floor(mins / 60);
+            if (horas < 24) return `Hace ${horas} h`;
+            return `Hace ${Math.floor(horas / 24)} d`;
+        }
+        function iconoNotif(mensaje) {
+            const msg = (mensaje || '').toLowerCase();
+            if (msg.includes('calific')) return { icon:'fa-solid fa-star', color:'yellow' };
+            if (msg.includes('solicitud') || msg.includes('soporte')) return { icon:'fa-solid fa-ticket', color:'red' };
+            if (msg.includes('pago') || msg.includes('factura')) return { icon:'fa-solid fa-file-invoice-dollar', color:'green' };
+            if (msg.includes('asign')) return { icon:'fa-solid fa-user-plus', color:'purple' };
+            return { icon:'fa-solid fa-bell', color:'purple' };
+        }
+        async function cargarNotificaciones() {
+            let notifs = [];
+            let unread = 0;
+            try {
+                const res = await fetch('php/notificaciones.php?action=listar', { cache: 'no-store' });
+                const data = await res.json();
+                if (data.error) return;
+                notifs = data.notificaciones || [];
+                unread = Number(data.no_leidas || 0);
+            } catch { return; }
             const badge = document.getElementById('notifBadge');
             if (unread > 0) { badge.textContent = unread; badge.style.display = 'flex'; }
             else { badge.style.display = 'none'; }
             document.getElementById('notifList').innerHTML = notifs.length === 0
                 ? '<div class="notif-empty"><i class="fa-regular fa-bell-slash"></i>Sin notificaciones</div>'
-                : notifs.map(n => `
-                    <div class="notif-item ${n.unread ? 'unread' : ''}">
-                        <div class="notif-icon ${n.color}"><i class="${n.icon}"></i></div>
+                : notifs.map(n => {
+                    const meta = iconoNotif(n.mensaje);
+                    return `
+                    <div class="notif-item ${Number(n.leida) === 0 ? 'unread' : ''}" onclick="abrirNotificacion(${n.id}, '${encodeURIComponent(n.url_referencia || '')}')">
+                        <div class="notif-icon ${meta.color}"><i class="${meta.icon}"></i></div>
                         <div class="notif-content">
-                            <p>${n.msg}</p>
-                            <div class="notif-time">${n.time}</div>
+                            <p>${escH(n.mensaje)}</p>
+                            <div class="notif-time">${tiempoRelativo(n.fecha_creacion)}</div>
                         </div>
-                        ${n.unread ? '<div class="notif-dot"></div>' : ''}
-                    </div>`).join('');
+                        ${Number(n.leida) === 0 ? '<div class="notif-dot"></div>' : ''}
+                    </div>`;
+                }).join('');
         }
-        function marcarTodasLeidas() {
-            document.getElementById('notifBadge').style.display = 'none';
-            document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
-            document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+        async function abrirNotificacion(id, urlCodificada) {
+            try {
+                await fetch('php/notificaciones.php?action=marcar_leida', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+            } catch { }
+            const url = decodeURIComponent(urlCodificada || '');
+            if (url) window.location.href = url.replace(/^\.\.\//, '');
+            else cargarNotificaciones();
         }
-
+        async function marcarTodasLeidas() {
+            try { await fetch('php/notificaciones.php?action=marcar_todas', { method: 'POST' }); } catch { }
+            cargarNotificaciones();
+        }
         function abrirModal() {
             document.getElementById('modalOverlay').classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -534,6 +568,7 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('contenido').style.display = 'block';
                 cargarNotificaciones();
+                setInterval(cargarNotificaciones, 15000);
 
             } catch { window.location.href = 'login.html'; }
         }

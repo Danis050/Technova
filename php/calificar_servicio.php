@@ -12,6 +12,7 @@
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once 'conexion.php';
+require_once 'notificaciones_helper.php';
 
 // ------------------------------------------------------------
 // 1. Validar sesión y rol Cliente
@@ -134,6 +135,15 @@ if (!$stmtInsert->execute()) {
 }
 
 $stmtInsert->close();
+
+$admins = $conn->query("SELECT id_usuario FROM usuario WHERE rol = 'Administrador' AND estado = 1");
+while ($admin = $admins->fetch_assoc()) {
+    crearNotificacion(
+        (int)$admin['id_usuario'],
+        'Nueva calificación recibida: ' . $puntuacion . ' estrellas',
+        '../calificaciones.html'
+    );
+}
 $conn->close();
 
 echo json_encode([

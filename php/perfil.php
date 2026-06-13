@@ -15,19 +15,49 @@ function responderPerfil(bool $error, string $mensaje, array $extra = []): void
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    responderPerfil(true, 'Metodo no permitido. Use POST.');
-}
-
 if (!isset($_SESSION['id_usuario'])) {
     responderPerfil(true, 'No hay sesion activa. Inicie sesion.');
 }
 
-$accion = trim($_POST['accion'] ?? '');
 $idUsuario = (int) $_SESSION['id_usuario'];
 $conn = getConexion();
 
 try {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $stmt = $conn->prepare(
+            "SELECT id_usuario, nombre, apellido, email, rol, puesto, estado
+             FROM usuario
+             WHERE id_usuario = ? AND estado = 1
+             LIMIT 1"
+        );
+        $stmt->bind_param('i', $idUsuario);
+        $stmt->execute();
+        $usuario = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if (!$usuario) {
+            responderPerfil(true, 'Usuario no encontrado o inactivo.');
+        }
+
+        responderPerfil(false, 'Perfil cargado correctamente.', [
+            'usuario' => [
+                'id_usuario' => (int) $usuario['id_usuario'],
+                'nombre' => $usuario['nombre'],
+                'apellido' => $usuario['apellido'],
+                'nombre_completo' => trim($usuario['nombre'] . ' ' . $usuario['apellido']),
+                'email' => $usuario['email'],
+                'rol' => $usuario['rol'],
+                'puesto' => $usuario['puesto'] ?? ''
+            ]
+        ]);
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        responderPerfil(true, 'Metodo no permitido. Use GET o POST.');
+    }
+
+    $accion = trim($_POST['accion'] ?? '');
+
     if ($accion === 'actualizar_nombre') {
         $nombre = trim($_POST['nombre'] ?? '');
 

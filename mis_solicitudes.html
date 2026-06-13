@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="dash-body">
-<div class="mobile-topbar"><span class="brand">🔷 TechNova</span><button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button></div>
+<div class="mobile-topbar"><span class="brand">?? TechNova</span><button class="btn-menu-toggle" id="btnMenuToggle"><i class="fa-solid fa-bars"></i></button></div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="dash-layout">
                             <aside class="sidebar" id="sidebar">
@@ -49,13 +49,13 @@
                 <h1><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:10px;"></i>Mis Solicitudes</h1>
                 <p>Visualiza el estado de tus solicitudes de soporte</p>
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesi�n</button>
         </div>
 
         <!-- SCRUM-88: Alertas de prioridad alta -->
         <div class="alert-banner critica" id="alertaCritica">
             <i class="fa-solid fa-circle-exclamation"></i>
-            <span>Tienes <strong>1 solicitud crítica</strong> pendiente de atención</span>
+            <span>Tienes <strong>1 solicitud cr�tica</strong> pendiente de atenci�n</span>
             <button class="alert-close" onclick="this.parentElement.style.display='none'"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
@@ -63,7 +63,7 @@
             <div class="stat-mini"><div class="num" style="color:#2563eb;">5</div><div class="label">Total</div></div>
             <div class="stat-mini"><div class="num" style="color:#d97706;">2</div><div class="label">En Proceso</div></div>
             <div class="stat-mini"><div class="num" style="color:#059669;">2</div><div class="label">Resueltas</div></div>
-            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Críticas</div></div>
+            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Cr�ticas</div></div>
         </div>
 
         <div class="table-card">
@@ -91,22 +91,16 @@
 document.getElementById('btnMenuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');});
 document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');});
 
-const solicitudes=[
-    {id:'SOL-001',asunto:'Error en módulo de pagos',proyecto:'Sitio Web Corporativo',prioridad:'Crítica',estado:'Abierta',fecha:'2026-05-20',desc:'El módulo de pagos muestra un error 500 al procesar tarjetas de crédito.'},
-    {id:'SOL-002',asunto:'Ajuste de colores en diseño',proyecto:'App Móvil Delivery',prioridad:'Baja',estado:'Resuelta',fecha:'2026-05-18',desc:'Los colores del header no coinciden con la guía de marca.'},
-    {id:'SOL-003',asunto:'Lentitud en carga de reportes',proyecto:'Sistema ERP Finanzas',prioridad:'Alta',estado:'En Proceso',fecha:'2026-05-22',desc:'Los reportes financieros tardan más de 30 segundos en cargar.'},
-    {id:'SOL-004',asunto:'Agregar filtro de búsqueda',proyecto:'Sitio Web Corporativo',prioridad:'Media',estado:'En Proceso',fecha:'2026-05-15',desc:'Se necesita un filtro de búsqueda en la sección de productos.'},
-    {id:'SOL-005',asunto:'Corrección de factura duplicada',proyecto:'Sistema ERP Finanzas',prioridad:'Media',estado:'Resuelta',fecha:'2026-05-10',desc:'Se generó una factura duplicada para el cliente ABC Corp.'}
-];
+let solicitudes = [];
 
-const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Crítica':'b-critica'};
+const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Cr�tica':'b-critica'};
 const estClass={'Abierta':'b-abierta','En Proceso':'b-en-proceso','Resuelta':'b-resuelta','Cerrada':'b-cerrada'};
 
 function diasDesde(f){return Math.floor((new Date()-new Date(f))/(1000*60*60*24));}
 
 function render(lista){
     document.getElementById('tablaSol').innerHTML=lista.map((s,i)=>{
-        const esAlta=s.prioridad==='Alta'||s.prioridad==='Crítica';
+        const esAlta=s.prioridad==='Alta'||s.prioridad==='Cr�tica';
         return`
         <tr>
             <td><strong>${s.id}</strong></td>
@@ -118,7 +112,7 @@ function render(lista){
             <td><button class="sol-detail-toggle" onclick="toggleDetail('det${i}')">Ver detalle</button></td>
         </tr>
         <tr class="sol-detail-row" id="det${i}">
-            <td colspan="7"><div class="sol-detail-content"><strong>Descripción:</strong> ${s.desc}</div></td>
+            <td colspan="7"><div class="sol-detail-content"><strong>Descripci�n:</strong> ${s.desc}</div></td>
         </tr>`;
     }).join('');
 }
@@ -131,7 +125,38 @@ function filtrar(estado,btn){
     render(estado==='todos'?solicitudes:solicitudes.filter(s=>s.estado===estado));
 }
 
-render(solicitudes);
+function actualizarStats() {
+    const total = solicitudes.length;
+    const proceso = solicitudes.filter(s => s.estado === 'En Proceso').length;
+    const resueltas = solicitudes.filter(s => s.estado === 'Resuelta').length;
+    const criticas = solicitudes.filter(s => s.prioridad === 'Cr�tica' || s.prioridad === 'Alta').length;
+    const nums = document.querySelectorAll('.stats-mini .num');
+    if (nums[0]) nums[0].textContent = total;
+    if (nums[1]) nums[1].textContent = proceso;
+    if (nums[2]) nums[2].textContent = resueltas;
+    if (nums[3]) nums[3].textContent = criticas;
+    const alerta = document.getElementById('alertaCritica');
+    if (alerta) {
+        alerta.style.display = criticas > 0 ? 'flex' : 'none';
+        const span = alerta.querySelector('span');
+        if (span) span.innerHTML = `Tienes <strong>${criticas} solicitud${criticas !== 1 ? 'es' : ''} cr�tica${criticas !== 1 ? 's' : ''}</strong> pendiente${criticas !== 1 ? 's' : ''} de atenci�n`;
+    }
+}
+
+async function cargarSolicitudes() {
+    try {
+        const res = await fetch('php/solicitudes.php?action=listar', { cache: 'no-store' });
+        const data = await res.json();
+        if (data.error) throw new Error(data.mensaje || 'No se pudieron cargar las solicitudes.');
+        solicitudes = data.solicitudes || [];
+        actualizarStats();
+        render(solicitudes);
+    } catch (e) {
+        document.getElementById('tablaSol').innerHTML = `<tr><td colspan="7" style="color:#dc2626;text-align:center;padding:30px;">${e.message || 'Error al cargar solicitudes.'}</td></tr>`;
+    }
+}
+
+cargarSolicitudes();
 
 (async function cargarSesion() {
     try {

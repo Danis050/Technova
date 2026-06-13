@@ -231,17 +231,29 @@
 
         const btn = document.getElementById('btnGuardarPwdTexto');
         btn.textContent = 'Guardando...';
-        
-        // Simulación de guardado
-        setTimeout(() => {
-            mostrarAlerta('¡Contraseña actualizada correctamente!', 'ok');
+
+        try {
+            const fd = new FormData();
+            fd.append('accion', 'cambiar_contrasena');
+            fd.append('contrasena_actual', actual);
+            fd.append('nueva_contrasena', nueva);
+            fd.append('confirmar_contrasena', confirmar);
+
+            const res = await fetch('php/perfil.php', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.error) return mostrarAlerta(data.mensaje || 'No se pudo actualizar la contraseña.');
+
+            mostrarAlerta(data.mensaje || 'Contraseña actualizada correctamente.', 'ok');
             document.getElementById('pwdActual').value = '';
             document.getElementById('pwdNueva').value = '';
             document.getElementById('pwdConfirmar').value = '';
             validarPassword();
             document.getElementById('pwdMatch').style.display = 'none';
+        } catch (e) {
+            mostrarAlerta('Error de conexión al actualizar la contraseña.');
+        } finally {
             btn.textContent = 'Guardar Contraseña';
-        }, 800);
+        }
     }
 
     function buildSidebar(rol) {
@@ -284,28 +296,38 @@
         });
     }
 
-    function cerrarSesion() {
+    async function cerrarSesion() {
+        try { await fetch('php/logout.php'); } catch(e) {}
         window.location.href = 'login.html';
     }
 
-    function init() {
-        // Simulación sin PHP
-        const data = {
-            usuario: 'Carlos Lobos',
-            email: 'carlos@technova.com',
-            rol: 'Administrador',
-            puesto: 'Gerente IT'
-        };
+    function badgeClassPorRol(rol) {
+        if (rol === 'Administrador') return 'badge-rol badge-rol-admin';
+        if (rol === 'Empleado') return 'badge-rol badge-rol-emp';
+        return 'badge-rol badge-rol-client';
+    }
 
-        document.getElementById('sidebarNombre').textContent = data.usuario;
+    async function init() {
+        let data;
+        try {
+            const res = await fetch('php/perfil.php');
+            const json = await res.json();
+            if (json.error) { window.location.href = 'login.html'; return; }
+            data = json.usuario;
+        } catch (e) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        document.getElementById('sidebarNombre').textContent = data.nombre_completo;
         document.getElementById('sidebarRol').textContent = data.rol;
         document.getElementById('saludo').textContent = 'Gestiona tu información personal';
         buildSidebar(data.rol);
 
-        const nombre = data.usuario.split(' ')[0];
-        const apellido = data.usuario.split(' ').slice(1).join(' ');
-        document.getElementById('perfilAvatar').textContent = nombre[0].toUpperCase();
-        document.getElementById('perfilNombreCompleto').textContent = data.usuario;
+        const nombre = data.nombre || '';
+        const apellido = data.apellido || '';
+        document.getElementById('perfilAvatar').textContent = (nombre[0] || '?').toUpperCase();
+        document.getElementById('perfilNombreCompleto').textContent = data.nombre_completo;
         document.getElementById('perfilEmail').textContent = data.email;
         document.getElementById('perfilNombre').value = nombre;
         document.getElementById('perfilApellido').value = apellido;
@@ -313,11 +335,11 @@
         document.getElementById('perfilRolInput').value = data.rol;
 
         const rolBadge = document.getElementById('perfilRolBadge');
-        rolBadge.className = 'badge-rol badge-rol-admin';
+        rolBadge.className = badgeClassPorRol(data.rol);
         rolBadge.textContent = data.rol;
 
-        document.getElementById('perfilPuestoField').style.display = 'block';
-        document.getElementById('perfilPuesto').value = data.puesto;
+        document.getElementById('perfilPuestoField').style.display = data.puesto ? 'block' : 'none';
+        document.getElementById('perfilPuesto').value = data.puesto || '';
     }
 
     init();

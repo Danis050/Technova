@@ -156,18 +156,7 @@
         sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
     });
 
-    const calificaciones = [
-        { id:1, proyecto:'Sistema de Facturación', cliente:'Juan Pérez García', estrellas:5, comentario:'Excelente trabajo, superó las expectativas.', fecha:'2026-05-28' },
-        { id:2, proyecto:'Sitio Web Corporativo', cliente:'Juan Ramirez', estrellas:4, comentario:'Muy buen diseño, entrega a tiempo.', fecha:'2026-05-25' },
-        { id:3, proyecto:'Sistema de gestion de citas', cliente:'Juan Ramirez', estrellas:5, comentario:'Funcionalidad completa y fácil de usar.', fecha:'2026-05-20' },
-        { id:4, proyecto:'Sitio de venta', cliente:'Juan Pérez García', estrellas:3, comentario:'Cumple pero podría mejorar la velocidad.', fecha:'2026-05-18' },
-        { id:5, proyecto:'Sitio de prueba', cliente:'Juan Pérez García', estrellas:5, comentario:'Perfecto, nada que objetar.', fecha:'2026-05-15' },
-        { id:6, proyecto:'Sitio de tatuaje', cliente:'Juan Pérez García', estrellas:4, comentario:'Diseño atractivo y funcional.', fecha:'2026-05-12' },
-        { id:7, proyecto:'Sitio web de pago', cliente:'Juan Pérez García', estrellas:2, comentario:'Tuvo varios errores al principio.', fecha:'2026-05-10' },
-        { id:8, proyecto:'App Móvil Inventario', cliente:'Juan Ramirez', estrellas:5, comentario:'Increíble la calidad del desarrollo.', fecha:'2026-05-08' },
-        { id:9, proyecto:'Sitio de medico', cliente:'Juan Pérez García', estrellas:4, comentario:'Buen sistema, fácil de usar para el personal médico.', fecha:'2026-05-05' },
-        { id:10, proyecto:'Proyecto prueba', cliente:'Juan Pérez García', estrellas:1, comentario:'No cumplió con lo acordado.', fecha:'2026-05-02' },
-    ];
+    let calificaciones = [];
 
     let filtroEstrellasActual = 'todos';
 
@@ -229,17 +218,32 @@
         renderTabla(lista);
     }
 
-    function cerrarSesion() {
+    async function cerrarSesion() {
+        try { await fetch('php/logout.php'); } catch(e) {}
         window.location.href = 'login.html';
     }
 
-    function init() {
-        const sesion = { usuario: 'Carlos Lobos', rol: 'Administrador' };
-        document.getElementById('sidebarNombre').textContent = sesion.usuario;
-        document.getElementById('sidebarRol').textContent = sesion.rol;
-        document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' · ' + sesion.rol;
-        actualizarStats();
-        renderTabla(calificaciones);
+    async function init() {
+        try {
+            const resSesion = await fetch('php/dashboard_data.php');
+            const sesion = await resSesion.json();
+            if (sesion.error) { window.location.href = 'login.html'; return; }
+            if (sesion.rol !== 'Administrador') { window.location.href = 'dashboard.html'; return; }
+            document.getElementById('sidebarNombre').textContent = sesion.usuario || '';
+            document.getElementById('sidebarRol').textContent = sesion.rol || '';
+            document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' - ' + sesion.rol;
+
+            const res = await fetch('php/listar_calificaciones.php', { cache: 'no-store' });
+            const data = await res.json();
+            if (data.error) throw new Error(data.mensaje || 'Error al cargar calificaciones.');
+            calificaciones = data.calificaciones || [];
+            actualizarStats();
+            renderTabla(calificaciones);
+        } catch (e) {
+            document.getElementById('califCount').textContent = e.message || 'No se pudieron cargar las calificaciones.';
+            actualizarStats();
+            renderTabla([]);
+        }
     }
 
     init();

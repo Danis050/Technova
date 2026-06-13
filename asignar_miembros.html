@@ -26,11 +26,11 @@
             </div>
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Principal</div>
-                <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
                 <!-- <a href="#"><i class="fa-solid fa-users"></i> Clientes</a> -->
                 <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
                 <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="asignar_miembros.html" class="active"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
                 <!-- <a href="entregables.html"><i class="fa-solid fa-clipboard-check"></i> Entregables</a> -->
                 <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
                 <!-- <a href="dashboard_soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a> -->
@@ -41,13 +41,13 @@
                 <!-- <a href="#"><i class="fa-solid fa-chart-bar"></i> Reportes</a> -->
 
                 <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
-                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
-                    <i class="fa-solid fa-user-plus"></i>
-                    Crear Usuario
-                    <span class="badge-new">ADMIN</span>
-                </button>
+                <a href="listado_usuarios.html" id="linkListadoUsuarios" style="display:none;"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html" id="linkReportes" style="display:none;"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html" id="linkAuditoria" style="display:none;"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html" id="linkCalificaciones" style="display:none;"><i class="fa-solid fa-star"></i> Calificaciones</a>
 
-                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
             <div class="sidebar-user">
@@ -84,10 +84,7 @@
                     <label style="font-weight:700;font-size:.88rem;color:#0f172a;"><i class="fa-solid fa-folder-open"
                             style="color:#6d28d9;margin-right:6px;"></i>Proyecto:</label>
                     <select id="selProyecto" onchange="cargarMiembros()">
-                        <option value="">Selecciona un proyecto...</option>
-                        <option value="1">Sitio Web Corporativo</option>
-                        <option value="2">App Móvil Delivery</option>
-                        <option value="3">Sistema ERP Finanzas</option>
+                        <option value="">Cargando proyectos...</option>
                     </select>
                     <button class="btn-save" onclick="abrirModalAsignar()" id="btnAgregar" style="display:none;">
                         <i class="fa-solid fa-user-plus"></i> Agregar Miembro
@@ -116,26 +113,11 @@
             <div class="modal-header">
                 <div>
                     <h2><span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span> Agregar Miembro</h2>
-                    <p class="modal-subtitle">Busca un empleado y asígnale un rol en el proyecto</p>
+                    <p class="modal-subtitle">Busca un empleado y asígnalo al proyecto seleccionado</p>
                 </div>
                 <button class="btn-close-modal" onclick="cerrarModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
-                <div class="rol-select-modal">
-                    <label>Rol en el proyecto <span style="color:#ef4444;">*</span></label>
-                    <div class="roles-grid">
-                        <label class="rol-opt"><input type="radio" name="rolProy" value="Desarrollador" checked>
-                            <span class="rol-card-m"><i class="fa-solid fa-code"></i> Desarrollador</span></label>
-                        <label class="rol-opt"><input type="radio" name="rolProy" value="Diseñador">
-                            <span class="rol-card-m"><i class="fa-solid fa-pen-nib"></i> Diseñador</span></label>
-                        <label class="rol-opt"><input type="radio" name="rolProy" value="QA Tester">
-                            <span class="rol-card-m"><i class="fa-solid fa-bug"></i> QA Tester</span></label>
-                        <label class="rol-opt"><input type="radio" name="rolProy" value="Project Manager">
-                            <span class="rol-card-m"><i class="fa-solid fa-diagram-project"></i> Project
-                                Manager</span></label>
-                    </div>
-                </div>
-                <hr class="divider" style="margin:16px 0;">
                 <div class="modal-buscar">
                     <input type="text" id="buscarEmpleado" placeholder="Buscar empleado por nombre..."
                         oninput="filtrarEmpleados()">
@@ -157,29 +139,51 @@
             document.getElementById('sidebarOverlay').classList.remove('visible');
         });
 
-        const empleadosDB = [
-            { id: 1, nombre: 'Carlos López', puesto: 'Desarrollador', email: 'carlos@technova.com' },
-            { id: 2, nombre: 'Ana Martínez', puesto: 'Diseñadora', email: 'ana@technova.com' },
-            { id: 3, nombre: 'Roberto García', puesto: 'QA Tester', email: 'roberto@technova.com' },
-            { id: 4, nombre: 'María Fernández', puesto: 'Project Manager', email: 'maria@technova.com' },
-            { id: 5, nombre: 'Diego Torres', puesto: 'Desarrollador', email: 'diego@technova.com' },
-            { id: 6, nombre: 'Laura Sánchez', puesto: 'Diseñadora', email: 'laura@technova.com' },
-            { id: 7, nombre: 'Pedro Ramírez', puesto: 'Soporte Técnico', email: 'pedro@technova.com' },
-            { id: 8, nombre: 'Sofía Herrera', puesto: 'Desarrolladora', email: 'sofia@technova.com' }
-        ];
-
-        const miembrosPorProyecto = {
-            '1': [{ id: 1, nombre: 'Carlos López', rol: 'Desarrollador' }, { id: 2, nombre: 'Ana Martínez', rol: 'Diseñador' }],
-            '2': [{ id: 4, nombre: 'María Fernández', rol: 'Project Manager' }, { id: 5, nombre: 'Diego Torres', rol: 'Desarrollador' }, { id: 3, nombre: 'Roberto García', rol: 'QA Tester' }],
-            '3': []
-        };
+        let empleadosDB = [];
+        let miembrosActuales = [];
 
         const avatarColors = ['avatar-purple', 'avatar-blue', 'avatar-green', 'avatar-orange'];
-        const rolClasses = { 'Desarrollador': 'rol-dev', 'Diseñador': 'rol-design', 'QA Tester': 'rol-qa', 'Project Manager': 'rol-pm' };
+        const rolClasses = { 'Desarrollador': 'rol-dev', 'Diseñador': 'rol-design', 'QA Tester': 'rol-qa', 'Project Manager': 'rol-pm', 'Soporte Técnico': 'rol-qa', 'Empleado': 'rol-dev' };
 
         function getInitials(n) { return n.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase(); }
+        function escH(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+        }
 
-        function cargarMiembros() {
+        function mostrarErrorAsignacion(msg) {
+            const empty = document.getElementById('emptyState');
+            document.getElementById('miembrosGrid').style.display = 'none';
+            empty.style.display = 'block';
+            empty.innerHTML = `<div class="empty-miembros"><i class="fa-solid fa-triangle-exclamation"></i><h3 style="color:#334155;margin-bottom:6px;">No se pudo cargar</h3><p>${msg}</p></div>`;
+        }
+
+        async function cargarProyectos() {
+            const sel = document.getElementById('selProyecto');
+            try {
+                const res = await fetch('php/proyectos_lista.php');
+                const proyectos = await res.json();
+                sel.innerHTML = '<option value="">Selecciona un proyecto...</option>' + proyectos.map(p => {
+                    const nombre = p.nombreCliente ? `${p.nombre} - ${p.nombreCliente}` : p.nombre;
+                    return `<option value="${p.id}">${escH(nombre)}</option>`;
+                }).join('');
+            } catch (e) {
+                sel.innerHTML = '<option value="">No se pudieron cargar proyectos</option>';
+            }
+        }
+
+        async function cargarEmpleados() {
+            const res = await fetch('php/get_usuarios_activos.php');
+            const data = await res.json();
+            if (data.error) throw new Error(data.mensaje || 'No se pudieron cargar empleados.');
+            empleadosDB = data.map(e => ({
+                id: e.id_usuario,
+                nombre: e.nombre,
+                puesto: e.puesto || e.rol || 'Empleado',
+                email: e.email || ''
+            }));
+        }
+
+        async function cargarMiembros() {
             const pid = document.getElementById('selProyecto').value;
             const grid = document.getElementById('miembrosGrid');
             const empty = document.getElementById('emptyState');
@@ -187,7 +191,23 @@
             const cont = document.getElementById('contadorMiembros');
             if (!pid) { grid.style.display = 'none'; empty.style.display = 'block'; btn.style.display = 'none'; cont.style.display = 'none'; return; }
             btn.style.display = 'flex'; cont.style.display = 'flex';
-            const miembros = miembrosPorProyecto[pid] || [];
+
+            try {
+                const res = await fetch(`php/proyecto_miembros.php?id_proyecto=${encodeURIComponent(pid)}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.mensaje || 'No se pudieron cargar los miembros.');
+                miembrosActuales = data.miembros.map(m => ({
+                    id: m.id_usuario,
+                    nombre: m.nombre,
+                    email: m.email || '',
+                    rol: m.puesto || m.rol || 'Empleado'
+                }));
+            } catch (e) {
+                mostrarErrorAsignacion(e.message);
+                return;
+            }
+
+            const miembros = miembrosActuales;
             document.getElementById('numMiembros').textContent = miembros.length;
             if (miembros.length === 0) {
                 grid.style.display = 'none'; empty.style.display = 'block';
@@ -199,19 +219,30 @@
         <div class="miembro-card">
             <div class="miembro-avatar ${avatarColors[i % 4]}">${getInitials(m.nombre)}</div>
             <div class="miembro-info">
-                <h4>${m.nombre}</h4>
-                <p>${empleadosDB.find(e => e.id === m.id)?.puesto || 'Empleado'}</p>
-                <span class="miembro-rol ${rolClasses[m.rol] || 'rol-dev'}">${m.rol}</span>
+                <h4>${escH(m.nombre)}</h4>
+                <p>${escH(m.email || 'Empleado')}</p>
+                <span class="miembro-rol ${rolClasses[m.rol] || 'rol-dev'}">${escH(m.rol)}</span>
             </div>
             <button class="btn-remove" onclick="removerMiembro(${m.id})" title="Remover"><i class="fa-solid fa-xmark"></i></button>
         </div>
     `).join('');
         }
 
-        function removerMiembro(empId) {
+        async function removerMiembro(empId) {
             const pid = document.getElementById('selProyecto').value;
             if (!pid) return;
-            miembrosPorProyecto[pid] = miembrosPorProyecto[pid].filter(m => m.id !== empId);
+            try {
+                const res = await fetch('php/asignar_miembro.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_proyecto: Number(pid), id_usuario: Number(empId), accion: 'desasignar' })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.mensaje || 'No se pudo desasignar el miembro.');
+            } catch (e) {
+                alert(e.message);
+                return;
+            }
             cargarMiembros();
         }
 
@@ -229,7 +260,7 @@
 
         function renderEmpleados(filtro = '') {
             const pid = document.getElementById('selProyecto').value;
-            const asignados = (miembrosPorProyecto[pid] || []).map(m => m.id);
+            const asignados = miembrosActuales.map(m => m.id);
             let lista = empleadosDB.filter(e => !asignados.includes(e.id));
             if (filtro) lista = lista.filter(e => e.nombre.toLowerCase().includes(filtro.toLowerCase()));
             const el = document.getElementById('listaEmpleados');
@@ -237,22 +268,38 @@
             el.innerHTML = lista.map(e => `
         <div class="empleado-item">
             <div class="emp-avatar">${getInitials(e.nombre)}</div>
-            <div class="emp-info"><h4>${e.nombre}</h4><p>${e.puesto} Â· ${e.email}</p></div>
-            <button class="btn-asignar-emp" onclick="asignarEmpleado(${e.id},'${e.nombre}')"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Asignar</button>
+            <div class="emp-info"><h4>${escH(e.nombre)}</h4><p>${escH(e.puesto)} · ${escH(e.email)}</p></div>
+            <button class="btn-asignar-emp" onclick="asignarEmpleado(${e.id})"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Asignar</button>
         </div>
     `).join('');
         }
         function filtrarEmpleados() { renderEmpleados(document.getElementById('buscarEmpleado').value); }
 
-        function asignarEmpleado(id, nombre) {
+        async function asignarEmpleado(id) {
             const pid = document.getElementById('selProyecto').value;
-            const rol = document.querySelector('input[name="rolProy"]:checked')?.value || 'Desarrollador';
-            if (!miembrosPorProyecto[pid]) miembrosPorProyecto[pid] = [];
-            miembrosPorProyecto[pid].push({ id, nombre, rol });
-            cargarMiembros(); renderEmpleados(document.getElementById('buscarEmpleado').value);
+            const empleado = empleadosDB.find(e => e.id === id);
+            const nombre = empleado?.nombre || 'Empleado';
+            if (!pid) return;
+            try {
+                const res = await fetch('php/asignar_miembro.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_proyecto: Number(pid), id_usuario: Number(id), accion: 'asignar' })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.mensaje || 'No se pudo asignar el miembro.');
+            } catch (e) {
+                const al = document.getElementById('modalAlerta');
+                al.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;';
+                al.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + e.message;
+                return;
+            }
+
+            await cargarMiembros();
+            renderEmpleados(document.getElementById('buscarEmpleado').value);
             const al = document.getElementById('modalAlerta');
             al.style.cssText = 'display:block;padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:500;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;';
-            al.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + nombre + ' asignado como ' + rol;
+            al.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + nombre + ' asignado al proyecto.';
             setTimeout(() => { al.style.display = 'none'; }, 2000);
         }
 
@@ -265,10 +312,13 @@
                 document.getElementById('sidebarRol').textContent = data.rol || '';
                 if (data.rol === 'Administrador') {
                     const sec = document.getElementById('adminSection');
-                    const btn = document.getElementById('btnAbrirModal');
                     if (sec) sec.style.display = 'block';
-                    if (btn) btn.style.display = 'flex';
+                    ['linkListadoUsuarios', 'linkReportes', 'linkAuditoria', 'linkCalificaciones'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.style.display = 'flex';
+                    });
                 }
+                await Promise.all([cargarProyectos(), cargarEmpleados()]);
             } catch (e) { window.location.href = 'login.html'; }
         })();
 

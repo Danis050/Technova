@@ -2,6 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 require_once 'conexion.php';
+require_once 'notificaciones_helper.php';
 
 // Validar sesión activa
 if (!isset($_SESSION['id_usuario'])) {
@@ -55,7 +56,17 @@ try {
         throw new Exception("Error al guardar la solicitud: " . $stmt_insert->error);
     }
 
+    $id_solicitud = $stmt_insert->insert_id;
     $stmt_insert->close();
+
+    $admins = $conn->query("SELECT id_usuario FROM usuario WHERE rol = 'Administrador' AND estado = 1");
+    while ($admin = $admins->fetch_assoc()) {
+        crearNotificacion(
+            (int)$admin['id_usuario'],
+            'Nueva solicitud de soporte: ' . $asunto,
+            '../gestion_solicitudes.html?id=' . $id_solicitud
+        );
+    }
     $conn->close();
 
     // 4. Respuesta exitosa

@@ -64,16 +64,21 @@ $stmtCliente->close();
 ===================================================== */
 $stmtProyectos = $conn->prepare("
 SELECT
-    id_proyecto,
-    nombre,
-    descripcion,
-    fecha_inicio,
-    fecha_entrega,
-    estado,
-    creado_en
-FROM proyecto
-WHERE id_cliente = ?
-ORDER BY creado_en DESC
+    p.id_proyecto,
+    p.nombre,
+    p.descripcion,
+    p.fecha_inicio,
+    p.fecha_entrega,
+    p.estado,
+    p.creado_en,
+    cal.puntuacion AS mi_calificacion,
+    cal.comentario AS mi_comentario
+FROM proyecto p
+LEFT JOIN calificaciones cal
+    ON cal.id_proyecto = p.id_proyecto
+   AND cal.id_cliente = p.id_cliente
+WHERE p.id_cliente = ?
+ORDER BY p.creado_en DESC
 ");
 if (!$stmtProyectos) {
     echo json_encode([
@@ -94,9 +99,12 @@ while ($row = $res->fetch_assoc()) {
     $proyectos[] = [
         'id'            => $row['id_proyecto'],
         'nombre'        => $row['nombre'],
+        'descripcion'   => $row['descripcion'],
         'fechaInicio'   => $row['fecha_inicio'],
         'fechaEntrega'  => $row['fecha_entrega'],
-        'estado'        => $row['estado']
+        'estado'        => $row['estado'],
+        'miCalificacion'=> $row['mi_calificacion'] !== null ? (int)$row['mi_calificacion'] : null,
+        'miComentario'  => $row['mi_comentario']
     ];
 }
 

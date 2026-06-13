@@ -11,10 +11,10 @@ if (!isset($_SESSION['id_usuario'])) {
 $conn = getConexion();
 
 $stmt = $conn->prepare("
-    SELECT id_usuario, nombre, apellido, rol, puesto
+    SELECT id_usuario, nombre, apellido, email, rol, puesto
     FROM usuario
     WHERE estado = 1
-      AND rol IN ('Administrador', 'Empleado')
+      AND rol IN ('Empleado')
     ORDER BY nombre ASC, apellido ASC
 ");
 $stmt->execute();
@@ -25,6 +25,7 @@ while ($row = $result->fetch_assoc()) {
     $usuarios[] = [
         'id_usuario' => (int)$row['id_usuario'],
         'nombre'     => $row['nombre'] . ' ' . $row['apellido'],
+        'email'      => $row['email'],
         'rol'        => $row['rol'],
         'puesto'     => $row['puesto'] ?? ''
     ];
