@@ -51,13 +51,13 @@
                 <h1><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:10px;"></i>Mis Solicitudes</h1>
                 <p>Visualiza el estado de tus solicitudes de soporte</p>
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesi�n</button>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
         </div>
 
         <!-- SCRUM-88: Alertas de prioridad alta -->
         <div class="alert-banner critica" id="alertaCritica">
             <i class="fa-solid fa-circle-exclamation"></i>
-            <span>Tienes <strong>1 solicitud cr�tica</strong> pendiente de atenci�n</span>
+            <span>Tienes <strong>1 solicitud crótica</strong> pendiente de atención</span>
             <button class="alert-close" onclick="this.parentElement.style.display='none'"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
@@ -65,7 +65,7 @@
             <div class="stat-mini"><div class="num" style="color:#2563eb;">5</div><div class="label">Total</div></div>
             <div class="stat-mini"><div class="num" style="color:#d97706;">2</div><div class="label">En Proceso</div></div>
             <div class="stat-mini"><div class="num" style="color:#059669;">2</div><div class="label">Resueltas</div></div>
-            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Cr�ticas</div></div>
+            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Criticas</div></div>
         </div>
 
         <div class="table-card">
@@ -137,14 +137,14 @@ document.getElementById('sidebarOverlay').addEventListener('click',()=>{document
 
 let solicitudes = [];
 
-const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Cr�tica':'b-critica'};
+const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Critica':'b-critica'};
 const estClass={'Abierta':'b-abierta','En Proceso':'b-en-proceso','Resuelta':'b-resuelta','Cerrada':'b-cerrada'};
 
 function diasDesde(f){return Math.floor((new Date()-new Date(f))/(1000*60*60*24));}
 
 function render(lista){
     document.getElementById('tablaSol').innerHTML=lista.map((s,i)=>{
-        const esAlta=s.prioridad==='Alta'||s.prioridad==='Cr�tica';
+        const esAlta=s.prioridad==='Alta'||s.prioridad==='Critica';
         return`
         <tr>
             <td><strong>${s.id}</strong></td>
@@ -156,7 +156,7 @@ function render(lista){
             <td><button class="sol-detail-toggle" onclick="toggleDetail('det${i}')">Ver detalle</button></td>
         </tr>
         <tr class="sol-detail-row" id="det${i}">
-            <td colspan="7"><div class="sol-detail-content"><strong>Descripci�n:</strong> ${s.desc}</div></td>
+            <td colspan="7"><div class="sol-detail-content"><strong>Descripción:</strong> ${s.desc}</div></td>
         </tr>`;
     }).join('');
 }
@@ -173,7 +173,7 @@ function actualizarStats() {
     const total = solicitudes.length;
     const proceso = solicitudes.filter(s => s.estado === 'En Proceso').length;
     const resueltas = solicitudes.filter(s => s.estado === 'Resuelta').length;
-    const criticas = solicitudes.filter(s => s.prioridad === 'Cr�tica' || s.prioridad === 'Alta').length;
+    const criticas = solicitudes.filter(s => s.prioridad === 'Critica' || s.prioridad === 'Alta').length;
     const nums = document.querySelectorAll('.stats-mini .num');
     if (nums[0]) nums[0].textContent = total;
     if (nums[1]) nums[1].textContent = proceso;
@@ -183,7 +183,7 @@ function actualizarStats() {
     if (alerta) {
         alerta.style.display = criticas > 0 ? 'flex' : 'none';
         const span = alerta.querySelector('span');
-        if (span) span.innerHTML = `Tienes <strong>${criticas} solicitud${criticas !== 1 ? 'es' : ''} cr�tica${criticas !== 1 ? 's' : ''}</strong> pendiente${criticas !== 1 ? 's' : ''} de atenci�n`;
+        if (span) span.innerHTML = `Tienes <strong>${criticas} solicitud${criticas !== 1 ? 'es' : ''} critica${criticas !== 1 ? 's' : ''}</strong> pendiente${criticas !== 1 ? 's' : ''} de atención`;
     }
 }
 

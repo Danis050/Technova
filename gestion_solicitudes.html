@@ -160,12 +160,14 @@
         }
 
         function render(lista) {
-            document.getElementById('tablaGest').innerHTML = lista.length === 0
-                ? `<tr><td colspan=”7” style=”text-align:center;padding:40px;color:#94a3b8;”>No hay solicitudes.</td></tr>`
-                : lista.map(s => {
-                    const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
-                    const idNum = s.id_num;
-                    return `<tr>
+            const tbody = document.getElementById('tablaGest');
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan=”7” style=”text-align:center;padding:40px;color:#94a3b8;”>No hay solicitudes.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = lista.map(s => {
+                const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
+                return `<tr>
                 <td><strong>${escH(s.id)}</strong></td>
                 <td>${escH(s.cliente)}</td>
                 <td>${escH(s.asunto)}</td>
@@ -173,11 +175,18 @@
                 <td><span class=”badge-g ${pCls[s.prioridad] || 'bp-media'} ${esAlta ? 'prio-pulse' : ''}”>${escH(s.prioridad)}</span></td>
                 <td><span class=”badge-g ${eCls[s.estado] || ''}”>${escH(s.estado)}</span></td>
                 <td style=”white-space:nowrap;”>
-                    <button class=”btn-accion-g btn-ver-g” onclick=”abrirDetalle(${idNum})”><i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver</button>
+                    <button class=”btn-accion-g btn-ver-g” data-id=”${s.id_num}”><i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver</button>
                 </td>
             </tr>`;
-                }).join('');
+            }).join('');
         }
+
+        document.getElementById('tablaGest').addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-ver-g');
+            if (!btn) return;
+            const idNum = parseInt(btn.dataset.id, 10);
+            abrirDetalle(idNum);
+        });
 
         function aplicarFiltros() {
             let lista = sols;
