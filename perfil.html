@@ -216,6 +216,7 @@
         el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
     }
 
+<<<<<<< Updated upstream
     async function guardarPassword() {
         const actual = document.getElementById('pwdActual').value;
         const nueva = document.getElementById('pwdNueva').value;
@@ -256,6 +257,8 @@
         }
     }
 
+=======
+>>>>>>> Stashed changes
     function buildSidebar(rol) {
         const menu = document.getElementById('sidebarMenu');
         if (rol === 'Cliente') {
@@ -296,6 +299,7 @@
         });
     }
 
+<<<<<<< Updated upstream
     async function cerrarSesion() {
         try { await fetch('php/logout.php'); } catch(e) {}
         window.location.href = 'login.html';
@@ -341,6 +345,92 @@
         document.getElementById('perfilPuestoField').style.display = data.puesto ? 'block' : 'none';
         document.getElementById('perfilPuesto').value = data.puesto || '';
     }
+=======
+    async function cerrarSesion() {
+        await fetch('php/logout.php');
+        window.location.href = 'login.html';
+    }
+
+    async function guardarPassword() {
+        const actual    = document.getElementById('pwdActual').value;
+        const nueva     = document.getElementById('pwdNueva').value;
+        const confirmar = document.getElementById('pwdConfirmar').value;
+
+        if (!actual || !nueva || !confirmar) return mostrarAlerta('Todos los campos son requeridos.');
+        if (nueva.length < 8) return mostrarAlerta('La contraseña debe tener al menos 8 caracteres.');
+        if (!/[A-Z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una mayúscula.');
+        if (!/[a-z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una minúscula.');
+        if (!/[0-9]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un número.');
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un carácter especial.');
+        if (nueva !== confirmar) return mostrarAlerta('Las contraseñas no coinciden.');
+
+        const btn = document.getElementById('btnGuardarPwdTexto');
+        btn.textContent = 'Guardando...';
+
+        const fd = new FormData();
+        fd.append('accion',             'cambiar_contrasena');
+        fd.append('contrasena_actual',  actual);
+        fd.append('nueva_contrasena',   nueva);
+        fd.append('confirmar_contrasena', confirmar);
+
+        try {
+            const res  = await fetch('php/perfil.php', { method: 'POST', body: fd });
+            const data = await res.json();
+            if (data.error) {
+                mostrarAlerta(data.mensaje);
+            } else {
+                mostrarAlerta(data.mensaje, 'ok');
+                document.getElementById('pwdActual').value    = '';
+                document.getElementById('pwdNueva').value     = '';
+                document.getElementById('pwdConfirmar').value = '';
+                validarPassword();
+                document.getElementById('pwdMatch').style.display = 'none';
+            }
+        } catch(e) {
+            mostrarAlerta('Error de conexión con el servidor.');
+        }
+
+        btn.textContent = 'Guardar Contraseña';
+    }
+
+    async function init() {
+        try {
+            const res  = await fetch('php/get_perfil.php');
+            const data = await res.json();
+
+            if (data.error) { window.location.href = 'login.html'; return; }
+
+            const nombreCompleto = data.nombre + ' ' + data.apellido;
+
+            document.getElementById('sidebarNombre').textContent = nombreCompleto;
+            document.getElementById('sidebarRol').textContent    = data.rol;
+            buildSidebar(data.rol);
+
+            document.getElementById('perfilAvatar').textContent        = data.nombre[0].toUpperCase();
+            document.getElementById('perfilNombreCompleto').textContent = nombreCompleto;
+            document.getElementById('perfilEmail').textContent         = data.email;
+            document.getElementById('perfilNombre').value              = data.nombre;
+            document.getElementById('perfilApellido').value            = data.apellido;
+            document.getElementById('perfilEmailInput').value          = data.email;
+            document.getElementById('perfilRolInput').value            = data.rol;
+
+            const rolBadge = document.getElementById('perfilRolBadge');
+            const badgeClass = data.rol === 'Administrador' ? 'badge-rol-admin'
+                             : data.rol === 'Empleado'       ? 'badge-rol-empleado'
+                             : 'badge-rol-cliente';
+            rolBadge.className  = 'badge-rol ' + badgeClass;
+            rolBadge.textContent = data.rol;
+
+            if (data.rol === 'Empleado' && data.puesto) {
+                document.getElementById('perfilPuestoField').style.display = 'block';
+                document.getElementById('perfilPuesto').value = data.puesto;
+            }
+
+        } catch(e) {
+            window.location.href = 'login.html';
+        }
+    }
+>>>>>>> Stashed changes
 
     init();
 </script>
