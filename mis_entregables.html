@@ -401,6 +401,10 @@
             try {
                 const res = await fetch(url);
                 const data = await res.json();
+                if (data.error) {
+                    el.innerHTML = `<p style="color:#ef4444;text-align:center;padding:20px;">${data.mensaje || 'Error al cargar entregables.'}</p>`;
+                    return;
+                }
                 const lista = data.entregables ? data.entregables : (Array.isArray(data) ? data : []);
 
                 if (lista.length === 0) {

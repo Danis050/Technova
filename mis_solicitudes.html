@@ -51,13 +51,13 @@
                 <h1><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:10px;"></i>Mis Solicitudes</h1>
                 <p>Visualiza el estado de tus solicitudes de soporte</p>
             </div>
-            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesi�n</button>
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
         </div>
 
         <!-- SCRUM-88: Alertas de prioridad alta -->
         <div class="alert-banner critica" id="alertaCritica">
             <i class="fa-solid fa-circle-exclamation"></i>
-            <span>Tienes <strong>1 solicitud cr�tica</strong> pendiente de atenci�n</span>
+            <span>Tienes <strong>1 solicitud crótica</strong> pendiente de atención</span>
             <button class="alert-close" onclick="this.parentElement.style.display='none'"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
@@ -65,12 +65,15 @@
             <div class="stat-mini"><div class="num" style="color:#2563eb;">5</div><div class="label">Total</div></div>
             <div class="stat-mini"><div class="num" style="color:#d97706;">2</div><div class="label">En Proceso</div></div>
             <div class="stat-mini"><div class="num" style="color:#059669;">2</div><div class="label">Resueltas</div></div>
-            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Cr�ticas</div></div>
+            <div class="stat-mini"><div class="num" style="color:#dc2626;">1</div><div class="label">Criticas</div></div>
         </div>
 
         <div class="table-card">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
                 <h3 style="font-size:1rem;font-weight:700;color:#0f172a;margin:0;"><i class="fa-solid fa-list" style="color:#6d28d9;margin-right:6px;"></i>Listado de Solicitudes</h3>
+                <button onclick="abrirModalSol()" style="padding:9px 18px;background:#6d28d9;color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-plus"></i> Nueva Solicitud
+                </button>
             </div>
             <div class="filtros-sol">
                 <button class="chip active" onclick="filtrar('todos',this)">Todas</button>
@@ -89,20 +92,59 @@
     </main>
 </div>
 
+<!-- Modal Nueva Solicitud -->
+<div id="modalSolOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px);">
+    <div style="background:white;border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.2);animation:mInSol .22s ease;">
+        <div style="padding:22px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+            <div>
+                <h3 style="font-size:1.05rem;font-weight:700;color:#0f172a;margin-bottom:2px;"><i class="fa-solid fa-ticket" style="color:#6d28d9;margin-right:6px;"></i>Nueva Solicitud</h3>
+                <p style="font-size:.78rem;color:#64748b;">Envía una solicitud de soporte para un proyecto completado</p>
+            </div>
+            <button onclick="cerrarModalSol()" style="background:none;border:none;cursor:pointer;font-size:1rem;color:#94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="padding:0 22px 22px;">
+            <div id="solAlerta" style="display:none;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;"></div>
+            <div style="margin-bottom:14px;">
+                <label style="display:block;font-size:.78rem;font-weight:600;color:#374151;margin-bottom:5px;">Proyecto <span style="color:#ef4444;">*</span></label>
+                <select id="solProyecto" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.875rem;font-family:inherit;color:#0f172a;background:#f8fafc;outline:none;">
+                    <option value="">Cargando proyectos...</option>
+                </select>
+            </div>
+            <div style="margin-bottom:14px;">
+                <label style="display:block;font-size:.78rem;font-weight:600;color:#374151;margin-bottom:5px;">Asunto <span style="color:#ef4444;">*</span></label>
+                <input type="text" id="solAsunto" placeholder="Describe brevemente tu solicitud" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.875rem;font-family:inherit;color:#0f172a;background:#f8fafc;outline:none;box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:18px;">
+                <label style="display:block;font-size:.78rem;font-weight:600;color:#374151;margin-bottom:5px;">Descripción <span style="color:#ef4444;">*</span></label>
+                <textarea id="solDescripcion" placeholder="Explica con detalle tu solicitud..." rows="4" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.875rem;font-family:inherit;color:#0f172a;background:#f8fafc;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button onclick="cerrarModalSol()" style="padding:10px 18px;background:white;color:#374151;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.875rem;font-weight:600;font-family:inherit;cursor:pointer;">Cancelar</button>
+                <button id="btnEnviarSol" onclick="enviarSolicitud()" style="padding:10px 22px;background:#6d28d9;color:white;border:none;border-radius:8px;font-size:.875rem;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+@keyframes mInSol { from{opacity:0;transform:scale(.96) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+</style>
+
 <script>
 document.getElementById('btnMenuToggle').addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');});
 document.getElementById('sidebarOverlay').addEventListener('click',()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');});
 
 let solicitudes = [];
 
-const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Cr�tica':'b-critica'};
+const prioClass={'Baja':'b-baja','Media':'b-media','Alta':'b-alta','Critica':'b-critica'};
 const estClass={'Abierta':'b-abierta','En Proceso':'b-en-proceso','Resuelta':'b-resuelta','Cerrada':'b-cerrada'};
 
 function diasDesde(f){return Math.floor((new Date()-new Date(f))/(1000*60*60*24));}
 
 function render(lista){
     document.getElementById('tablaSol').innerHTML=lista.map((s,i)=>{
-        const esAlta=s.prioridad==='Alta'||s.prioridad==='Cr�tica';
+        const esAlta=s.prioridad==='Alta'||s.prioridad==='Critica';
         return`
         <tr>
             <td><strong>${s.id}</strong></td>
@@ -114,7 +156,7 @@ function render(lista){
             <td><button class="sol-detail-toggle" onclick="toggleDetail('det${i}')">Ver detalle</button></td>
         </tr>
         <tr class="sol-detail-row" id="det${i}">
-            <td colspan="7"><div class="sol-detail-content"><strong>Descripci�n:</strong> ${s.desc}</div></td>
+            <td colspan="7"><div class="sol-detail-content"><strong>Descripción:</strong> ${s.desc}</div></td>
         </tr>`;
     }).join('');
 }
@@ -131,7 +173,7 @@ function actualizarStats() {
     const total = solicitudes.length;
     const proceso = solicitudes.filter(s => s.estado === 'En Proceso').length;
     const resueltas = solicitudes.filter(s => s.estado === 'Resuelta').length;
-    const criticas = solicitudes.filter(s => s.prioridad === 'Cr�tica' || s.prioridad === 'Alta').length;
+    const criticas = solicitudes.filter(s => s.prioridad === 'Critica' || s.prioridad === 'Alta').length;
     const nums = document.querySelectorAll('.stats-mini .num');
     if (nums[0]) nums[0].textContent = total;
     if (nums[1]) nums[1].textContent = proceso;
@@ -141,7 +183,7 @@ function actualizarStats() {
     if (alerta) {
         alerta.style.display = criticas > 0 ? 'flex' : 'none';
         const span = alerta.querySelector('span');
-        if (span) span.innerHTML = `Tienes <strong>${criticas} solicitud${criticas !== 1 ? 'es' : ''} cr�tica${criticas !== 1 ? 's' : ''}</strong> pendiente${criticas !== 1 ? 's' : ''} de atenci�n`;
+        if (span) span.innerHTML = `Tienes <strong>${criticas} solicitud${criticas !== 1 ? 'es' : ''} critica${criticas !== 1 ? 's' : ''}</strong> pendiente${criticas !== 1 ? 's' : ''} de atención`;
     }
 }
 
@@ -174,6 +216,89 @@ cargarSolicitudes();
 async function cerrarSesion() {
     try { await fetch('php/logout.php'); } catch(e) {}
     window.location.href = 'login.html';
+}
+
+async function abrirModalSol() {
+    document.getElementById('solAsunto').value = '';
+    document.getElementById('solDescripcion').value = '';
+    ocultarAlertaSol();
+    const overlay = document.getElementById('modalSolOverlay');
+    overlay.style.display = 'flex';
+
+    const sel = document.getElementById('solProyecto');
+    sel.innerHTML = '<option value="">Cargando proyectos...</option>';
+    try {
+        const res = await fetch('php/mis_proyectos.php');
+        const data = await res.json();
+        const completados = Array.isArray(data) ? data.filter(p => p.estado === 'Completado') : [];
+        if (completados.length === 0) {
+            sel.innerHTML = '<option value="">No tienes proyectos completados</option>';
+        } else {
+            sel.innerHTML = '<option value="">Selecciona un proyecto</option>' +
+                completados.map(p => `<option value="${p.id}">${escH(p.nombre)}</option>`).join('');
+        }
+    } catch {
+        sel.innerHTML = '<option value="">Error al cargar proyectos</option>';
+    }
+}
+
+function cerrarModalSol() {
+    document.getElementById('modalSolOverlay').style.display = 'none';
+}
+
+document.getElementById('modalSolOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) cerrarModalSol();
+});
+
+function mostrarAlertaSol(msg, tipo = 'error') {
+    const el = document.getElementById('solAlerta');
+    const [bg, col, bdr] = tipo === 'ok'
+        ? ['#d1fae5', '#065f46', '#6ee7b7']
+        : ['#fee2e2', '#dc2626', '#fca5a5'];
+    el.style.cssText = `display:block;padding:9px 12px;border-radius:7px;margin-bottom:12px;font-size:.8rem;font-weight:500;background:${bg};color:${col};border:1px solid ${bdr};`;
+    el.textContent = msg;
+}
+
+function ocultarAlertaSol() {
+    const el = document.getElementById('solAlerta');
+    el.style.display = 'none';
+    el.textContent = '';
+}
+
+function escH(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+
+async function enviarSolicitud() {
+    const id_proyecto = document.getElementById('solProyecto').value;
+    const asunto = document.getElementById('solAsunto').value.trim();
+    const descripcion = document.getElementById('solDescripcion').value.trim();
+
+    if (!id_proyecto) { mostrarAlertaSol('Selecciona un proyecto.'); return; }
+    if (!asunto) { mostrarAlertaSol('El asunto es obligatorio.'); return; }
+    if (!descripcion) { mostrarAlertaSol('La descripción es obligatoria.'); return; }
+
+    const btn = document.getElementById('btnEnviarSol');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+        const res = await fetch('php/registrar_solicitud.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_proyecto: parseInt(id_proyecto), asunto, descripcion })
+        });
+        const data = await res.json();
+        if (data.error) {
+            mostrarAlertaSol(data.mensaje || 'Error al enviar la solicitud.');
+        } else {
+            mostrarAlertaSol(data.mensaje || 'Solicitud enviada correctamente.', 'ok');
+            setTimeout(() => { cerrarModalSol(); cargarSolicitudes(); }, 1500);
+        }
+    } catch {
+        mostrarAlertaSol('Error de conexión. Intenta de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar';
+    }
 }
 </script>
 </body>

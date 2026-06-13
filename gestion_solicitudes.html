@@ -97,7 +97,6 @@
                                 <th>Proyecto</th>
                                 <th>Prioridad</th>
                                 <th>Estado</th>
-                                <th>Asignado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -127,41 +126,77 @@
         document.getElementById('btnMenuToggle').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('visible'); });
         document.getElementById('sidebarOverlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('visible'); });
 
-        const sols = [
-            { id: 'SOL-001', cliente: 'Empresa ABC', asunto: 'Error en módulo de pagos', proyecto: 'Sitio Web Corporativo', prioridad: 'Crítica', estado: 'Abierta', asignado: 'Carlos L.', fecha: '2026-05-20', desc: 'Error 500 al procesar pagos con tarjeta de crédito.' },
-            { id: 'SOL-002', cliente: 'Corp XYZ', asunto: 'Ajuste de colores', proyecto: 'App Móvil Delivery', prioridad: 'Baja', estado: 'Resuelta', asignado: 'Ana M.', fecha: '2026-05-18', desc: 'Los colores del header no coinciden con la guía de marca.' },
-            { id: 'SOL-003', cliente: 'Tech Solutions', asunto: 'Lentitud en reportes', proyecto: 'Sistema ERP', prioridad: 'Alta', estado: 'En Proceso', asignado: 'Diego T.', fecha: '2026-05-22', desc: 'Reportes financieros tardan más de 30 segundos.' },
-            { id: 'SOL-004', cliente: 'Empresa ABC', asunto: 'Filtro de búsqueda', proyecto: 'Sitio Web Corporativo', prioridad: 'Media', estado: 'En Proceso', asignado: 'Sofía H.', fecha: '2026-05-15', desc: 'Se necesita un filtro de búsqueda en productos.' },
-            { id: 'SOL-005', cliente: 'Corp XYZ', asunto: 'Factura duplicada', proyecto: 'Sistema ERP', prioridad: 'Media', estado: 'Resuelta', asignado: 'Pedro R.', fecha: '2026-05-10', desc: 'Factura duplicada generada para cliente.' },
-            { id: 'SOL-006', cliente: 'Innovatech', asunto: 'Caída del servidor', proyecto: 'Hosting Cloud', prioridad: 'Crítica', estado: 'Abierta', asignado: null, fecha: '2026-05-24', desc: 'Servidor de producción inaccesible desde las 8am.' },
-            { id: 'SOL-007', cliente: 'Tech Solutions', asunto: 'Actualizar certificado SSL', proyecto: 'Sistema ERP', prioridad: 'Alta', estado: 'Abierta', asignado: null, fecha: '2026-05-23', desc: 'Certificado SSL expira en 3 días.' },
-            { id: 'SOL-008', cliente: 'Innovatech', asunto: 'Mejora de diseño', proyecto: 'Hosting Cloud', prioridad: 'Baja', estado: 'Cerrada', asignado: 'Laura S.', fecha: '2026-05-05', desc: 'Solicitud de rediseño del panel de control.' }
-        ];
+        let sols = [];
+        let filtroEstado = 'todos', filtroPrioridad = '';
 
         const pCls = { 'Baja': 'bp-baja', 'Media': 'bp-media', 'Alta': 'bp-alta', 'Crítica': 'bp-critica' };
         const eCls = { 'Abierta': 'bg-abierta', 'En Proceso': 'bg-proceso', 'Resuelta': 'bg-resuelta', 'Cerrada': 'bg-cerrada' };
-        let filtroEstado = 'todos', filtroPrioridad = '';
 
-        function getInit(n) { return n.split(' ').map(w => w[0]).join('').toUpperCase(); }
+        function escH(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+
+        function actualizarStats() {
+            const total = sols.length;
+            const abiertas = sols.filter(s => s.estado === 'Abierta').length;
+            const proceso = sols.filter(s => s.estado === 'En Proceso').length;
+            const resueltas = sols.filter(s => s.estado === 'Resuelta').length;
+            const cerradas = sols.filter(s => s.estado === 'Cerrada').length;
+            const criticas = sols.filter(s => s.prioridad === 'Alta' || s.prioridad === 'Crítica').length;
+            const ns = document.querySelectorAll('.stats-row .n');
+            if (ns[0]) ns[0].textContent = total;
+            if (ns[1]) ns[1].textContent = abiertas;
+            if (ns[2]) ns[2].textContent = proceso;
+            if (ns[3]) ns[3].textContent = resueltas;
+            if (ns[4]) ns[4].textContent = cerradas;
+            const alerta = document.getElementById('alertaTop');
+            if (alerta) {
+                if (criticas > 0) {
+                    alerta.style.display = 'flex';
+                    const sp = alerta.querySelector('span');
+                    if (sp) sp.innerHTML = `<strong>${criticas} solicitud${criticas !== 1 ? 'es críticas' : ' crítica'}</strong> requiere${criticas !== 1 ? 'n' : ''} atención inmediata`;
+                } else {
+                    alerta.style.display = 'none';
+                }
+            }
+        }
 
         function render(lista) {
-            document.getElementById('tablaGest').innerHTML = lista.map(s => {
+            const tbody = document.getElementById('tablaGest');
+            tbody.innerHTML = '';
+
+            if (lista.length === 0) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 7;
+                td.style.cssText = 'text-align:center;padding:40px;color:#94a3b8;';
+                td.textContent = 'No hay solicitudes.';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                return;
+            }
+
+            lista.forEach(function(s) {
                 const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
-                const asig = s.asignado ? `<span class="asignado-badge"><span class="av">${getInit(s.asignado)}</span>${s.asignado}</span>` : '<span style="color:#94a3b8;font-size:.78rem;">Sin asignar</span>';
-                return `<tr>
-            <td><strong>${s.id}</strong></td>
-            <td>${s.cliente}</td>
-            <td>${s.asunto}</td>
-            <td style="color:#64748b;font-size:.8rem;">${s.proyecto}</td>
-            <td><span class="badge-g ${pCls[s.prioridad]} ${esAlta ? 'prio-pulse' : ''}">${s.prioridad}</span></td>
-            <td><span class="badge-g ${eCls[s.estado]}">${s.estado}</span></td>
-            <td>${asig}</td>
-            <td style="white-space:nowrap;">
-                <button class="btn-accion-g btn-ver-g" onclick="verDetalle('${s.id}')"><i class="fa-solid fa-eye" style="margin-right:3px;"></i>Ver</button>
-                ${!s.asignado ? `<button class="btn-accion-g btn-asignar-g" onclick="asignarRapido('${s.id}')"><i class="fa-solid fa-user-plus" style="margin-right:3px;"></i>Asignar</button>` : ''}
-            </td>
-        </tr>`;
-            }).join('');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><strong>' + escH(s.id) + '</strong></td>' +
+                    '<td>' + escH(s.cliente) + '</td>' +
+                    '<td>' + escH(s.asunto) + '</td>' +
+                    '<td style=”color:#64748b;font-size:.8rem;”>' + escH(s.proyecto) + '</td>' +
+                    '<td><span class=”badge-g ' + (pCls[s.prioridad] || 'bp-media') + (esAlta ? ' prio-pulse' : '') + '”>' + escH(s.prioridad) + '</span></td>' +
+                    '<td><span class=”badge-g ' + (eCls[s.estado] || '') + '”>' + escH(s.estado) + '</span></td>' +
+                    '<td style=”white-space:nowrap;”></td>';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-accion-g btn-ver-g';
+                btn.innerHTML = '<i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver';
+                btn.addEventListener('click', (function(sol) {
+                    return function() { abrirDetalle(sol); };
+                })(s));
+
+                tr.lastElementChild.appendChild(btn);
+                tbody.appendChild(tr);
+            });
         }
 
         function aplicarFiltros() {
@@ -176,37 +211,126 @@
         }
         function filtrarPrio() { filtroPrioridad = document.getElementById('filtroPrio').value; aplicarFiltros(); }
 
-        function verDetalle(id) {
-            const s = sols.find(x => x.id === id); if (!s) return;
-            document.getElementById('mdTitle').textContent = s.id + ' â€” ' + s.asunto;
-            document.getElementById('mdSub').textContent = s.cliente + ' Â· ' + s.proyecto;
-            document.getElementById('mdBody').innerHTML = `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
-            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Prioridad</label><span class="badge-g ${pCls[s.prioridad]}">${s.prioridad}</span></div>
-            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Estado</label><span class="badge-g ${eCls[s.estado]}">${s.estado}</span></div>
-            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Fecha</label><span style="font-size:.88rem;font-weight:600;color:#1e293b;">${s.fecha}</span></div>
-            <div><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;">Asignado</label><span style="font-size:.88rem;font-weight:600;color:#1e293b;">${s.asignado || 'Sin asignar'}</span></div>
-        </div>
-        <div style="margin-bottom:18px;"><label style="font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:6px;">Descripción</label><p style="font-size:.88rem;color:#475569;line-height:1.6;background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;">${s.desc}</p></div>
-        <div class="mfield"><label>Cambiar estado</label><select id="nuevoEstado" style="width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;"><option ${s.estado === 'Abierta' ? 'selected' : ''}>Abierta</option><option ${s.estado === 'En Proceso' ? 'selected' : ''}>En Proceso</option><option ${s.estado === 'Resuelta' ? 'selected' : ''}>Resuelta</option><option ${s.estado === 'Cerrada' ? 'selected' : ''}>Cerrada</option></select></div>
-        <button class="btn-modal-submit" onclick="cambiarEstado('${s.id}')"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>`;
-            document.getElementById('modalDetalle').classList.add('open'); document.body.style.overflow = 'hidden';
+        let solicitudActual = null;
+
+        function abrirDetalle(s) {
+            solicitudActual = s;
+
+            document.getElementById('mdTitle').textContent = s.id + ' – ' + s.asunto;
+            document.getElementById('mdSub').textContent  = s.cliente + ' · ' + s.proyecto;
+
+            var body = document.getElementById('mdBody');
+            body.innerHTML = '';
+
+            // Grid de datos
+            var grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;';
+            var labelStyle = 'font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;';
+
+            [
+                { titulo: 'Prioridad', contenido: '<span class=”badge-g ' + (pCls[s.prioridad] || 'bp-media') + '”>' + escH(s.prioridad) + '</span>' },
+                { titulo: 'Estado',    contenido: '<span class=”badge-g ' + (eCls[s.estado]    || '')         + '”>' + escH(s.estado)    + '</span>' },
+                { titulo: 'Fecha',     contenido: '<span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>' + escH(s.fecha)   + '</span>' },
+                { titulo: 'Cliente',   contenido: '<span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>' + escH(s.cliente) + '</span>' }
+            ].forEach(function(item) {
+                var cel = document.createElement('div');
+                cel.innerHTML = '<label style=”' + labelStyle + '”>' + item.titulo + '</label>' + item.contenido;
+                grid.appendChild(cel);
+            });
+            body.appendChild(grid);
+
+            // Descripción
+            var descDiv = document.createElement('div');
+            descDiv.style.marginBottom = '18px';
+            descDiv.innerHTML = '<label style=”' + labelStyle + '”>Descripción</label>' +
+                '<p style=”font-size:.88rem;color:#475569;line-height:1.6;background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;”>' +
+                escH(s.desc || '') + '</p>';
+            body.appendChild(descDiv);
+
+            // Select estado
+            var selDiv = document.createElement('div');
+            selDiv.className = 'mfield';
+            var selLabel = document.createElement('label');
+            selLabel.textContent = 'Cambiar estado';
+            var sel = document.createElement('select');
+            sel.id = 'nuevoEstado';
+            sel.style.cssText = 'width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;';
+            ['Abierta', 'En Proceso', 'Resuelta', 'Cerrada'].forEach(function(op) {
+                var opt = document.createElement('option');
+                opt.value = op;
+                opt.textContent = op;
+                opt.selected = (s.estado === op);
+                sel.appendChild(opt);
+            });
+            selDiv.appendChild(selLabel);
+            selDiv.appendChild(sel);
+            body.appendChild(selDiv);
+
+            // Alerta modal
+            var alerta = document.createElement('div');
+            alerta.id = 'mdAlerta';
+            alerta.style.display = 'none';
+            body.appendChild(alerta);
+
+            // Botón guardar
+            var btnGuardar = document.createElement('button');
+            btnGuardar.className = 'btn-modal-submit';
+            btnGuardar.id = 'btnGuardarEstado';
+            btnGuardar.innerHTML = '<i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios';
+            btnGuardar.addEventListener('click', guardarCambioEstado);
+            body.appendChild(btnGuardar);
+
+            document.getElementById('modalDetalle').classList.add('open');
+            document.body.style.overflow = 'hidden';
         }
         function cerrarMD() { document.getElementById('modalDetalle').classList.remove('open'); document.body.style.overflow = ''; }
         document.getElementById('modalDetalle').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarMD(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarMD(); });
 
-        function cambiarEstado(id) {
-            const s = sols.find(x => x.id === id); if (!s) return;
-            s.estado = document.getElementById('nuevoEstado').value;
-            cerrarMD(); aplicarFiltros();
-        }
-        function asignarRapido(id) {
-            const s = sols.find(x => x.id === id); if (!s) return;
-            s.asignado = 'Carlos L.'; aplicarFiltros();
+        async function guardarCambioEstado() {
+            if (!solicitudActual) return;
+            const estado = document.getElementById('nuevoEstado').value;
+            const btn = document.getElementById('btnGuardarEstado');
+            const alerta = document.getElementById('mdAlerta');
+            btn.disabled = true;
+            btn.innerHTML = '<i class=”fa-solid fa-spinner fa-spin”></i> Guardando...';
+            alerta.style.display = 'none';
+            try {
+                const res = await fetch('php/solicitudes.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'actualizar_estado', id_solicitud: solicitudActual.id_num, estado })
+                });
+                const data = await res.json();
+                if (data.error) {
+                    alerta.style.cssText = 'display:block;padding:9px 12px;border-radius:7px;margin:10px 0;font-size:.8rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+                    alerta.textContent = data.mensaje || 'Error al actualizar.';
+                } else {
+                    cerrarMD();
+                    await cargarSolicitudes();
+                }
+            } catch {
+                alerta.style.cssText = 'display:block;padding:9px 12px;border-radius:7px;margin:10px 0;font-size:.8rem;font-weight:500;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;';
+                alerta.textContent = 'Error de conexión.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios';
+            }
         }
 
-        render(sols);
+        async function cargarSolicitudes() {
+            try {
+                const res = await fetch('php/solicitudes.php?action=listar', { cache: 'no-store' });
+                const data = await res.json();
+                if (data.error) throw new Error(data.mensaje);
+                sols = data.solicitudes || [];
+                actualizarStats();
+                aplicarFiltros();
+            } catch (e) {
+                document.getElementById('tablaGest').innerHTML =
+                    `<tr><td colspan=”8” style=”color:#dc2626;text-align:center;padding:30px;”>${e.message || 'Error al cargar solicitudes.'}</td></tr>`;
+            }
+        }
 
         function buildSidebar(rol) {
             const menu = document.getElementById('sidebarMenu');
@@ -241,9 +365,11 @@
                 const data = await res.json();
                 if (data.error) { window.location.href = 'login.html'; return; }
                 if (data.rol === 'Cliente') { window.location.href = 'mis_proyectos.html'; return; }
+                if (data.rol === 'Empleado') { window.location.href = 'mis_proyectos_empleado.html'; return; }
                 document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre || '';
                 document.getElementById('sidebarRol').textContent = data.rol || '';
                 buildSidebar(data.rol);
+                await cargarSolicitudes();
             } catch (e) { window.location.href = 'login.html'; }
         })();
 
