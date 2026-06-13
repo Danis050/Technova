@@ -161,32 +161,43 @@
 
         function render(lista) {
             const tbody = document.getElementById('tablaGest');
+            tbody.innerHTML = '';
+
             if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan=”7” style=”text-align:center;padding:40px;color:#94a3b8;”>No hay solicitudes.</td></tr>`;
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 7;
+                td.style.cssText = 'text-align:center;padding:40px;color:#94a3b8;';
+                td.textContent = 'No hay solicitudes.';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
                 return;
             }
-            tbody.innerHTML = lista.map(s => {
-                const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
-                return `<tr>
-                <td><strong>${escH(s.id)}</strong></td>
-                <td>${escH(s.cliente)}</td>
-                <td>${escH(s.asunto)}</td>
-                <td style=”color:#64748b;font-size:.8rem;”>${escH(s.proyecto)}</td>
-                <td><span class=”badge-g ${pCls[s.prioridad] || 'bp-media'} ${esAlta ? 'prio-pulse' : ''}”>${escH(s.prioridad)}</span></td>
-                <td><span class=”badge-g ${eCls[s.estado] || ''}”>${escH(s.estado)}</span></td>
-                <td style=”white-space:nowrap;”>
-                    <button class=”btn-accion-g btn-ver-g” data-id=”${s.id_num}”><i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver</button>
-                </td>
-            </tr>`;
-            }).join('');
-        }
 
-        document.getElementById('tablaGest').addEventListener('click', function(e) {
-            const btn = e.target.closest('.btn-ver-g');
-            if (!btn) return;
-            const idNum = parseInt(btn.dataset.id, 10);
-            abrirDetalle(idNum);
-        });
+            lista.forEach(function(s) {
+                const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><strong>' + escH(s.id) + '</strong></td>' +
+                    '<td>' + escH(s.cliente) + '</td>' +
+                    '<td>' + escH(s.asunto) + '</td>' +
+                    '<td style=”color:#64748b;font-size:.8rem;”>' + escH(s.proyecto) + '</td>' +
+                    '<td><span class=”badge-g ' + (pCls[s.prioridad] || 'bp-media') + (esAlta ? ' prio-pulse' : '') + '”>' + escH(s.prioridad) + '</span></td>' +
+                    '<td><span class=”badge-g ' + (eCls[s.estado] || '') + '”>' + escH(s.estado) + '</span></td>' +
+                    '<td style=”white-space:nowrap;”></td>';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-accion-g btn-ver-g';
+                btn.innerHTML = '<i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver';
+                btn.addEventListener('click', (function(sol) {
+                    return function() { abrirDetalle(sol); };
+                })(s));
+
+                tr.lastElementChild.appendChild(btn);
+                tbody.appendChild(tr);
+            });
+        }
 
         function aplicarFiltros() {
             let lista = sols;
@@ -202,28 +213,73 @@
 
         let solicitudActual = null;
 
-        function abrirDetalle(idNum) {
-            const s = sols.find(x => Number(x.id_num) === Number(idNum));
-            if (!s) return;
+        function abrirDetalle(s) {
             solicitudActual = s;
+
             document.getElementById('mdTitle').textContent = s.id + ' – ' + s.asunto;
-            document.getElementById('mdSub').textContent = s.cliente + ' · ' + s.proyecto;
-            document.getElementById('mdBody').innerHTML = `
-        <div style=”display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;”>
-            <div><label style=”font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;”>Prioridad</label><span class=”badge-g ${pCls[s.prioridad] || 'bp-media'}”>${escH(s.prioridad)}</span></div>
-            <div><label style=”font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;”>Estado</label><span class=”badge-g ${eCls[s.estado] || ''}”>${escH(s.estado)}</span></div>
-            <div><label style=”font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;”>Fecha</label><span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>${escH(s.fecha)}</span></div>
-            <div><label style=”font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;”>Cliente</label><span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>${escH(s.cliente)}</span></div>
-        </div>
-        <div style=”margin-bottom:18px;”><label style=”font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:6px;”>Descripción</label><p style=”font-size:.88rem;color:#475569;line-height:1.6;background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;”>${escH(s.desc)}</p></div>
-        <div class=”mfield”><label>Cambiar estado</label><select id=”nuevoEstado” style=”width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;”>
-            <option ${s.estado==='Abierta'?'selected':''}>Abierta</option>
-            <option ${s.estado==='En Proceso'?'selected':''}>En Proceso</option>
-            <option ${s.estado==='Resuelta'?'selected':''}>Resuelta</option>
-            <option ${s.estado==='Cerrada'?'selected':''}>Cerrada</option>
-        </select></div>
-        <div id=”mdAlerta” style=”display:none;padding:9px 12px;border-radius:7px;margin:10px 0;font-size:.8rem;font-weight:500;”></div>
-        <button class=”btn-modal-submit” id=”btnGuardarEstado” onclick=”guardarCambioEstado()”><i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios</button>`;
+            document.getElementById('mdSub').textContent  = s.cliente + ' · ' + s.proyecto;
+
+            var body = document.getElementById('mdBody');
+            body.innerHTML = '';
+
+            // Grid de datos
+            var grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;';
+            var labelStyle = 'font-size:.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:3px;';
+
+            [
+                { titulo: 'Prioridad', contenido: '<span class=”badge-g ' + (pCls[s.prioridad] || 'bp-media') + '”>' + escH(s.prioridad) + '</span>' },
+                { titulo: 'Estado',    contenido: '<span class=”badge-g ' + (eCls[s.estado]    || '')         + '”>' + escH(s.estado)    + '</span>' },
+                { titulo: 'Fecha',     contenido: '<span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>' + escH(s.fecha)   + '</span>' },
+                { titulo: 'Cliente',   contenido: '<span style=”font-size:.88rem;font-weight:600;color:#1e293b;”>' + escH(s.cliente) + '</span>' }
+            ].forEach(function(item) {
+                var cel = document.createElement('div');
+                cel.innerHTML = '<label style=”' + labelStyle + '”>' + item.titulo + '</label>' + item.contenido;
+                grid.appendChild(cel);
+            });
+            body.appendChild(grid);
+
+            // Descripción
+            var descDiv = document.createElement('div');
+            descDiv.style.marginBottom = '18px';
+            descDiv.innerHTML = '<label style=”' + labelStyle + '”>Descripción</label>' +
+                '<p style=”font-size:.88rem;color:#475569;line-height:1.6;background:#f8fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;”>' +
+                escH(s.desc || '') + '</p>';
+            body.appendChild(descDiv);
+
+            // Select estado
+            var selDiv = document.createElement('div');
+            selDiv.className = 'mfield';
+            var selLabel = document.createElement('label');
+            selLabel.textContent = 'Cambiar estado';
+            var sel = document.createElement('select');
+            sel.id = 'nuevoEstado';
+            sel.style.cssText = 'width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.85rem;font-family:inherit;';
+            ['Abierta', 'En Proceso', 'Resuelta', 'Cerrada'].forEach(function(op) {
+                var opt = document.createElement('option');
+                opt.value = op;
+                opt.textContent = op;
+                opt.selected = (s.estado === op);
+                sel.appendChild(opt);
+            });
+            selDiv.appendChild(selLabel);
+            selDiv.appendChild(sel);
+            body.appendChild(selDiv);
+
+            // Alerta modal
+            var alerta = document.createElement('div');
+            alerta.id = 'mdAlerta';
+            alerta.style.display = 'none';
+            body.appendChild(alerta);
+
+            // Botón guardar
+            var btnGuardar = document.createElement('button');
+            btnGuardar.className = 'btn-modal-submit';
+            btnGuardar.id = 'btnGuardarEstado';
+            btnGuardar.innerHTML = '<i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios';
+            btnGuardar.addEventListener('click', guardarCambioEstado);
+            body.appendChild(btnGuardar);
+
             document.getElementById('modalDetalle').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
