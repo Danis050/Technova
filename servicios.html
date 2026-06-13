@@ -374,6 +374,7 @@
         let proyectoEditId = null;
         let proyectoEliminarId = null;
 
+<<<<<<< Updated upstream
         function formatFecha(f) {
             if (!f || f === '0000-00-00') return '-';
             const [y, m, d] = f.split('-');
@@ -390,6 +391,22 @@
             d.textContent = s;
             return d.innerHTML;
         }
+=======
+// ─── Init ─────────────────────────────────────────────────────
+async function init() {
+    try {
+        const res  = await fetch('php/dashboard_data.php');
+        const data = await res.json();
+        if (data.error) { window.location.href = 'login.html'; return; }
+        if (data.rol === 'Cliente') { window.location.href = 'mis_proyectos.html'; return; }
+        document.getElementById('sidebarNombre').textContent = data.usuario;
+        document.getElementById('sidebarRol').textContent    = data.rol;
+        document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+        if (data.rol === 'Administrador') document.getElementById('adminSection').style.display = 'block';
+    } catch (e) { window.location.href = 'login.html'; }
+    await cargarServicios();
+}
+>>>>>>> Stashed changes
 
         async function cargarProyectos() {
             try {

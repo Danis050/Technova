@@ -19,11 +19,13 @@
             </div>
             <nav class="sidebar-menu">
                 <div class="menu-section-label">Mi Portal</div>
-                <a href="mis_proyectos.html"><i class=" fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
-                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
-                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i>Mis incidencias</a>
-                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket active"></i>Mis solicitudes</a>
-                <div class="menu-section-label" style="margin-top:8px;">Sitio</div>
+                <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i> Mis entregables</a>
+                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i> Mis incidencias</a>
+                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i> Mis solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Mis Pagos</a>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
             </nav>
             <div class="sidebar-user">
@@ -163,6 +165,7 @@ cargarSolicitudes();
         const res = await fetch('php/dashboard_data.php');
         const data = await res.json();
         if (data.error) { window.location.href = 'login.html'; return; }
+        if (data.rol !== 'Cliente') { window.location.href = 'dashboard.html'; return; }
         document.getElementById('sidebarNombre').textContent = data.usuario || data.nombre || '';
         document.getElementById('sidebarRol').textContent = data.rol || '';
     } catch (e) { window.location.href = 'login.html'; }
