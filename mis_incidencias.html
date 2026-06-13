@@ -148,11 +148,11 @@
         // ── Sidebar móvil ─────────────────────────────────────────────
         document.getElementById('btnMenuToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('visible');
         });
         document.getElementById('sidebarOverlay').addEventListener('click', () => {
             document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('visible');
         });
 
         // ── Utilidades ────────────────────────────────────────────────

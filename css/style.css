@@ -6741,3 +6741,472 @@ body.admin {
         height: 140px !important;
     }
 }
+
+/* ============================================================
+   RESPONSIVE MÓVIL — mejoras globales para teléfono
+   ============================================================ */
+
+/* ── 768px: tablet/móvil grande ── */
+@media (max-width: 768px) {
+
+    /* Header del panel: apilar verticalmente */
+    .dash-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dash-header h1 {
+        font-size: 1.3rem;
+    }
+
+    /* Buscador facturas: ancho completo */
+    .input-busqueda {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 4px;
+    }
+
+    /* Buscador usuarios */
+    .usuarios-search {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    /* Form panel (pagos, incidencias): quitar sticky */
+    .form-panel {
+        position: relative !important;
+        top: auto !important;
+    }
+
+    /* Selector de proyecto: apilar */
+    .proyecto-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .proyecto-selector select {
+        min-width: unset !important;
+        width: 100% !important;
+    }
+
+    /* Grid detalle factura en modal: 1 columna */
+    .detalle-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+
+    /* Botones de estado en modal factura: columna */
+    .estado-selector {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Filtros admin: envolver */
+    .filtros-admin {
+        gap: 6px;
+    }
+
+    /* Stats solicitudes: 2 columnas */
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Tabla soporte */
+    .rec-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Todos los wrappers de tabla */
+    .table-wrap,
+    .facturas-table-wrap,
+    .historial-table-wrap,
+    .gest-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Entregables: fila completa */
+    .entregable-row {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .ent-fecha,
+    .ent-actions,
+    .ent-info {
+        width: 100%;
+    }
+
+    .ent-actions {
+        justify-content: flex-end;
+    }
+
+    /* Tabla de incidencias: min-width */
+    .inc-table {
+        min-width: 480px;
+    }
+
+    /* Tabla de solicitudes: min-width */
+    .sol-table {
+        min-width: 460px;
+    }
+
+    .inc-layout,
+    .pagos-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Grid 2 del dashboard soporte */
+    .grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Modal: más pantalla */
+    .modal-overlay {
+        padding: 8px;
+    }
+
+    .modal-overlay .modal,
+    .dash-layout .modal {
+        max-height: 96vh;
+        border-radius: 16px;
+    }
+
+    /* Roles grid asignar miembros */
+    .roles-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Notif dropdown */
+    .notif-dropdown {
+        width: calc(100vw - 16px);
+        right: 0;
+        left: auto;
+    }
+
+    /* Perfil avatar: apilar */
+    .perfil-avatar-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Login/registro en mobile */
+    .login-wrapper,
+    .recovery-wrapper {
+        padding: 16px !important;
+        align-items: flex-start;
+        padding-top: 40px !important;
+    }
+
+    .login-container,
+    .recovery-container {
+        padding: 28px 20px !important;
+    }
+
+    /* Code inputs recuperar contraseña */
+    .code-inputs input {
+        width: 44px;
+        height: 48px;
+        font-size: 1.2rem;
+    }
+}
+
+/* ── 480px: teléfono estándar ── */
+@media (max-width: 480px) {
+
+    /* Dash main: padding lateral reducido */
+    .dash-main {
+        padding: 72px 14px 24px !important;
+    }
+
+    /* Header */
+    .dash-header h1 {
+        font-size: 1.15rem;
+    }
+
+    /* Stats cards dashboard: 2 columnas compactas */
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+
+    .stat-card-dash {
+        padding: 14px 12px;
+        gap: 10px;
+    }
+
+    .stat-card-dash h3 {
+        font-size: 1.2rem;
+    }
+
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    /* Pagos: resumen 2 columnas */
+    .resumen-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px;
+    }
+
+    .resumen-card {
+        padding: 14px 12px;
+        gap: 10px;
+    }
+
+    .resumen-card h4 {
+        font-size: 1.1rem;
+    }
+
+    /* Método de pago: 2 columnas */
+    .metodo-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Role selector modal: 2 columnas (antes 3) */
+    .role-selector {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Prioridad incidencias: 1 columna */
+    .prioridad-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Stats fila gestion: 2 columnas */
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Soporte stats */
+    .soporte-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Calificaciones stats */
+    .calif-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Reportes stats */
+    .report-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Stats mini (solicitudes) */
+    .stats-mini {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Form row 2 columnas → 1 */
+    .form-row-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Puestos grid modal usuario */
+    .puestos-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Tabla facturas: reducir padding */
+    .facturas-table th,
+    .facturas-table td {
+        padding: 8px 10px;
+        font-size: .78rem;
+    }
+
+    /* Tabla gestión: reducir padding */
+    .gest-table th,
+    .gest-table td {
+        padding: 9px 10px;
+        font-size: .78rem;
+    }
+
+    /* Tabla historial pagos */
+    .historial-table th,
+    .historial-table td {
+        padding: 9px 10px;
+        font-size: .78rem;
+    }
+
+    /* Tabla incidencias */
+    .inc-table th,
+    .inc-table td {
+        padding: 9px 10px;
+        font-size: .78rem;
+    }
+
+    /* Botón cerrar sesión */
+    .btn-logout {
+        font-size: .78rem;
+        padding: 6px 12px;
+    }
+
+    /* Notif dropdown: casi fullscreen */
+    .notif-dropdown {
+        width: calc(100vw - 12px);
+        right: -4px;
+    }
+
+    /* Table-card padding */
+    .table-card {
+        padding: 16px 14px;
+    }
+
+    /* Panel card */
+    .panel-card {
+        padding: 16px;
+    }
+
+    /* Rol card desc: ocultar en móvil */
+    .role-card-desc {
+        display: none;
+    }
+
+    /* Role card más compacta */
+    .role-card {
+        padding: 10px 6px;
+    }
+
+    .role-card-icon {
+        width: 32px;
+        height: 32px;
+        font-size: .9rem;
+    }
+
+    .role-card-name {
+        font-size: .72rem;
+    }
+
+    /* Modal body padding */
+    .modal-overlay .modal-body,
+    .dash-layout .modal-body {
+        padding: 0 16px 20px;
+    }
+
+    .modal-header {
+        padding: 18px 16px 0;
+    }
+
+    /* Sidebar user */
+    .dash-layout .sidebar-user {
+        font-size: .78rem;
+    }
+
+    /* Login container */
+    .login-container {
+        padding: 24px 16px !important;
+    }
+
+    /* Recovery container */
+    .recovery-container {
+        padding: 28px 16px !important;
+    }
+
+    /* Code inputs más pequeños */
+    .code-inputs {
+        gap: 7px;
+    }
+
+    .code-inputs input {
+        width: 40px;
+        height: 44px;
+        font-size: 1.1rem;
+        border-radius: 10px;
+    }
+
+    /* Filtros bar: wrapping natural */
+    .filtros-bar {
+        gap: 6px;
+    }
+
+    .btn-filtro {
+        padding: 5px 12px;
+        font-size: .75rem;
+    }
+
+    /* Pagination más compacta */
+    .pagination button {
+        min-width: 32px;
+        height: 32px;
+        font-size: .76rem;
+    }
+
+    .pagination .page-info {
+        display: none;
+    }
+
+    /* Perfil card */
+    .perfil-card {
+        padding: 20px 16px;
+    }
+}
+
+/* ── 360px: teléfonos pequeños ── */
+@media (max-width: 360px) {
+
+    /* Stats dashboard: 1 columna */
+    .stats-cards {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Pagos resumen: 1 columna */
+    .resumen-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Soporte stats: 1 columna */
+    .soporte-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Stats row gestion: 1 columna */
+    .stats-row {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Stats mini: 1 columna */
+    .stats-mini {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Dash main */
+    .dash-main {
+        padding: 64px 10px 20px !important;
+    }
+
+    /* Header más compacto */
+    .dash-header h1 {
+        font-size: 1.05rem;
+    }
+
+    /* Prioridad: 1 columna */
+    .prioridad-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Método pago: 1 columna */
+    .metodo-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Code inputs aún más pequeños */
+    .code-inputs input {
+        width: 36px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    /* Role selector: 1 fila de 2 */
+    .role-selector {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Nav links landing */
+    .nav-links li a {
+        font-size: .9rem;
+    }
+}
