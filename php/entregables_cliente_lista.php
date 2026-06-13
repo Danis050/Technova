@@ -9,10 +9,10 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 $id_usuario = $_SESSION['id_usuario'];
-$conn = getConexion();
 $action = isset($_GET['action']) ? $_GET['action'] : 'entregables';
 
 try {
+    $conn = getConexion();
     if ($action === 'proyectos') {
         $sql = "SELECT p.id_proyecto, p.nombre 
                 FROM proyecto p 
@@ -61,7 +61,7 @@ try {
     
     echo json_encode(['error' => false, 'entregables' => $entregables]);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     echo json_encode(['error' => true, 'mensaje' => 'Error en el servidor: ' . $e->getMessage()]);
 }
 ?>
