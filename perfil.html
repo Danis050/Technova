@@ -223,6 +223,12 @@
                 <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
                 <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
+        } else if (rol === 'Empleado') {
+            menu.innerHTML = `
+                <div class="menu-section-label">Mi Portal</div>
+                <a href="mis_proyectos_empleado.html"><i class="fa-solid fa-diagram-project"></i> Mis Proyectos</a>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>`;
         } else {
             menu.innerHTML = `
                 <div class="menu-section-label">Principal</div>

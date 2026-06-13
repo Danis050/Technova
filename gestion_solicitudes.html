@@ -97,7 +97,6 @@
                                 <th>Proyecto</th>
                                 <th>Prioridad</th>
                                 <th>Estado</th>
-                                <th>Asignado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -162,9 +161,10 @@
 
         function render(lista) {
             document.getElementById('tablaGest').innerHTML = lista.length === 0
-                ? `<tr><td colspan=”8” style=”text-align:center;padding:40px;color:#94a3b8;”>No hay solicitudes.</td></tr>`
+                ? `<tr><td colspan=”7” style=”text-align:center;padding:40px;color:#94a3b8;”>No hay solicitudes.</td></tr>`
                 : lista.map(s => {
                     const esAlta = s.prioridad === 'Alta' || s.prioridad === 'Crítica';
+                    const idNum = s.id_num;
                     return `<tr>
                 <td><strong>${escH(s.id)}</strong></td>
                 <td>${escH(s.cliente)}</td>
@@ -172,9 +172,8 @@
                 <td style=”color:#64748b;font-size:.8rem;”>${escH(s.proyecto)}</td>
                 <td><span class=”badge-g ${pCls[s.prioridad] || 'bp-media'} ${esAlta ? 'prio-pulse' : ''}”>${escH(s.prioridad)}</span></td>
                 <td><span class=”badge-g ${eCls[s.estado] || ''}”>${escH(s.estado)}</span></td>
-                <td><span style=”color:#94a3b8;font-size:.78rem;”>—</span></td>
                 <td style=”white-space:nowrap;”>
-                    <button class=”btn-accion-g btn-ver-g” onclick=”verDetalle(${s.id_num})”><i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver</button>
+                    <button class=”btn-accion-g btn-ver-g” onclick=”abrirDetalle(${idNum})”><i class=”fa-solid fa-eye” style=”margin-right:3px;”></i>Ver</button>
                 </td>
             </tr>`;
                 }).join('');
@@ -192,8 +191,12 @@
         }
         function filtrarPrio() { filtroPrioridad = document.getElementById('filtroPrio').value; aplicarFiltros(); }
 
-        function verDetalle(idNum) {
-            const s = sols.find(x => x.id_num === idNum); if (!s) return;
+        let solicitudActual = null;
+
+        function abrirDetalle(idNum) {
+            const s = sols.find(x => Number(x.id_num) === Number(idNum));
+            if (!s) return;
+            solicitudActual = s;
             document.getElementById('mdTitle').textContent = s.id + ' – ' + s.asunto;
             document.getElementById('mdSub').textContent = s.cliente + ' · ' + s.proyecto;
             document.getElementById('mdBody').innerHTML = `
@@ -211,24 +214,27 @@
             <option ${s.estado==='Cerrada'?'selected':''}>Cerrada</option>
         </select></div>
         <div id=”mdAlerta” style=”display:none;padding:9px 12px;border-radius:7px;margin:10px 0;font-size:.8rem;font-weight:500;”></div>
-        <button class=”btn-modal-submit” id=”btnGuardarEstado” onclick=”cambiarEstado(${s.id_num})”><i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios</button>`;
-            document.getElementById('modalDetalle').classList.add('open'); document.body.style.overflow = 'hidden';
+        <button class=”btn-modal-submit” id=”btnGuardarEstado” onclick=”guardarCambioEstado()”><i class=”fa-solid fa-floppy-disk”></i> Guardar Cambios</button>`;
+            document.getElementById('modalDetalle').classList.add('open');
+            document.body.style.overflow = 'hidden';
         }
         function cerrarMD() { document.getElementById('modalDetalle').classList.remove('open'); document.body.style.overflow = ''; }
         document.getElementById('modalDetalle').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarMD(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarMD(); });
 
-        async function cambiarEstado(idNum) {
+        async function guardarCambioEstado() {
+            if (!solicitudActual) return;
             const estado = document.getElementById('nuevoEstado').value;
             const btn = document.getElementById('btnGuardarEstado');
             const alerta = document.getElementById('mdAlerta');
             btn.disabled = true;
             btn.innerHTML = '<i class=”fa-solid fa-spinner fa-spin”></i> Guardando...';
+            alerta.style.display = 'none';
             try {
                 const res = await fetch('php/solicitudes.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'actualizar_estado', id_solicitud: idNum, estado })
+                    body: JSON.stringify({ action: 'actualizar_estado', id_solicitud: solicitudActual.id_num, estado })
                 });
                 const data = await res.json();
                 if (data.error) {
