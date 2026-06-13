@@ -26,36 +26,7 @@
                 <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
                 TechNova
             </div>
-            <nav class="sidebar-menu">
-                <div class="menu-section-label">Principal</div>
-                <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                
-                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
-                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
-                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
-                
-                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
-                
-                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
-                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
-                
-                <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
-                
-                <div class="menu-section-label" id="adminSection" style="display:none;">Administración</div>
-                <a href="listado_usuarios.html" id="linkListadoUsuarios" style="display:none;"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
-                <a href="reportes_proyectos.html" id="linkReportes" style="display:none;"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
-                <a href="auditoria.html" id="linkAuditoria" style="display:none;"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
-                <a href="calificaciones.html" id="linkCalificaciones" style="display:none;"><i class="fa-solid fa-star"></i> Calificaciones</a>
-                <button class="btn-crear-usuario" id="btnAbrirModal" style="display:none;" onclick="abrirModal()">
-                    <i class="fa-solid fa-user-plus"></i>
-                    Crear Usuario
-                    <span class="badge-new">ADMIN</span>
-                </button>
-
-                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
-                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
-                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-            </nav>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
             <div class="sidebar-user">
                 <strong id="sidebarNombre">Cargando...</strong>
                 <span id="sidebarRol"></span>
@@ -477,6 +448,38 @@
             txt.textContent = 'Crear Usuario';
         }
 
+        function buildSidebar(rol) {
+            const menu = document.getElementById('sidebarMenu');
+            menu.innerHTML = `
+                <div class="menu-section-label">Principal</div>
+                <a href="dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="proyectos.html"><i class="fa-solid fa-diagram-project"></i> Proyectos</a>
+                <a href="facturas.html"><i class="fa-solid fa-file-invoice-dollar"></i> Facturación</a>
+                <a href="asignar_miembros.html"><i class="fa-solid fa-user-group"></i> Asignar Miembros</a>
+                <a href="gestion_solicitudes.html"><i class="fa-solid fa-ticket"></i> Solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Pagos</a>
+                <a href="servicios.html"><i class="fa-solid fa-screwdriver-wrench"></i> Servicios</a>
+                <a href="soporte.html"><i class="fa-solid fa-headset"></i> Soporte</a>
+                ${rol === 'Administrador' ? `
+                <div class="menu-section-label">Administración</div>
+                <a href="listado_usuarios.html"><i class="fa-solid fa-users-gear"></i> Listado Usuarios</a>
+                <a href="reportes_proyectos.html"><i class="fa-solid fa-chart-bar"></i> Reportes</a>
+                <a href="auditoria.html"><i class="fa-solid fa-clock-rotate-left"></i> Auditoría</a>
+                <a href="calificaciones.html"><i class="fa-solid fa-star"></i> Calificaciones</a>
+                <button class="btn-crear-usuario" onclick="abrirModal()">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Crear Usuario
+                    <span class="badge-new">ADMIN</span>
+                </button>` : ''}
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
+            const currentPage = location.pathname.split('/').pop() || 'index.html';
+            menu.querySelectorAll('a').forEach(a => {
+                if (a.getAttribute('href') === currentPage) a.classList.add('active');
+            });
+        }
+
         let todosLosProyectos = [];
         let esAdminGlobal = false;
 
@@ -519,19 +522,11 @@
                 document.getElementById('sidebarNombre').textContent = data.usuario;
                 document.getElementById('sidebarRol').textContent = data.rol;
                 document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
+                buildSidebar(data.rol);
                 document.getElementById('totalClientes').textContent = data.total_clientes;
                 document.getElementById('totalProyectos').textContent = data.total_proyectos;
                 document.getElementById('totalFacturado').textContent = '$' + parseFloat(data.total_facturado).toFixed(2);
                 document.getElementById('totalPagos').textContent = '$' + parseFloat(data.total_pagos).toFixed(2);
-
-                if (data.rol === 'Administrador') {
-                    document.getElementById('adminSection').style.display = 'block';
-                    document.getElementById('linkListadoUsuarios').style.display = 'block';
-                    document.getElementById('linkReportes').style.display = 'block';
-                    document.getElementById('linkAuditoria').style.display = 'block';
-                    document.getElementById('linkCalificaciones').style.display = 'block';
-                    document.getElementById('btnAbrirModal').style.display = 'flex';
-                }
 
                 if (data.proyectos && data.proyectos.length > 0) {
                     esAdminGlobal = (data.rol === 'Administrador');

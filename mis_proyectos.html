@@ -220,16 +220,7 @@
                 <img src="img/logo-icon.svg" alt="TechNova" width="36" height="34">
                 TechNova
             </div>
-            <nav class="sidebar-menu">
-                <div class="menu-section-label">Mi Portal</div>
-                <a href="mis_proyectos.html"><i class="active fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
-                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i>Mis entregables</a>
-                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i>Mis incidencias</a>
-                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i>Mis solicitudes</a>
-                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
-                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
-                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>
-            </nav>
+            <nav class="sidebar-menu" id="sidebarMenu"></nav>
             <div class="sidebar-user">
                 <strong id="sidebarNombre">Cargando...</strong>
                 <span id="sidebarRol"></span>
@@ -530,6 +521,24 @@
             document.getElementById('errorMsg').textContent = msg;
         }
 
+        function buildSidebar() {
+            const menu = document.getElementById('sidebarMenu');
+            menu.innerHTML = `
+                <div class="menu-section-label">Mi Portal</div>
+                <a href="mis_proyectos.html"><i class="fa-regular fa-rectangle-list"></i> Mis Proyectos</a>
+                <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i> Mis entregables</a>
+                <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i> Mis incidencias</a>
+                <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i> Mis solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Mis Pagos</a>
+                <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
+                <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
+                <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
+            const currentPage = location.pathname.split('/').pop() || 'index.html';
+            menu.querySelectorAll('a').forEach(a => {
+                if (a.getAttribute('href') === currentPage) a.classList.add('active');
+            });
+        }
+
         // ─── Init ─────────────────────────────────────────────────────
         async function init() {
             try {
@@ -542,6 +551,7 @@
                 document.getElementById('sidebarNombre').textContent = sesion.usuario;
                 document.getElementById('sidebarRol').textContent = sesion.rol;
                 document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario;
+                buildSidebar();
 
                 const resProy = await fetch('php/mis_proyectos.php');
                 const proyectos = await resProy.json();
