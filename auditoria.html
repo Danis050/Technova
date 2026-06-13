@@ -99,6 +99,16 @@
     </div>
 
 <script>
+// Sidebar móvil
+const sidebar    = document.getElementById('sidebar');
+const sidebarOvl = document.getElementById('sidebarOverlay');
+document.getElementById('btnMenuToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open'); sidebarOvl.classList.toggle('visible');
+});
+sidebarOvl.addEventListener('click', () => {
+    sidebar.classList.remove('open'); sidebarOvl.classList.remove('visible');
+});
+
 // Variables globales
 let filtroAccion = ''; // Vacío significa 'todos'
 let paginaActual = 1;
