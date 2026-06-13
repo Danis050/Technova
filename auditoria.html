@@ -265,9 +265,6 @@ async function init() {
     }
 }
 
-<<<<<<< Updated upstream
-init();
-=======
     function renderPaginacion(totalPaginas) {
         const pag = document.getElementById('paginacion');
         if (totalPaginas <= 1) { pag.innerHTML = ''; return; }
@@ -293,7 +290,7 @@ init();
     function aplicarFiltros() { paginaActual = 1; renderTabla(); }
 
     async function cerrarSesion() {
-        await fetch('php/logout.php');
+        try { await fetch('php/logout.php'); } catch(e) {}
         window.location.href = 'login.html';
     }
 
@@ -341,7 +338,6 @@ init();
     }
 
     init();
->>>>>>> Stashed changes
 </script>
 </body>
 </html>

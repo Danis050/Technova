@@ -189,38 +189,8 @@
         renderTabla(lista);
     }
 
-<<<<<<< Updated upstream
     async function cerrarSesion() {
         try { await fetch('php/logout.php'); } catch(e) {}
-        window.location.href = 'login.html';
-    }
-
-    async function init() {
-        try {
-            const resSesion = await fetch('php/dashboard_data.php');
-            const sesion = await resSesion.json();
-            if (sesion.error) { window.location.href = 'login.html'; return; }
-            if (sesion.rol !== 'Administrador') { window.location.href = 'dashboard.html'; return; }
-            document.getElementById('sidebarNombre').textContent = sesion.usuario || '';
-            document.getElementById('sidebarRol').textContent = sesion.rol || '';
-            document.getElementById('saludo').textContent = 'Bienvenido, ' + sesion.usuario + ' - ' + sesion.rol;
-
-            const res = await fetch('php/listar_calificaciones.php', { cache: 'no-store' });
-            const data = await res.json();
-            if (data.error) throw new Error(data.mensaje || 'Error al cargar calificaciones.');
-            calificaciones = data.calificaciones || [];
-            actualizarStats();
-            renderTabla(calificaciones);
-        } catch (e) {
-            document.getElementById('califCount').textContent = e.message || 'No se pudieron cargar las calificaciones.';
-            actualizarStats();
-            renderTabla([]);
-        }
-    }
-
-=======
-    async function cerrarSesion() {
-        await fetch('php/logout.php');
         window.location.href = 'login.html';
     }
 
@@ -261,13 +231,15 @@
             document.getElementById('sidebarRol').textContent    = data.rol;
             document.getElementById('saludo').textContent = 'Bienvenido, ' + data.usuario + ' · ' + data.rol;
             buildSidebar();
+
+            const resCalif = await fetch('php/listar_calificaciones.php', { cache: 'no-store' });
+            const dataCalif = await resCalif.json();
+            if (!dataCalif.error) calificaciones = dataCalif.calificaciones || [];
         } catch(e) { window.location.href = 'login.html'; return; }
 
         actualizarStats();
         renderTabla(calificaciones);
     }
-
->>>>>>> Stashed changes
     init();
 </script>
 </body>

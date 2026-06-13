@@ -136,7 +136,6 @@
     </div>
 
 <script>
-    
     const sidebar = document.getElementById('sidebar');
     const sidebarOvl = document.getElementById('sidebarOverlay');
     document.getElementById('btnMenuToggle').addEventListener('click', () => {
@@ -155,15 +154,13 @@
             { id: 'rule-number',  test: /[0-9]/.test(pwd) },
             { id: 'rule-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
         ];
-
         let score = 0;
         rules.forEach(r => {
             const el = document.getElementById(r.id);
             const icon = el.querySelector('i');
             if (r.test) {
                 el.classList.add('valid'); el.classList.remove('invalid');
-                icon.className = 'fa-solid fa-circle-check';
-                score++;
+                icon.className = 'fa-solid fa-circle-check'; score++;
             } else if (pwd.length > 0) {
                 el.classList.add('invalid'); el.classList.remove('valid');
                 icon.className = 'fa-solid fa-circle-xmark';
@@ -172,8 +169,6 @@
                 icon.className = 'fa-solid fa-circle';
             }
         });
-
-        // Barra de fortaleza
         const fill = document.getElementById('strengthFill');
         const label = document.getElementById('strengthLabel');
         if (pwd.length === 0) {
@@ -188,7 +183,6 @@
             fill.style.width = '100%'; fill.style.background = '#059669';
             label.textContent = 'Fuerte'; label.style.color = '#059669';
         }
-
         validarCoincidencia();
     }
 
@@ -216,49 +210,6 @@
         el.innerHTML = `<i class="fa-solid ${ico}"></i> ${msg}`;
     }
 
-<<<<<<< Updated upstream
-    async function guardarPassword() {
-        const actual = document.getElementById('pwdActual').value;
-        const nueva = document.getElementById('pwdNueva').value;
-        const confirmar = document.getElementById('pwdConfirmar').value;
-
-        if (!actual || !nueva || !confirmar) return mostrarAlerta('Todos los campos son requeridos.');
-        if (nueva.length < 8) return mostrarAlerta('La contraseña debe tener al menos 8 caracteres.');
-        if (!/[A-Z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una mayúscula.');
-        if (!/[a-z]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos una minúscula.');
-        if (!/[0-9]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un número.');
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(nueva)) return mostrarAlerta('La contraseña debe tener al menos un carácter especial.');
-        if (nueva !== confirmar) return mostrarAlerta('Las contraseñas no coinciden.');
-
-        const btn = document.getElementById('btnGuardarPwdTexto');
-        btn.textContent = 'Guardando...';
-
-        try {
-            const fd = new FormData();
-            fd.append('accion', 'cambiar_contrasena');
-            fd.append('contrasena_actual', actual);
-            fd.append('nueva_contrasena', nueva);
-            fd.append('confirmar_contrasena', confirmar);
-
-            const res = await fetch('php/perfil.php', { method: 'POST', body: fd });
-            const data = await res.json();
-            if (data.error) return mostrarAlerta(data.mensaje || 'No se pudo actualizar la contraseña.');
-
-            mostrarAlerta(data.mensaje || 'Contraseña actualizada correctamente.', 'ok');
-            document.getElementById('pwdActual').value = '';
-            document.getElementById('pwdNueva').value = '';
-            document.getElementById('pwdConfirmar').value = '';
-            validarPassword();
-            document.getElementById('pwdMatch').style.display = 'none';
-        } catch (e) {
-            mostrarAlerta('Error de conexión al actualizar la contraseña.');
-        } finally {
-            btn.textContent = 'Guardar Contraseña';
-        }
-    }
-
-=======
->>>>>>> Stashed changes
     function buildSidebar(rol) {
         const menu = document.getElementById('sidebarMenu');
         if (rol === 'Cliente') {
@@ -268,6 +219,7 @@
                 <a href="mis_entregables.html"><i class="fa-solid fa-clipboard-check"></i> Mis entregables</a>
                 <a href="mis_incidencias.html"><i class="fa-solid fa-triangle-exclamation fa-sm"></i> Mis incidencias</a>
                 <a href="mis_solicitudes.html"><i class="fa-solid fa-ticket"></i> Mis solicitudes</a>
+                <a href="pagos.html"><i class="fa-solid fa-hand-holding-dollar"></i> Mis Pagos</a>
                 <div class="menu-section-label" style="margin-top:8px;">Cuenta</div>
                 <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
@@ -292,62 +244,14 @@
                 <a href="perfil.html"><i class="fa-solid fa-user-circle"></i> Mi Perfil</a>
                 <a href="index.html"><i class="fa-solid fa-globe"></i> Ver Sitio Web</a>`;
         }
-        // Active link
         const currentPage = location.pathname.split('/').pop() || 'index.html';
         menu.querySelectorAll('a').forEach(a => {
             if (a.getAttribute('href') === currentPage) a.classList.add('active');
         });
     }
 
-<<<<<<< Updated upstream
     async function cerrarSesion() {
         try { await fetch('php/logout.php'); } catch(e) {}
-        window.location.href = 'login.html';
-    }
-
-    function badgeClassPorRol(rol) {
-        if (rol === 'Administrador') return 'badge-rol badge-rol-admin';
-        if (rol === 'Empleado') return 'badge-rol badge-rol-emp';
-        return 'badge-rol badge-rol-client';
-    }
-
-    async function init() {
-        let data;
-        try {
-            const res = await fetch('php/perfil.php');
-            const json = await res.json();
-            if (json.error) { window.location.href = 'login.html'; return; }
-            data = json.usuario;
-        } catch (e) {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        document.getElementById('sidebarNombre').textContent = data.nombre_completo;
-        document.getElementById('sidebarRol').textContent = data.rol;
-        document.getElementById('saludo').textContent = 'Gestiona tu información personal';
-        buildSidebar(data.rol);
-
-        const nombre = data.nombre || '';
-        const apellido = data.apellido || '';
-        document.getElementById('perfilAvatar').textContent = (nombre[0] || '?').toUpperCase();
-        document.getElementById('perfilNombreCompleto').textContent = data.nombre_completo;
-        document.getElementById('perfilEmail').textContent = data.email;
-        document.getElementById('perfilNombre').value = nombre;
-        document.getElementById('perfilApellido').value = apellido;
-        document.getElementById('perfilEmailInput').value = data.email;
-        document.getElementById('perfilRolInput').value = data.rol;
-
-        const rolBadge = document.getElementById('perfilRolBadge');
-        rolBadge.className = badgeClassPorRol(data.rol);
-        rolBadge.textContent = data.rol;
-
-        document.getElementById('perfilPuestoField').style.display = data.puesto ? 'block' : 'none';
-        document.getElementById('perfilPuesto').value = data.puesto || '';
-    }
-=======
-    async function cerrarSesion() {
-        await fetch('php/logout.php');
         window.location.href = 'login.html';
     }
 
@@ -368,9 +272,9 @@
         btn.textContent = 'Guardando...';
 
         const fd = new FormData();
-        fd.append('accion',             'cambiar_contrasena');
-        fd.append('contrasena_actual',  actual);
-        fd.append('nueva_contrasena',   nueva);
+        fd.append('accion',              'cambiar_contrasena');
+        fd.append('contrasena_actual',   actual);
+        fd.append('nueva_contrasena',    nueva);
         fd.append('confirmar_contrasena', confirmar);
 
         try {
@@ -389,7 +293,6 @@
         } catch(e) {
             mostrarAlerta('Error de conexión con el servidor.');
         }
-
         btn.textContent = 'Guardar Contraseña';
     }
 
@@ -406,22 +309,22 @@
             document.getElementById('sidebarRol').textContent    = data.rol;
             buildSidebar(data.rol);
 
-            document.getElementById('perfilAvatar').textContent        = data.nombre[0].toUpperCase();
-            document.getElementById('perfilNombreCompleto').textContent = nombreCompleto;
-            document.getElementById('perfilEmail').textContent         = data.email;
-            document.getElementById('perfilNombre').value              = data.nombre;
-            document.getElementById('perfilApellido').value            = data.apellido;
-            document.getElementById('perfilEmailInput').value          = data.email;
-            document.getElementById('perfilRolInput').value            = data.rol;
+            document.getElementById('perfilAvatar').textContent         = data.nombre[0].toUpperCase();
+            document.getElementById('perfilNombreCompleto').textContent  = nombreCompleto;
+            document.getElementById('perfilEmail').textContent          = data.email;
+            document.getElementById('perfilNombre').value               = data.nombre;
+            document.getElementById('perfilApellido').value             = data.apellido;
+            document.getElementById('perfilEmailInput').value           = data.email;
+            document.getElementById('perfilRolInput').value             = data.rol;
 
             const rolBadge = document.getElementById('perfilRolBadge');
             const badgeClass = data.rol === 'Administrador' ? 'badge-rol-admin'
                              : data.rol === 'Empleado'       ? 'badge-rol-empleado'
                              : 'badge-rol-cliente';
-            rolBadge.className  = 'badge-rol ' + badgeClass;
+            rolBadge.className   = 'badge-rol ' + badgeClass;
             rolBadge.textContent = data.rol;
 
-            if (data.rol === 'Empleado' && data.puesto) {
+            if (data.puesto) {
                 document.getElementById('perfilPuestoField').style.display = 'block';
                 document.getElementById('perfilPuesto').value = data.puesto;
             }
@@ -430,7 +333,6 @@
             window.location.href = 'login.html';
         }
     }
->>>>>>> Stashed changes
 
     init();
 </script>

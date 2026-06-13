@@ -330,11 +330,12 @@ CREATE TABLE `soporte_notificacion` (
 -- Tabla: password_reset_token
 -- --------------------------------------------------------
 CREATE TABLE `password_reset_token` (
-  `id`         int(11)      NOT NULL,
-  `email`      varchar(150) NOT NULL,
-  `token`      varchar(255) NOT NULL,
-  `expires_at` datetime     NOT NULL,
-  `created_at` datetime     DEFAULT current_timestamp()
+  `id_token`   int(11)      NOT NULL,
+  `id_usuario` int(11)      NOT NULL,
+  `token_hash` varchar(64)  NOT NULL,
+  `expira_en`  datetime     NOT NULL,
+  `creado_en`  datetime     NOT NULL DEFAULT current_timestamp(),
+  `usado_en`   datetime     DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ============================================================
@@ -477,8 +478,8 @@ ALTER TABLE `soporte_notificacion`
   ADD KEY `idx_soporte_notificacion_leida`      (`leida`);
 
 ALTER TABLE `password_reset_token`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `email` (`email`);
+  ADD PRIMARY KEY (`id_token`),
+  ADD KEY `idx_id_usuario` (`id_usuario`);
 
 -- ============================================================
 -- AUTO_INCREMENT
@@ -497,7 +498,7 @@ ALTER TABLE `solicitud`            MODIFY `id_solicitud`    int(11) NOT NULL AUT
 ALTER TABLE `reporte`              MODIFY `id_reporte`      int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 ALTER TABLE `notificaciones`       MODIFY `id`              int(11) NOT NULL AUTO_INCREMENT;
 ALTER TABLE `soporte_notificacion` MODIFY `id_notificacion` int(11) NOT NULL AUTO_INCREMENT;
-ALTER TABLE `password_reset_token` MODIFY `id`              int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `password_reset_token` MODIFY `id_token`        int(11) NOT NULL AUTO_INCREMENT;
 
 -- ============================================================
 -- FOREIGN KEYS
@@ -580,6 +581,10 @@ ALTER TABLE `calificaciones`
     FOREIGN KEY (`id_proyecto`) REFERENCES `proyecto` (`id_proyecto`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_calif_cliente`
     FOREIGN KEY (`id_cliente`)  REFERENCES `cliente`  (`id_cliente`)  ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `password_reset_token`
+  ADD CONSTRAINT `fk_prt_usuario`
+    FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 
